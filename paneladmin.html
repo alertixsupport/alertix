@@ -121,7 +121,7 @@
         .header-right {
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 16px;
         }
 
         /* Notificación Campana SVG */
@@ -176,6 +176,31 @@
             50% { transform: scale(1.15); }
         }
 
+        /* Componente de Correo en PC (Visible solo en pantallas grandes) */
+        .user-email-pc {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 7px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .user-email-pc svg, .user-email-sidebar svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--red-primary);
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 6px var(--red-glow));
+        }
+
+        @media (min-width: 768px) {
+            .user-email-pc { display: flex; }
+        }
+
         .logout-btn {
             background: linear-gradient(180deg, rgba(220, 20, 60, 0.8) 0%, rgba(130, 0, 30, 0.9) 100%);
             border: 1px solid rgba(255, 50, 50, 0.4);
@@ -194,7 +219,7 @@
             transform: translateY(-1px);
         }
 
-        /* Toast de Alerta Flotante en tiempo real */
+        /* Toast de Alerta Flotante */
         .toast-alert {
             position: fixed;
             bottom: 24px;
@@ -292,20 +317,26 @@
             text-transform: uppercase;
             color: var(--text-muted);
             font-weight: 600;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
-        /* Correo del usuario fachero y estético en el menú */
+        /* Correo del usuario en el menú lateral (Visible principalmente en Celular) */
         .sidebar-user-email {
-            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
             color: #ffffff;
             font-weight: 500;
             word-break: break-all;
             background: rgba(220, 20, 60, 0.08);
             border: 1px solid rgba(220, 20, 60, 0.2);
-            padding: 6px 10px;
+            padding: 7px 10px;
             border-radius: 6px;
-            display: inline-block;
+        }
+
+        @media (min-width: 768px) {
+            .sidebar-user-email { display: none; } /* Ocultar en PC dentro del menú, ya que está arriba */
         }
 
         .sidebar-close {
@@ -610,6 +641,16 @@
                 </button>
                 <span class="notif-badge" id="notif-badge">0</span>
             </div>
+
+            <!-- Correo visible en PC con el logotipo SVG rojo -->
+            <div class="user-email-pc" id="user-display-pc">
+                <svg viewBox="0 0 24 24">
+                    <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
+                    <path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z" />
+                </svg>
+                <span id="email-text-pc">Cargando...</span>
+            </div>
+
             <button class="logout-btn" onclick="cerrarSesion()">Cerrar Sesión</button>
         </div>
     </header>
@@ -620,7 +661,14 @@
         <div class="sidebar-header">
             <div class="sidebar-header-info">
                 <h3>Navegación</h3>
-                <div class="sidebar-user-email" id="sidebar-user-email">Cargando...</div>
+                <!-- Correo visible en el menú lateral para dispositivos móviles con el logotipo SVG rojo -->
+                <div class="sidebar-user-email" id="sidebar-user-email">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
+                        <path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z" />
+                    </svg>
+                    <span id="email-text-mobile">Cargando...</span>
+                </div>
             </div>
             <button class="sidebar-close" id="sidebar-close">
                 <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -711,7 +759,8 @@
         if (!userEmail) {
             window.location.href = "googleadmin.html";
         } else {
-            document.getElementById("sidebar-user-email").innerText = userEmail;
+            document.getElementById("email-text-pc").innerText = userEmail;
+            document.getElementById("email-text-mobile").innerText = userEmail;
         }
 
         window.cerrarSesion = function() {
@@ -734,7 +783,7 @@
         sidebarClose.addEventListener("click", toggleSidebar);
         sidebarOverlay.addEventListener("click", toggleSidebar);
 
-        // --- Carga Instantánea del Menú con Caché (Sin parpadeo ni demora) ---
+        // --- Carga Instantánea del Menú con Caché ---
         const menuList = document.getElementById("dynamic-menu-list");
         
         function renderizarMenuHTML(menuItems) {
@@ -746,7 +795,6 @@
             menuList.innerHTML = itemsHtml;
         }
 
-        // 1. Intentar pintar inmediatamente desde sessionStorage si existe caché previa
         const cachedMenu = sessionStorage.getItem("alertix_menu_cache");
         if (cachedMenu) {
             try {
@@ -756,7 +804,6 @@
             }
         }
 
-        // 2. Sincronizar en tiempo real con Firestore y actualizar caché
         function escucharMenuEnTiempoReal() {
             const q = query(collection(db, "menupanel"), orderBy("orden", "asc"));
 
@@ -767,7 +814,6 @@
                 });
 
                 if (fetchedItems.length > 0) {
-                    // Guardar en caché de sesión para cargas futuras instantáneas
                     sessionStorage.setItem("alertix_menu_cache", JSON.stringify(fetchedItems));
                     renderizarMenuHTML(fetchedItems);
                 } else {
