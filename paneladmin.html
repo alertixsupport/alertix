@@ -35,7 +35,6 @@
             overflow-x: hidden;
         }
 
-        /* Ambient subtle grid */
         body::before {
             content: '';
             position: absolute;
@@ -66,7 +65,6 @@
             gap: 18px;
         }
 
-        /* Botón Menú Hamburguesa con SVG */
         .menu-toggle {
             background: transparent;
             border: 1px solid var(--border-subtle);
@@ -126,7 +124,7 @@
             gap: 18px;
         }
 
-        /* Notificación Campana SVG con animación pulse */
+        /* Notificación Campana SVG */
         .notif-wrapper {
             position: relative;
         }
@@ -168,7 +166,7 @@
             font-weight: 700;
             padding: 2px 5px;
             border-radius: 8px;
-            display: none;
+            display: none; /* Inicia completamente oculto (vacío) */
             box-shadow: 0 0 10px var(--red-primary);
             animation: pulseBadge 1.5s infinite;
         }
@@ -210,7 +208,7 @@
             transform: translateY(-1px);
         }
 
-        /* Toast de Alerta Flotante en tiempo real */
+        /* Toast de Alerta Flotante en tiempo real (PUM) */
         .toast-alert {
             position: fixed;
             bottom: 24px;
@@ -555,14 +553,14 @@
 </head>
 <body>
 
-    <!-- Toast Alert Flotante para Notificación en Tiempo Real -->
+    <!-- Toast de Notificación en vivo (PUM - solo nuevas sesiones) -->
     <div class="toast-alert" id="toast-alert">
         <div class="toast-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
         </div>
         <div class="toast-content">
             <strong>Nueva Sesión Detectada</strong>
-            <span id="toast-msg">Un usuario acaba de iniciar sesión.</span>
+            <span id="toast-msg">Se ha registrado un nuevo acceso.</span>
         </div>
     </div>
 
@@ -578,7 +576,7 @@
             </div>
         </div>
         <div class="header-right">
-            <!-- Campana SVG de Notificaciones -->
+            <!-- Campana de Notificaciones (Inicia vacía) -->
             <div class="notif-wrapper">
                 <button class="notif-btn" id="notif-btn" title="Alertas de nuevas sesiones">
                     <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
@@ -665,7 +663,7 @@
     <!-- Script de Integración con Firestore -->
     <script type="module">
         import { db } from "./app.js";
-        import { collection, getDocs, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { collection, getDocs, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const userEmail = sessionStorage.getItem("alertix_user_email");
 
@@ -705,7 +703,6 @@
                 if (!querySnapshot.empty) {
                     querySnapshot.forEach((doc) => {
                         const data = doc.data();
-                        // Renderiza icono SVG o personalizado definido en menupanel
                         const iconSvg = data.iconoSvg || `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
                         itemsHtml += `<li><a href="${data.redireccion || '#'}">${iconSvg} ${data.titulo || 'Página'}</a></li>`;
                     });
@@ -736,6 +733,7 @@
                 const totalSesiones = snapshot.size;
                 sesionesCounter.innerText = totalSesiones;
 
+                // Renderizar historial completo en el modal (para cuando el usuario hace clic en "Ver Detalle")
                 let sesionesHtml = "";
                 snapshot.forEach((doc) => {
                     const data = doc.data();
@@ -752,28 +750,28 @@
                 });
                 sessionsListContainer.innerHTML = sesionesHtml || "<p style='color:var(--text-muted); text-align:center;'>Sin accesos registrados.</p>";
 
-                // Detectar si ingresa una NUEVA sesión mientras la página está abierta
-                if (initialLoadCompleted) {
+                // LÓGICA DE NOTIFICACIONES: Ignora las cargas iniciales y SOLO avisa si entra una NUEVA sesión en vivo
+                if (!initialLoadCompleted) {
+                    initialLoadCompleted = true; // Ignora todo el registro histórico que ya estaba en la base
+                } else {
                     snapshot.docChanges().forEach((change) => {
                         if (change.type === "added") {
                             const newDoc = change.doc.data();
                             newNotifCount++;
                             notifBadge.innerText = newNotifCount;
-                            notifBadge.style.display = "inline-block";
+                            notifBadge.style.display = "inline-block"; // ¡PUM! Aparece la notificación
 
-                            // Disparar aviso flotante (Toast)
+                            // Mostrar alerta flotante (Toast) en la esquina inferior derecha
                             toastMsg.innerText = `Acceso de: ${newDoc.email || 'Nuevo usuario'}`;
                             toastAlert.classList.add("show");
-                            setTimeout(() => toastAlert.classList.remove("show"), 4000);
+                            setTimeout(() => toastAlert.classList.remove("show"), 4500);
                         }
                     });
-                } else {
-                    initialLoadCompleted = true;
                 }
             });
         }
 
-        // Limpiar notificaciones de la campana al hacer clic en ella
+        // Al hacer clic en la campana, abre el modal y limpia el contador de nuevas alertas
         document.getElementById("notif-btn").addEventListener("click", () => {
             newNotifCount = 0;
             notifBadge.style.display = "none";
