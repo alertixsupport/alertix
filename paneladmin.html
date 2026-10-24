@@ -457,7 +457,7 @@
                 transform: translateY(0px);
             }
             50% {
-                transform: translateY(-5px); /* Sube ligeramente */
+                transform: translateY(-5px);
             }
         }
 
@@ -466,7 +466,7 @@
             stroke: rgba(220, 20, 60, 0.65);
             stroke-width: 2.5;
             stroke-linecap: square;
-            stroke-linejoin: miter; /* Esquinas totalmente cuadradas */
+            stroke-linejoin: miter;
         }
 
         .card-btn {
@@ -631,14 +631,14 @@
             </button>
         </div>
         <ul class="sidebar-menu" id="dynamic-menu-list">
-            <!-- Cargado dinámicamente desde Firestore (menupanel) -->
+            <!-- Cargado en tiempo real desde Firestore (menupanel) -->
         </ul>
     </nav>
 
     <!-- Dashboard Main -->
     <main>
         <div class="dashboard-grid">
-            <!-- Card Sesiones con Gráfico Animado Permanente -->
+            <!-- Card Sesiones -->
             <div class="card">
                 <div>
                     <div class="card-header-icon">
@@ -649,7 +649,6 @@
                     
                     <div class="metric-row">
                         <div class="metric-value" id="sesiones-counter">0</div>
-                        <!-- Mini gráfico con animación permanente de flotación -->
                         <svg class="mini-sparkline" viewBox="0 0 100 35">
                             <path class="sparkline-path" d="M 0 28 L 18 28 L 18 12 L 38 12 L 38 22 L 58 8 L 78 20 L 78 14 L 100 14" />
                         </svg>
@@ -658,7 +657,7 @@
                 <button class="card-btn" id="open-sessions-modal">Ver Detalle</button>
             </div>
 
-            <!-- Card Tarjetas QR con Gráfico Animado Permanente -->
+            <!-- Card Tarjetas QR -->
             <div class="card">
                 <div>
                     <div class="card-header-icon">
@@ -669,7 +668,6 @@
                     
                     <div class="metric-row">
                         <div class="metric-value" id="tarjetas-counter">0</div>
-                        <!-- Mini gráfico con animación permanente de flotación -->
                         <svg class="mini-sparkline" viewBox="0 0 100 35" style="animation-delay: 1.5s;">
                             <path class="sparkline-path" d="M 0 22 L 20 22 L 20 15 L 40 15 L 40 26 L 65 10 L 82 18 L 82 6 L 100 6" />
                         </svg>
@@ -710,7 +708,7 @@
     <!-- Script de Integración con Firestore -->
     <script type="module">
         import { db } from "./app.js";
-        import { collection, getDocs, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { collection, getDocs, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const userEmail = sessionStorage.getItem("alertix_user_email");
 
@@ -740,15 +738,16 @@
         sidebarClose.addEventListener("click", toggleSidebar);
         sidebarOverlay.addEventListener("click", toggleSidebar);
 
-        // --- Cargar Menú Dinámico desde Firestore (colección "menupanel") ---
-        async function cargarMenuDinamico() {
+        // --- Cargar Menú en Tiempo Real desde Firestore (colección "menupanel") ---
+        function escucharMenuEnTiempoReal() {
             const menuList = document.getElementById("dynamic-menu-list");
-            try {
-                const querySnapshot = await getDocs(collection(db, "menupanel"));
+            const q = query(collection(db, "menupanel"), orderBy("orden", "asc"));
+
+            onSnapshot(q, (snapshot) => {
                 let itemsHtml = "";
 
-                if (!querySnapshot.empty) {
-                    querySnapshot.forEach((doc) => {
+                if (!snapshot.empty) {
+                    snapshot.forEach((doc) => {
                         const data = doc.data();
                         const iconSvg = data.iconoSvg || `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
                         itemsHtml += `<li><a href="${data.redireccion || '#'}">${iconSvg} ${data.titulo || 'Página'}</a></li>`;
@@ -757,11 +756,12 @@
                     itemsHtml = `<li style="padding: 20px 24px; font-size: 0.82rem; color: var(--text-muted);">Sin páginas en 'menupanel'. Configúralas para desplegar el menú.</li>`;
                 }
                 menuList.innerHTML = itemsHtml;
-            } catch (error) {
+            }, (error) => {
+                console.error("Error escuchando el menú:", error);
                 menuList.innerHTML = `<li style="padding: 20px 24px; font-size: 0.82rem; color: var(--text-muted);">Menú pendiente de configuración.</li>`;
-            }
+            });
         }
-        cargarMenuDinamico();
+        escucharMenuEnTiempoReal();
 
         // --- Escuchador de Notificaciones y Sesiones en Tiempo Real ---
         let initialLoadCompleted = false;
@@ -816,7 +816,6 @@
         }
 
         document.getElementById("notif-btn").addEventListener("click", () => {
-            newNotifCommandCount = 0;
             newNotifCount = 0;
             notifBadge.style.display = "none";
             document.getElementById("sessions-modal").classList.add("open");
