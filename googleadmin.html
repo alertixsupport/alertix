@@ -3,99 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alertix - Acceso Administrativo</title>
+    <title>Alertix - Portal Corporativo</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 50%, #000000 100%);
+            background: #080808;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(180, 0, 0, 0.15) 0%, transparent 70%),
+                linear-gradient(180deg, #0d0d0d 0%, #050505 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #ffffff;
-            padding: 20px;
+            color: #f0f0f0;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
         }
 
+        /* Líneas decorativas estilo malla empresarial de fondo */
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Contenedor principal estilo tarjeta corporativa */
         .login-card {
-            background: linear-gradient(145deg, #1f1f1f, #0d0d0d);
-            border: 1px solid #330000;
-            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.1);
-            padding: 30px 20px;
+            position: relative;
+            z-index: 1;
+            background: rgba(18, 18, 20, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(255, 50, 50, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(150, 0, 0, 0.1);
+            padding: 50px 32px 36px 32px;
             border-radius: 12px;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             text-align: center;
+            animation: cardAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .logo-area h1 {
-            font-size: clamp(2rem, 5vw, 2.5rem);
-            background: linear-gradient(90deg, #ff1a1a, #800000);
+        @keyframes cardAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo estilo Emblema Corporativo Flotante (Media redonda metálica sobria) */
+        .floating-logo-container {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 68px;
+            height: 34px;
+            background: linear-gradient(180deg, #d60d0d 0%, #4a0000 100%);
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+            border: 1px solid rgba(255, 100, 100, 0.4);
+            border-bottom: none;
+            box-shadow: 0 8px 20px rgba(214, 13, 13, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: subtleFloat 4s ease-in-out infinite;
+        }
+
+        /* Isotipo interno refinado */
+        .floating-logo-container::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes subtleFloat {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(-4px);
+            }
+        }
+
+        .header-area {
+            margin-top: 10px;
+            margin-bottom: 28px;
+        }
+
+        .header-area .brand-name {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #ffffff 30%, #a0a0a0 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+
+        .header-area .brand-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
+            color: #ff4d4d;
+            background: rgba(255, 0, 0, 0.08);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 12px;
         }
 
-        .logo-area p {
-            color: #b3b3b3;
-            font-size: clamp(0.85rem, 3vw, 0.95rem);
-            margin-bottom: 25px;
+        .header-area p {
+            color: #888888;
+            font-size: 0.85rem;
+            font-weight: 400;
         }
 
+        /* Divider elegante */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            margin-bottom: 28px;
+        }
+
+        /* Botón empresarial de autenticación */
         .google-login-btn {
             background: #ffffff;
-            color: #333333;
-            border: none;
-            padding: 14px 20px;
+            color: #1a1a1a;
+            border: 1px solid #ffffff;
+            padding: 13px 20px;
             border-radius: 6px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             cursor: pointer;
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
-            transition: background 0.3s ease, transform 0.1s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             -webkit-tap-highlight-color: transparent;
         }
 
         .google-login-btn:hover {
-            background: #e6e6e6;
+            background: #f0f0f0;
+            box-shadow: 0 6px 20px rgba(255, 0, 0, 0.15);
+            transform: translateY(-1px);
         }
 
         .google-login-btn:active {
-            transform: scale(0.98);
+            transform: translateY(0);
+            background: #e0e0e0;
         }
 
         .google-login-btn svg {
             flex-shrink: 0;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
         }
 
         .status-msg {
-            margin-top: 20px;
-            font-size: 0.85rem;
-            color: #ff4d4d;
+            margin-top: 22px;
+            font-size: 0.8rem;
+            color: #ff5555;
             min-height: 20px;
             word-break: break-word;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        /* Footer discreto corporativo */
+        .card-footer {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.72rem;
+            color: #555555;
+            letter-spacing: 0.5px;
         }
 
         @media (max-width: 480px) {
             .login-card {
-                padding: 25px 15px;
-                border: none;
-                background: linear-gradient(145deg, #161616, #0a0a0a);
-                box-shadow: 0 5px 20px rgba(255, 0, 0, 0.15);
+                padding: 45px 20px 25px 20px;
             }
         }
     </style>
@@ -103,20 +216,31 @@
 <body>
 
     <div class="login-card">
-        <div class="logo-area">
-            <h1>Alertix</h1>
-            <p>Sistema de Alertas y Seguridad Inteligente</p>
+        <!-- Emblema / Logo en media redonda flotante -->
+        <div class="floating-logo-container" title="Alertix Enterprise"></div>
+
+        <div class="header-area">
+            <h1 class="brand-name">Alertix</h1>
+            <span class="brand-badge">Enterprise Security</span>
+            <p>Plataforma de Gestión y Monitoreo de Alertas</p>
         </div>
 
-        <!-- Botón de inicio de sesión con Google -->
+        <div class="divider"></div>
+
+        <!-- Botón corporativo Google -->
         <button id="login-btn" class="google-login-btn">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
             <span>Iniciar sesión con Google</span>
         </button>
+
         <div id="status" class="status-msg"></div>
+
+        <div class="card-footer">
+            &copy; Alertix Security Systems. Acceso restringido.
+        </div>
     </div>
 
-    <!-- Script de conexión con app.js y Firestore -->
+    <!-- Módulo de conexión con app.js y Firebase -->
     <script type="module">
         import { auth, provider, db } from "./app.js";
         import { signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -127,13 +251,13 @@
 
         loginBtn.addEventListener("click", async () => {
             try {
-                statusDiv.innerText = "1. Abriendo ventana de Google...";
+                statusDiv.innerText = "Iniciando autenticación segura...";
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
 
-                statusDiv.innerText = "2. ¡Autenticado! Guardando sesión en Firestore...";
+                statusDiv.innerText = "Registrando sesión empresarial...";
 
-                // Guardar el registro de la sesión en Firestore (crea la colección 'seciones' automáticamente)
+                // Guardar la sesión en la colección 'seciones' en Firestore
                 await addDoc(collection(db, "seciones"), {
                     email: user.email,
                     nombre: user.displayName || "Sin nombre",
@@ -141,18 +265,18 @@
                     uid: user.uid
                 });
 
-                statusDiv.innerText = "3. ¡Sesión guardada! Redirigiendo...";
+                statusDiv.innerText = "Autenticación exitosa. Redirigiendo...";
 
                 sessionStorage.setItem("alertix_user_email", user.email);
                 sessionStorage.setItem("alertix_user_name", user.displayName || "");
 
                 setTimeout(() => {
                     window.location.href = "paneladmin.html";
-                }, 1500);
+                }, 1000);
 
             } catch (error) {
-                console.error("Error detallado:", error);
-                statusDiv.innerText = "ERROR: " + error.message;
+                console.error("Error de autenticación:", error);
+                statusDiv.innerText = "Error de acceso. Verifique sus credenciales.";
             }
         });
     </script>
