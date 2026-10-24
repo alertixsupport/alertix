@@ -32,10 +32,10 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding-top: 70px; /* Espacio para el Header Fijo */
+            padding-top: 70px;
         }
 
-        /* Cabecera Completamente Fija (Inmóvil) */
+        /* Cabecera Fija */
         header {
             position: fixed;
             top: 0;
@@ -327,7 +327,7 @@
 
     <main>
         <h2 class="section-title">Administrar Accesos Directos</h2>
-        <p class="section-desc">Crea, edita y ordena las páginas que se deplegarán dinámicamente en la consola de Alertix.</p>
+        <p class="section-desc">Crea, edita y ordena las páginas que se desplegarán dinámicamente en la consola de Alertix.</p>
 
         <!-- Formulario (Para Agregar o Editar) -->
         <div class="form-card">
@@ -374,7 +374,7 @@
             window.location.href = "googleadmin.html";
         }
 
-        let menuDataCache = []; // Almacena el array de datos locales para el reordenamiento
+        let menuDataCache = [];
 
         // --- Guardar / Editar Documento ---
         const menuForm = document.getElementById("menu-form");
@@ -387,14 +387,12 @@
 
             try {
                 if (editId) {
-                    // Modo Edición
                     await updateDoc(doc(db, "menupanel", editId), {
                         titulo,
                         redireccion,
                         iconoSvg
                     });
                 } else {
-                    // Modo Creación (Asigna un orden al final)
                     const nuevoOrden = menuDataCache.length + 1;
                     await addDoc(collection(db, "menupanel"), {
                         titulo,
@@ -413,33 +411,17 @@
             }
         });
 
-        // --- Cargar y Verificar la Colección 'menupanel' ---
+        // --- Cargar Menú (Sin autorrelleno forzoso) ---
         async function cargarMenuAdmin() {
             const container = document.getElementById("menu-items-container");
             try {
                 const q = query(collection(db, "menupanel"), orderBy("orden", "asc"));
-                let querySnapshot = await getDocs(q);
+                const querySnapshot = await getDocs(q);
 
-                // SI LA COLECCIÓN ESTÁ VACÍA: Inicializa la colección automáticamente con páginas por defecto
                 if (querySnapshot.empty) {
-                    await addDoc(collection(db, "menupanel"), {
-                        titulo: "Gestión de Menú",
-                        redireccion: "menupanel.html",
-                        iconoSvg: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>`,
-                        orden: 1,
-                        createdAt: serverTimestamp()
-                    });
-
-                    await addDoc(collection(db, "menupanel"), {
-                        titulo: "Gestión de Tarjetas QR",
-                        redireccion: "tarjetas.html",
-                        iconoSvg: `<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>`,
-                        orden: 2,
-                        createdAt: serverTimestamp()
-                    });
-
-                    // Recarga la consulta ahora con los datos recién creados
-                    querySnapshot = await getDocs(q);
+                    container.innerHTML = `<p style="color: var(--text-muted); text-align: center;">No hay páginas configuradas en el menú actualmente.</p>`;
+                    menuDataCache = [];
+                    return;
                 }
 
                 menuDataCache = [];
@@ -478,7 +460,7 @@
             }
         }
 
-        // --- Mover Items Arriba o Abajo (Reordenamiento) ---
+        // --- Mover Items Arriba o Abajo ---
         window.moverItem = async function(id, direccion) {
             const index = menuDataCache.findIndex(item => item.id === id);
             if (index === -1) return;
