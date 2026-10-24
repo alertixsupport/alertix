@@ -176,7 +176,6 @@
             50% { transform: scale(1.15); }
         }
 
-        /* Componente de Correo en PC (Visible solo en pantallas grandes) */
         .user-email-pc {
             display: none;
             align-items: center;
@@ -320,7 +319,6 @@
             margin-bottom: 8px;
         }
 
-        /* Correo del usuario en el menú lateral (Visible principalmente en Celular) */
         .sidebar-user-email {
             display: flex;
             align-items: center;
@@ -336,7 +334,7 @@
         }
 
         @media (min-width: 768px) {
-            .sidebar-user-email { display: none; } /* Ocultar en PC dentro del menú, ya que está arriba */
+            .sidebar-user-email { display: none; }
         }
 
         .sidebar-close {
@@ -642,7 +640,7 @@
                 <span class="notif-badge" id="notif-badge">0</span>
             </div>
 
-            <!-- Correo visible en PC con el logotipo SVG rojo -->
+            <!-- Correo visible en PC -->
             <div class="user-email-pc" id="user-display-pc">
                 <svg viewBox="0 0 24 24">
                     <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
@@ -661,7 +659,6 @@
         <div class="sidebar-header">
             <div class="sidebar-header-info">
                 <h3>Navegación</h3>
-                <!-- Correo visible en el menú lateral para dispositivos móviles con el logotipo SVG rojo -->
                 <div class="sidebar-user-email" id="sidebar-user-email">
                     <svg viewBox="0 0 24 24">
                         <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
@@ -675,7 +672,7 @@
             </button>
         </div>
         <ul class="sidebar-menu" id="dynamic-menu-list">
-            <!-- Renderizado instantáneo por caché -->
+            <!-- Caché instantáneo -->
         </ul>
     </nav>
 
@@ -749,7 +746,7 @@
         </div>
     </div>
 
-    <!-- Script de Integración con Firestore -->
+    <!-- Script de Integración con Caché y Carga Instantánea -->
     <script type="module">
         import { db } from "./app.js";
         import { collection, getDocs, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -783,7 +780,7 @@
         sidebarClose.addEventListener("click", toggleSidebar);
         sidebarOverlay.addEventListener("click", toggleSidebar);
 
-        // --- Carga Instantánea del Menú con Caché ---
+        // --- 1. CARGA INSTANTÁNEA DEL MENÚ DESDE CACHÉ ---
         const menuList = document.getElementById("dynamic-menu-list");
         
         function renderizarMenuHTML(menuItems) {
@@ -797,35 +794,45 @@
 
         const cachedMenu = sessionStorage.getItem("alertix_menu_cache");
         if (cachedMenu) {
+            try { renderizarMenuHTML(JSON.parse(cachedMenu)); } catch(e) {}
+        }
+
+        onSnapshot(query(collection(db, "menupanel"), orderBy("orden", "asc")), (snapshot) => {
+            const fetchedItems = [];
+            snapshot.forEach((doc) => fetchedItems.push(doc.data()));
+            if (fetchedItems.length > 0) {
+                sessionStorage.setItem("alertix_menu_cache", JSON.stringify(fetchedItems));
+                renderizarMenuHTML(fetchedItems);
+            }
+        });
+
+        // --- 2. CARGA INSTANTÁNEA DE TARJETAS QR DESDE CACHÉ ---
+        const tarjetasCounter = document.getElementById("tarjetas-counter");
+        const cachedTarjetas = sessionStorage.getItem("alertix_tarjetas_cache");
+        if (cachedTarjetas) {
+            tarjetasCounter.innerText = cachedTarjetas;
+        }
+
+        async function cargarConteoTarjetasRapido() {
             try {
-                renderizarMenuHTML(JSON.parse(cachedMenu));
+                const snap = await getDocs(collection(db, "usuarios", userEmail, "tarjetas"));
+                const total = snap.size;
+                tarjetasCounter.innerText = total;
+                sessionStorage.setItem("alertix_tarjetas_cache", total);
             } catch (e) {
-                console.error("Error leyendo caché del menú");
+                try {
+                    const snapRoot = await getDocs(collection(db, "tarjetas"));
+                    const totalRoot = snapRoot.size;
+                    tarjetasCounter.innerText = totalRoot;
+                    sessionStorage.setItem("alertix_tarjetas_cache", totalRoot);
+                } catch(err) {
+                    tarjetasCounter.innerText = "0";
+                }
             }
         }
+        cargarConteoTarjetasRapido();
 
-        function escucharMenuEnTiempoReal() {
-            const q = query(collection(db, "menupanel"), orderBy("orden", "asc"));
-
-            onSnapshot(q, (snapshot) => {
-                const fetchedItems = [];
-                snapshot.forEach((doc) => {
-                    fetchedItems.push(doc.data());
-                });
-
-                if (fetchedItems.length > 0) {
-                    sessionStorage.setItem("alertix_menu_cache", JSON.stringify(fetchedItems));
-                    renderizarMenuHTML(fetchedItems);
-                } else {
-                    menuList.innerHTML = `<li style="padding: 20px 24px; font-size: 0.82rem; color: var(--text-muted);">Sin páginas en 'menupanel'.</li>`;
-                }
-            }, (error) => {
-                console.error("Error escuchando el menú:", error);
-            });
-        }
-        escucharMenuEnTiempoReal();
-
-        // --- Escuchador de Notificaciones y Sesiones en Tiempo Real ---
+        // --- 3. HISTORIAL DE SESIONES EN TIEMPO REAL CON CACHÉ ---
         let initialLoadCompleted = false;
         let newNotifCount = 0;
 
@@ -835,12 +842,17 @@
         const sesionesCounter = document.getElementById("sesiones-counter");
         const sessionsListContainer = document.getElementById("sessions-list-container");
 
-        function escucharSesionesEnTiempoReal() {
-            const q = query(collection(db, "seciones"));
+        // Pintar sesión en caché de inmediato si existe
+        const cachedSesionesCount = sessionStorage.getItem("alertix_sesiones_count_cache");
+        const cachedSesionesHtml = sessionStorage.getItem("alertix_sesiones_html_cache");
+        if (cachedSesionesCount) sesionesCounter.innerText = cachedSesionesCount;
+        if (cachedSesionesHtml) sessionsListContainer.innerHTML = cachedSesionesHtml;
 
-            onSnapshot(q, (snapshot) => {
+        function escucharSesionesEnTiempoReal() {
+            onSnapshot(query(collection(db, "seciones")), (snapshot) => {
                 const totalSesiones = snapshot.size;
                 sesionesCounter.innerText = totalSesiones;
+                sessionStorage.setItem("alertix_sesiones_count_cache", totalSesiones);
 
                 let sesionesHtml = "";
                 snapshot.forEach((doc) => {
@@ -856,7 +868,10 @@
                         </div>
                     `;
                 });
-                sessionsListContainer.innerHTML = sesionesHtml || "<p style='color:var(--text-muted); text-align:center;'>Sin accesos registrados.</p>";
+                
+                const finalHtml = sesionesHtml || "<p style='color:var(--text-muted); text-align:center;'>Sin accesos registrados.</p>";
+                sessionsListContainer.innerHTML = finalHtml;
+                sessionStorage.setItem("alertix_sesiones_html_cache", finalHtml);
 
                 if (!initialLoadCompleted) {
                     initialLoadCompleted = true;
@@ -891,18 +906,7 @@
             if (e.target === sessionsModal) sessionsModal.classList.remove("open");
         });
 
-        // --- Conteo de Tarjetas ---
-        async function cargarConteoTarjetas() {
-            try {
-                const snap = await getDocs(collection(db, "usuarios", userEmail, "tarjetas"));
-                document.getElementById("tarjetas-counter").innerText = snap.size;
-            } catch (e) {
-                document.getElementById("tarjetas-counter").innerText = "0";
-            }
-        }
-
         escucharSesionesEnTiempoReal();
-        cargarConteoTarjetas();
     </script>
 </body>
 </html>
