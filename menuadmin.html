@@ -1,1 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alertix - Gestión de Menú</title>
+    <style>
+        :root {
+            --bg-base: #070709;
+            --bg-surface: rgba(18, 18, 22, 0.85);
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-accent: rgba(220, 20, 60, 0.4);
+            --red-primary: #dc143c;
+            --red-glow: rgba(220, 20, 60, 0.35);
+            --text-main: #f1f1f5;
+            --text-muted: #8a8a9e;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(180, 0, 0, 0.12) 0%, transparent 60%),
+                linear-gradient(180deg, #09090d 0%, #040406 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Profesional */
+        header {
+            background: rgba(10, 10, 14, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 14px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            border-color: var(--border-accent);
+            background: rgba(220, 20, 60, 0.1);
+        }
+
+        .brand-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #fff;
+        }
+
+        /* Contenido Principal */
+        main {
+            flex: 1;
+            padding: 36px 28px;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .section-desc {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin-bottom: 28px;
+        }
+
+        .form-card {
+            background: var(--bg-surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-subtle);
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+            margin-bottom: 36px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(10, 10, 14, 0.6);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 0.92rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--red-primary);
+            box-shadow: 0 0 10px var(--red-glow);
+        }
+
+        .submit-btn {
+            background: linear-gradient(180deg, rgba(220, 20, 60, 0.9) 0%, rgba(140, 0, 30, 1) 100%);
+            border: 1px solid rgba(255, 50, 50, 0.4);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px var(--red-glow);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(220, 20, 60, 0.5);
+        }
+
+        /* Lista de elementos existentes */
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .menu-item-row {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            padding: 16px 20px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-item-info strong {
+            display: block;
+            font-size: 0.95rem;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .menu-item-info span {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .menu-item-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            border-color: var(--border-accent);
+            background: rgba(220, 20, 60, 0.1);
+        }
+
+        .delete-btn:hover {
+            border-color: #ff4d4d;
+            background: rgba(255, 0, 0, 0.15);
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <a href="paneladmin.html" class="back-btn">← Volver al Panel</a>
+            <h1 class="brand-title">Gestión de Menú</h1>
+        </div>
+    </header>
+
+    <main>
+        <h2 class="section-title">Configurar Elementos del Menú Lateral</h2>
+        <p class="section-desc">Añade, edita o administra las páginas y accesos directos que aparecerán en el sidebar de Alertix.</p>
+
+        <!-- Formulario para agregar opción -->
+        <div class="form-card">
+            <form id="menu-form">
+                <div class="form-group">
+                    <label for="titulo">Título de la Página</label>
+                    <input type="text" id="titulo" class="form-control" placeholder="Ej. Gestión de Usuarios" required>
+                </div>
+                <div class="form-group">
+                    <label for="redireccion">Redirección (Nombre del archivo .html o URL)</label>
+                    <input type="text" id="redireccion" class="form-control" placeholder="Ej. usuarios.html" required>
+                </div>
+                <div class="form-group">
+                    <label for="iconoSvg">Código SVG del Icono (Opcional)</label>
+                    <textarea id="iconoSvg" class="form-control" rows="3" placeholder='Pega aquí tu <svg viewBox="0 0 24 24">...</svg>'></textarea>
+                </div>
+                <button type="submit" class="submit-btn" id="save-btn">Guardar en Menú</button>
+            </form>
+        </div>
+
+        <h3 class="section-title" style="font-size: 1.1rem; margin-bottom: 16px;">Páginas Registradas</h3>
+        <div class="items-list" id="menu-items-container">
+            <p style="color: var(--text-muted); text-align: center;">Cargando elementos del menú...</p>
+        </div>
+    </main>
+
+    <!-- Script de Firebase -->
+    <script type="module">
+        import { db } from "./app.js";
+        import { collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const userEmail = sessionStorage.getItem("alertix_user_email");
+        if (!userEmail) {
+            window.location.href = "googleadmin.html";
+        }
+
+        const menuForm = document.getElementById("menu-form");
+        const container = document.getElementById("menu-items-container");
+
+        // Guardar nuevo elemento en menupanel
+        menuForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const titulo = document.getElementById("titulo").value;
+            const redireccion = document.getElementById("redireccion").value;
+            const iconoSvg = document.getElementById("iconoSvg").value.trim();
+
+            try {
+                await addDoc(collection(db, "menupanel"), {
+                    titulo,
+                    redireccion,
+                    iconoSvg: iconoSvg || `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`,
+                    createdAt: serverTimestamp()
+                });
+
+                menuForm.reset();
+                cargarMenuAdmin();
+            } catch (error) {
+                console.error("Error al guardar elemento:", error);
+                alert("No se pudo guardar el elemento.");
+            }
+        });
+
+        // Cargar elementos existentes
+        async function cargarMenuAdmin() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "menupanel"));
+                let html = "";
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = `<p style="color: var(--text-muted); text-align: center;">No hay páginas configuradas aún.</p>`;
+                    return;
+                }
+
+                querySnapshot.forEach((documento) => {
+                    const data = documento.data();
+                    html += `
+                        <div class="menu-item-row">
+                            <div class="menu-item-info">
+                                <strong>${data.titulo}</strong>
+                                <span>Destino: ${data.redireccion}</span>
+                            </div>
+                            <div class="menu-item-actions">
+                                <button class="action-btn delete-btn" onclick="eliminarItem('${documento.id}')">Eliminar</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (error) {
+                console.error("Error cargando menú:", error);
+                container.innerHTML = `<p style="color: #ff6b6b; text-align: center;">Error al cargar los datos.</p>`;
+            }
+        }
+
+        // Función global para eliminar
+        window.eliminarItem = async function(id) {
+            if (confirm("¿Estás seguro de eliminar este elemento del menú?")) {
+                try {
+                    await deleteDoc(doc(db, "menupanel", id));
+                    cargarMenuAdmin();
+                } catch (error) {
+                    console.error("Error al eliminar:", error);
+                }
+            }
+        }
+
+        cargarMenuAdmin();
+    </script>
+</body>
+</html>
