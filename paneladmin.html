@@ -46,7 +46,6 @@
             z-index: 0;
         }
 
-        /* Header Profesional */
         header {
             position: relative;
             z-index: 10;
@@ -124,7 +123,6 @@
             gap: 16px;
         }
 
-        /* Notificación Campana SVG */
         .notif-wrapper {
             position: relative;
         }
@@ -218,7 +216,6 @@
             transform: translateY(-1px);
         }
 
-        /* Toast de Alerta Flotante */
         .toast-alert {
             position: fixed;
             bottom: 24px;
@@ -265,7 +262,6 @@
             color: var(--text-muted);
         }
 
-        /* Sidebar Menú Lateral */
         .sidebar-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -319,7 +315,6 @@
             margin-bottom: 8px;
         }
 
-        /* Estilo sobrio y limpio para el correo en el menú móvil (sin fondos blancos molestos) */
         .sidebar-user-email {
             display: flex;
             align-items: center;
@@ -349,21 +344,32 @@
             stroke-width: 2;
         }
 
+        /* Estilos para las categorías / separadores en el menú */
         .sidebar-menu {
             list-style: none;
-            padding: 16px 0;
+            padding: 12px 0;
             flex: 1;
             overflow-y: auto;
+        }
+
+        .menu-category-title {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--red-primary);
+            padding: 14px 24px 6px 24px;
+            font-weight: 700;
+            opacity: 0.9;
         }
 
         .sidebar-menu li a {
             display: flex;
             align-items: center;
             gap: 14px;
-            padding: 14px 24px;
+            padding: 12px 24px 12px 30px; /* Sangría sutil para los elementos hijos */
             color: var(--text-muted);
             text-decoration: none;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             font-weight: 500;
             border-left: 3px solid transparent;
             transition: all 0.2s ease;
@@ -383,7 +389,6 @@
             stroke-width: 1.8;
         }
 
-        /* Dashboard Grid */
         main {
             position: relative;
             z-index: 1;
@@ -508,7 +513,6 @@
             box-shadow: 0 0 15px var(--red-glow);
         }
 
-        /* Modal */
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -606,7 +610,6 @@
 </head>
 <body>
 
-    <!-- Toast de Notificación en vivo -->
     <div class="toast-alert" id="toast-alert">
         <div class="toast-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
@@ -617,7 +620,6 @@
         </div>
     </div>
 
-    <!-- Header -->
     <header>
         <div class="header-left">
             <button class="menu-toggle" id="menu-btn" title="Abrir Menú">
@@ -629,7 +631,6 @@
             </div>
         </div>
         <div class="header-right">
-            <!-- Campana de Notificaciones -->
             <div class="notif-wrapper">
                 <button class="notif-btn" id="notif-btn" title="Alertas de nuevas sesiones">
                     <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
@@ -637,7 +638,6 @@
                 <span class="notif-badge" id="notif-badge">0</span>
             </div>
 
-            <!-- Correo visible en PC -->
             <div class="user-email-pc" id="user-display-pc">
                 <svg viewBox="0 0 24 24">
                     <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
@@ -650,13 +650,11 @@
         </div>
     </header>
 
-    <!-- Sidebar Menú Lateral -->
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="sidebar-header-info">
                 <h3>Navegación</h3>
-                <!-- Correo móvil sin fondos blancos ni cajas pesadas -->
                 <div class="sidebar-user-email" id="sidebar-user-email">
                     <svg viewBox="0 0 24 24">
                         <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
@@ -670,14 +668,12 @@
             </button>
         </div>
         <ul class="sidebar-menu" id="dynamic-menu-list">
-            <!-- Caché instantáneo -->
+            <!-- Renderizado agrupado por categorías -->
         </ul>
     </nav>
 
-    <!-- Dashboard Main -->
     <main>
         <div class="dashboard-grid">
-            <!-- Card Sesiones -->
             <div class="card">
                 <div>
                     <div class="card-header-icon">
@@ -696,7 +692,6 @@
                 <button class="card-btn" id="open-sessions-modal">Ver Detalle</button>
             </div>
 
-            <!-- Card Tarjetas QR -->
             <div class="card">
                 <div>
                     <div class="card-header-icon">
@@ -715,7 +710,6 @@
                 <button class="card-btn" onclick="window.location.href='tarjetas.html'">Gestionar Tarjetas</button>
             </div>
 
-            <!-- Card Entorno Aislado -->
             <div class="card">
                 <div>
                     <div class="card-header-icon">
@@ -729,7 +723,6 @@
         </div>
     </main>
 
-    <!-- Modal Detalle Sesiones -->
     <div class="modal" id="sessions-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -744,13 +737,11 @@
         </div>
     </div>
 
-    <!-- Script de Integración con Caché y Carga Instantánea -->
     <script type="module">
         import { db } from "./app.js";
         import { collection, getDocs, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const userEmail = sessionStorage.getItem("alertix_user_email");
-
         if (!userEmail) {
             window.location.href = "googleadmin.html";
         } else {
@@ -763,7 +754,6 @@
             window.location.href = "googleadmin.html";
         };
 
-        // --- Sidebar Toggle ---
         const menuBtn = document.getElementById("menu-btn");
         const sidebar = document.getElementById("sidebar");
         const sidebarOverlay = document.getElementById("sidebar-overlay");
@@ -778,21 +768,32 @@
         sidebarClose.addEventListener("click", toggleSidebar);
         sidebarOverlay.addEventListener("click", toggleSidebar);
 
-        // --- 1. CARGA INSTANTÁNEA DEL MENÚ DESDE CACHÉ ---
+        // --- Renderizar Menú Agrupado por Categorías ---
         const menuList = document.getElementById("dynamic-menu-list");
         
-        function renderizarMenuHTML(menuItems) {
-            let itemsHtml = "";
+        function renderizarMenuAgrupado(menuItems) {
+            // Agrupar elementos por la propiedad 'categoria'
+            const grupos = {};
             menuItems.forEach((data) => {
-                const iconSvg = data.iconoSvg || `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
-                itemsHtml += `<li><a href="${data.redireccion || '#'}">${iconSvg} ${data.titulo || 'Página'}</a></li>`;
+                const cat = data.categoria || "General";
+                if (!grupos[cat]) grupos[cat] = [];
+                grupos[cat].push(data);
             });
-            menuList.innerHTML = itemsHtml;
+
+            let htmlFinal = "";
+            for (const [categoria, items] of Object.entries(grupos)) {
+                htmlFinal += `<li class="menu-category-title">${categoria}</li>`;
+                items.forEach((data) => {
+                    const iconSvg = data.iconoSvg || `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
+                    htmlFinal += `<li><a href="${data.redireccion || '#'}">${iconSvg} ${data.titulo || 'Página'}</a></li>`;
+                });
+            }
+            menuList.innerHTML = htmlFinal;
         }
 
         const cachedMenu = sessionStorage.getItem("alertix_menu_cache");
         if (cachedMenu) {
-            try { renderizarMenuHTML(JSON.parse(cachedMenu)); } catch(e) {}
+            try { renderizarMenuAgrupado(JSON.parse(cachedMenu)); } catch(e) {}
         }
 
         onSnapshot(query(collection(db, "menupanel"), orderBy("orden", "asc")), (snapshot) => {
@@ -800,16 +801,14 @@
             snapshot.forEach((doc) => fetchedItems.push(doc.data()));
             if (fetchedItems.length > 0) {
                 sessionStorage.setItem("alertix_menu_cache", JSON.stringify(fetchedItems));
-                renderizarMenuHTML(fetchedItems);
+                renderizarMenuAgrupado(fetchedItems);
             }
         });
 
-        // --- 2. CARGA INSTANTÁNEA DE TARJETAS QR DESDE CACHÉ ---
+        // --- Conteo y Sesiones con Caché ---
         const tarjetasCounter = document.getElementById("tarjetas-counter");
         const cachedTarjetas = sessionStorage.getItem("alertix_tarjetas_cache");
-        if (cachedTarjetas) {
-            tarjetasCounter.innerText = cachedTarjetas;
-        }
+        if (cachedTarjetas) tarjetasCounter.innerText = cachedTarjetas;
 
         async function cargarConteoTarjetasRapido() {
             try {
@@ -818,22 +817,13 @@
                 tarjetasCounter.innerText = total;
                 sessionStorage.setItem("alertix_tarjetas_cache", total);
             } catch (e) {
-                try {
-                    const snapRoot = await getDocs(collection(db, "tarjetas"));
-                    const totalRoot = snapRoot.size;
-                    tarjetasCounter.innerText = totalRoot;
-                    sessionStorage.setItem("alertix_tarjetas_cache", totalRoot);
-                } catch(err) {
-                    tarjetasCounter.innerText = "0";
-                }
+                tarjetasCounter.innerText = "0";
             }
         }
         cargarConteoTarjetasRapido();
 
-        // --- 3. HISTORIAL DE SESIONES EN TIEMPO REAL CON CACHÉ ---
         let initialLoadCompleted = false;
         let newNotifCount = 0;
-
         const notifBadge = document.getElementById("notif-badge");
         const toastAlert = document.getElementById("toast-alert");
         const toastMsg = document.getElementById("toast-msg");
@@ -845,49 +835,46 @@
         if (cachedSesionesCount) sesionesCounter.innerText = cachedSesionesCount;
         if (cachedSesionesHtml) sessionsListContainer.innerHTML = cachedSesionesHtml;
 
-        function escucharSesionesEnTiempoReal() {
-            onSnapshot(query(collection(db, "seciones")), (snapshot) => {
-                const totalSesiones = snapshot.size;
-                sesionesCounter.innerText = totalSesiones;
-                sessionStorage.setItem("alertix_sesiones_count_cache", totalSesiones);
+        onSnapshot(query(collection(db, "seciones")), (snapshot) => {
+            const totalSesiones = snapshot.size;
+            sesionesCounter.innerText = totalSesiones;
+            sessionStorage.setItem("alertix_sesiones_count_cache", totalSesiones);
 
-                let sesionesHtml = "";
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const fecha = data.fechaAcceso?.toDate ? data.fechaAcceso.toDate().toLocaleString() : "Reciente";
-                    sesionesHtml += `
-                        <div class="session-item">
-                            <div>
-                                <strong>${data.email || 'Acceso anónimo'}</strong>
-                                <span>${data.nombre || ''}</span>
-                            </div>
-                            <div class="session-time">${fecha}</div>
+            let sesionesHtml = "";
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const fecha = data.fechaAcceso?.toDate ? data.fechaAcceso.toDate().toLocaleString() : "Reciente";
+                sesionesHtml += `
+                    <div class="session-item">
+                        <div>
+                            <strong>${data.email || 'Acceso anónimo'}</strong>
+                            <span>${data.nombre || ''}</span>
                         </div>
-                    `;
-                });
-                
-                const finalHtml = sesionesHtml || "<p style='color:var(--text-muted); text-align:center;'>Sin accesos registrados.</p>";
-                sessionsListContainer.innerHTML = finalHtml;
-                sessionStorage.setItem("alertix_sesiones_html_cache", finalHtml);
-
-                if (!initialLoadCompleted) {
-                    initialLoadCompleted = true;
-                } else {
-                    snapshot.docChanges().forEach((change) => {
-                        if (change.type === "added") {
-                            const newDoc = change.doc.data();
-                            newNotifCount++;
-                            notifBadge.innerText = newNotifCount;
-                            notifBadge.style.display = "inline-block";
-
-                            toastMsg.innerText = `Acceso de: ${newDoc.email || 'Nuevo usuario'}`;
-                            toastAlert.classList.add("show");
-                            setTimeout(() => toastAlert.classList.remove("show"), 4500);
-                        }
-                    });
-                }
+                        <div class="session-time">${fecha}</div>
+                    </div>
+                `;
             });
-        }
+            
+            const finalHtml = sesionesHtml || "<p style='color:var(--text-muted); text-align:center;'>Sin accesos registrados.</p>";
+            sessionsListContainer.innerHTML = finalHtml;
+            sessionStorage.setItem("alertix_sesiones_html_cache", finalHtml);
+
+            if (!initialLoadCompleted) {
+                initialLoadCompleted = true;
+            } else {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const newDoc = change.doc.data();
+                        newNotifCount++;
+                        notifBadge.innerText = newNotifCount;
+                        notifBadge.style.display = "inline-block";
+                        toastMsg.innerText = `Acceso de: ${newDoc.email || 'Nuevo usuario'}`;
+                        toastAlert.classList.add("show");
+                        setTimeout(() => toastAlert.classList.remove("show"), 4500);
+                    }
+                });
+            }
+        });
 
         document.getElementById("notif-btn").addEventListener("click", () => {
             newNotifCount = 0;
@@ -895,15 +882,12 @@
             document.getElementById("sessions-modal").classList.add("open");
         });
 
-        // --- Modal Control ---
         const sessionsModal = document.getElementById("sessions-modal");
         document.getElementById("open-sessions-modal").addEventListener("click", () => sessionsModal.classList.add("open"));
         document.getElementById("close-sessions-modal").addEventListener("click", () => sessionsModal.classList.remove("open"));
         sessionsModal.addEventListener("click", (e) => {
             if (e.target === sessionsModal) sessionsModal.classList.remove("open");
         });
-
-        escucharSesionesEnTiempoReal();
     </script>
 </body>
 </html>
