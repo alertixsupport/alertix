@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Alertix - Panel de Vendedor</title>
-    <!-- Librería para escaneo de QR mediante cámara -->
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <!-- Librería HTML5-QRCode Oficial Estable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <style>
         :root {
             --bg-base: #070709;
@@ -220,7 +220,6 @@
             stroke-width: 2;
         }
 
-        /* BLOQUE DEL USUARIO EN EL MENÚ */
         .user-profile-box {
             background: rgba(220, 20, 60, 0.08);
             border: 1px solid rgba(220, 20, 60, 0.3);
@@ -315,7 +314,6 @@
             stroke-width: 2;
         }
 
-        /* CONTENIDO PRINCIPAL */
         main {
             flex: 1;
             padding: 30px 16px;
@@ -428,7 +426,6 @@
             max-height: 75vh;
         }
 
-        /* LECTOR QR */
         #reader {
             width: 100%;
             border-radius: 10px;
@@ -436,7 +433,6 @@
             border: 1px solid var(--border-subtle);
         }
 
-        /* PANTALLA DE CARGA 3 SEGUNDOS */
         .scan-loading-screen {
             display: none;
             text-align: center;
@@ -462,7 +458,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* MENSAJE DE ERROR TÁCTICO PARA QR NO VÁLIDO */
         .error-card-scan {
             display: none;
             text-align: center;
@@ -594,7 +589,7 @@
         </div>
     </header>
 
-    <!-- DRAWER LATERAL: CONTIENE EL USUARIO Y EL MENÚ MENUVENDEDORES -->
+    <!-- DRAWER LATERAL -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="window.toggleDrawer()">
         <div class="drawer-container" onclick="event.stopPropagation()">
             <div class="drawer-header">
@@ -604,7 +599,6 @@
                         <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                 </div>
-                <!-- BLOQUE DEL USUARIO Y CERRAR SESIÓN INTEGRADO -->
                 <div class="user-profile-box">
                     <div class="user-profile-info">
                         <span>Estas Aquí:</span>
@@ -617,7 +611,6 @@
                 </div>
             </div>
             
-            <!-- LISTA DE PÁGINAS CREADAS EN LA COLECCIÓN "menuvendedores" -->
             <div class="drawer-body" id="drawerMenuContainer">
                 <p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px;">Sincronizando menú...</p>
             </div>
@@ -757,7 +750,7 @@
             document.getElementById("drawerOverlay").classList.toggle("open");
         };
 
-        // INICIAR ESCANEO DE QR
+        // INICIAR ESCANEO DE QR ROBUSTO
         window.iniciarEscaneoQR = function() {
             document.getElementById("stepScanner").style.display = "block";
             document.getElementById("scanLoadingScreen").classList.remove("active");
@@ -771,16 +764,31 @@
                 if (!html5QrCode) {
                     html5QrCode = new Html5Qrcode("reader");
                 }
+                
+                const configCamera = { fps: 15, qrbox: { width: 240, height: 240 } };
+                
                 html5QrCode.start(
                     { facingMode: "environment" },
-                    { fps: 10, qrbox: { width: 250, height: 250 } },
+                    configCamera,
                     (decodedText) => {
                         detenerEscaneoYProcesar(decodedText);
                     },
-                    () => {}
+                    (errorMessage) => {
+                        // Ignorar errores menores de cuadro por cuadro mientras busca
+                    }
                 ).catch(err => {
-                    console.error("Error iniciando cámara:", err);
-                    alert("No se pudo acceder a la cámara. Verifique los permisos en el navegador.");
+                    console.warn("Cámara trasera no disponible, intentando cámara frontal...", err);
+                    html5QrCode.start(
+                        { facingMode: "user" },
+                        configCamera,
+                        (decodedText) => {
+                            detenerEscaneoYProcesar(decodedText);
+                        },
+                        () => {}
+                    ).catch(e => {
+                        console.error("Error total al abrir la cámara:", e);
+                        alert("No se pudo acceder a la cámara. Asegúrate de dar permisos HTTPS al navegador.");
+                    });
                 });
             }, 300);
         };
@@ -797,24 +805,22 @@
             }
         }
 
-        // BÚSQUEDA ACTIVA EN TIEMPO REAL EN LA COLECCIÓN "idtarjetas"
+        // BÚSQUEDA ACTIVA ESTRICTA EN LA COLECCIÓN "idtarjetas"
         async function ejecutarBusquedaActiva(qrText) {
             tarjetaIdDetectada = qrText.trim();
             document.getElementById("stepScanner").style.display = "none";
             document.getElementById("scanLoadingScreen").classList.add("active");
             document.getElementById("detectedIdText").innerText = `Buscando activo: ${tarjetaIdDetectada}`;
 
-            // Simulación de carga de 3 segundos con consulta activa a Firebase
             setTimeout(async () => {
                 try {
-                    // Consulta activa y estricta en la colección "idtarjetas"
                     const q = query(collection(db, "idtarjetas"), where("tarjetaId", "==", tarjetaIdDetectada));
                     const querySnapshot = await getDocs(q);
 
                     document.getElementById("scanLoadingScreen").classList.remove("active");
 
                     if (querySnapshot.empty) {
-                        // Si no existe en idtarjetas, muestra el error corporativo acordado
+                        // Si no existe en idtarjetas, muestra el error corporativo exigido
                         document.getElementById("errorCardScan").classList.add("active");
                     } else {
                         // Si existe en idtarjetas, pasa al formulario de venta
@@ -854,7 +860,6 @@
             btn.innerText = "Registrando...";
 
             try {
-                // 1. Guardar registro en la colección "ventavendedores"
                 await addDoc(collection(db, "ventavendedores"), {
                     vendedorId: vendedorId,
                     usuarioVendedor: vendedorNombre || vendedorUsuario,
@@ -865,7 +870,6 @@
                     createdAt: serverTimestamp()
                 });
 
-                // 2. Actualizar estado en la colección "idtarjetas" marcándola como vendida
                 const q = query(collection(db, "idtarjetas"), where("tarjetaId", "==", tarjetaIdDetectada));
                 const snap = await getDocs(q);
 
