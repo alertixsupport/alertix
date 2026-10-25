@@ -7,8 +7,8 @@
     <style>
         :root {
             --bg-base: #070709;
-            --bg-surface: rgba(18, 18, 22, 0.85);
-            --border-subtle: rgba(255, 255, 255, 0.07);
+            --bg-surface: rgba(18, 18, 22, 0.9);
+            --border-subtle: rgba(255, 255, 255, 0.08);
             --border-accent: rgba(220, 20, 60, 0.4);
             --red-primary: #dc143c;
             --red-glow: rgba(220, 20, 60, 0.35);
@@ -28,67 +28,89 @@
         body {
             background-color: var(--bg-base);
             background-image: 
-                radial-gradient(circle at 50% 10%, rgba(220, 20, 60, 0.15) 0%, transparent 55%),
+                radial-gradient(circle at 10% 20%, rgba(220, 20, 60, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(140, 0, 30, 0.08) 0%, transparent 50%),
                 linear-gradient(180deg, #09090d 0%, #040406 100%);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 16px;
             overflow-x: hidden;
             animation: fadeInPage 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         @keyframes fadeInPage {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         body.page-exiting {
             opacity: 0;
-            transform: translateY(-10px);
+            transform: translateY(-8px);
             pointer-events: none;
         }
 
-        /* Contenedor Principal del Login */
-        .login-wrapper {
+        /* CARD GRANDE SPLIT SCREEN (PC) Y VERTICAL (CELULAR) */
+        .login-main-card {
             width: 100%;
-            max-width: 420px;
+            max-width: 900px;
             background: var(--bg-surface);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
             border: 1px solid var(--border-subtle);
-            border-top: 2px solid var(--red-primary);
-            border-radius: 18px;
-            padding: 32px 28px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.85), 0 0 25px var(--red-glow);
+            border-radius: 20px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.9), 0 0 30px var(--red-glow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @media(min-width: 768px) {
+            .login-main-card {
+                flex-direction: row;
+                min-height: 520px;
+            }
+        }
+
+        /* MITAD IZQUIERDA: PRESENTACIÓN EMPRESARIAL */
+        .login-hero-side {
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.12) 0%, rgba(10, 10, 14, 0.95) 100%);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 36px 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             position: relative;
         }
 
-        .brand-header {
-            text-align: center;
-            margin-bottom: 28px;
+        @media(min-width: 768px) {
+            .login-hero-side {
+                width: 45%;
+                border-bottom: none;
+                border-right: 1px solid var(--border-subtle);
+                padding: 48px 36px;
+            }
         }
 
-        .brand-dot-container {
-            display: inline-flex;
+        .hero-brand-area {
+            display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
+            gap: 10px;
+            margin-bottom: 16px;
         }
 
         .brand-dot {
-            width: 8px;
-            height: 8px;
+            width: 9px;
+            height: 9px;
             background: var(--red-primary);
             border-radius: 50%;
-            box-shadow: 0 0 10px var(--red-primary);
+            box-shadow: 0 0 12px var(--red-primary);
         }
 
         .brand-title {
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             font-weight: 800;
             letter-spacing: 3px;
             text-transform: uppercase;
@@ -97,23 +119,76 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .brand-subtitle {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
+        .hero-content h2 {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+            line-height: 1.25;
         }
 
-        /* Detección de Vendedor en Tiempo Real */
-        .vendor-detected-card {
-            background: rgba(15, 15, 20, 0.8);
-            border: 1px solid rgba(52, 211, 153, 0.3);
-            border-radius: 10px;
-            padding: 12px 16px;
+        .hero-content p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .badge-sector {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(220, 20, 60, 0.12);
+            border: 1px solid rgba(220, 20, 60, 0.3);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #ff8090;
+            width: fit-content;
+        }
+
+        .hero-footer-note {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            margin-top: 20px;
+        }
+
+        /* MITAD DERECHA: FORMULARIO DE LOGIN */
+        .login-form-side {
+            padding: 36px 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex: 1;
+            background: rgba(12, 12, 16, 0.6);
+        }
+
+        @media(min-width: 768px) {
+            .login-form-side {
+                padding: 48px 40px;
+            }
+        }
+
+        .form-header-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
             margin-bottom: 20px;
+        }
+
+        /* DETECCIÓN EN TIEMPO REAL DEL VENDEDOR */
+        .vendor-detected-card {
+            background: rgba(15, 15, 22, 0.9);
+            border: 1px solid rgba(52, 211, 153, 0.35);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 18px;
             display: none;
             align-items: center;
             gap: 12px;
-            animation: slideDown 0.3s ease;
+            animation: slideDown 0.25s ease;
         }
 
         .vendor-detected-card.active {
@@ -121,13 +196,13 @@
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-8px); }
+            from { opacity: 0; transform: translateY(-6px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .vendor-avatar {
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             background: rgba(52, 211, 153, 0.15);
             border: 1px solid var(--green-active);
             border-radius: 50%;
@@ -136,31 +211,30 @@
             justify-content: center;
             color: var(--green-active);
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             flex-shrink: 0;
         }
 
         .vendor-info span {
             display: block;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.8px;
         }
 
         .vendor-info strong {
-            font-size: 0.92rem;
+            font-size: 0.88rem;
             color: #fff;
         }
 
-        /* Formulario */
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
         .form-group label {
             display: block;
-            font-size: 0.76rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-muted);
             margin-bottom: 6px;
@@ -168,19 +242,20 @@
             letter-spacing: 0.8px;
         }
 
+        /* font-size: 16px evita el zoom automático en celulares iOS y Android */
         .form-control {
             width: 100%;
-            background: rgba(10, 10, 14, 0.9);
+            background: rgba(10, 10, 14, 0.85);
             border: 1px solid var(--border-subtle);
             border-radius: 10px;
-            padding: 12px 16px;
+            padding: 12px 14px;
             color: #fff;
-            font-size: 16px; /* Evita zoom en iOS */
+            font-size: 16px;
             transition: all 0.25s;
         }
 
         @media(min-width: 768px) {
-            .form-control { font-size: 0.9rem; }
+            .form-control { font-size: 0.88rem; }
         }
 
         .form-control:focus {
@@ -194,13 +269,13 @@
             background: linear-gradient(180deg, rgba(220, 20, 60, 0.95) 0%, rgba(140, 0, 30, 1) 100%);
             border: 1px solid rgba(255, 50, 50, 0.5);
             color: white;
-            padding: 13px;
+            padding: 12px;
             border-radius: 10px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             transition: all 0.25s ease;
-            box-shadow: 0 6px 20px var(--red-glow);
+            box-shadow: 0 5px 18px var(--red-glow);
             margin-top: 6px;
             display: flex;
             align-items: center;
@@ -210,7 +285,7 @@
 
         .login-btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 8px 25px rgba(220, 20, 60, 0.6);
+            box-shadow: 0 7px 22px rgba(220, 20, 60, 0.6);
         }
 
         .login-btn:disabled {
@@ -219,7 +294,7 @@
             transform: none;
         }
 
-        /* Modal de Error Empresarial */
+        /* MODAL DE ERROR EMPRESARIAL */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -258,8 +333,8 @@
         }
 
         .error-icon-box {
-            width: 56px;
-            height: 56px;
+            width: 52px;
+            height: 52px;
             background: rgba(220, 20, 60, 0.15);
             border: 1px solid var(--red-primary);
             border-radius: 50%;
@@ -278,24 +353,24 @@
         }
 
         .error-icon-box svg {
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             stroke: currentColor;
             fill: none;
             stroke-width: 2.2;
         }
 
         .error-title {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #fff;
             margin-bottom: 8px;
         }
 
         .error-desc {
-            font-size: 0.85rem;
+            font-size: 0.84rem;
             color: var(--text-muted);
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             line-height: 1.4;
         }
 
@@ -307,7 +382,7 @@
             font-size: 0.82rem;
             color: #ff6b6b;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .error-close-btn {
@@ -332,52 +407,59 @@
             opacity: 0.4;
             cursor: not-allowed;
         }
-
-        .public-footer-note {
-            text-align: center;
-            margin-top: 24px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
     </style>
 </head>
 <body>
 
-    <div class="login-wrapper">
-        <div class="brand-header">
-            <div class="brand-dot-container">
-                <div class="brand-dot"></div>
-                <h1 class="brand-title">Alertix</h1>
+    <div class="login-main-card">
+        <!-- MITAD IZQUIERDA: PRESENTACIÓN CORPORATIVA -->
+        <div class="login-hero-side">
+            <div>
+                <div class="hero-brand-area">
+                    <div class="brand-dot"></div>
+                    <h1 class="brand-title">Alertix</h1>
+                </div>
+                <div class="hero-content" style="margin-top: 24px;">
+                    <h2>Seguridad de Alto Rendimiento</h2>
+                    <p>Plataforma corporativa de monitoreo avanzado y gestión de operaciones para nuestra red comercial oficial.</p>
+                    <div class="badge-sector">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        Sector de Vendedores Profesionales
+                    </div>
+                </div>
             </div>
-            <p class="brand-subtitle">Portal Oficial de Acceso para Vendedores</p>
+            <div class="hero-footer-note">
+                &copy; 2026 Alertix Security Systems &bull; Todos los derechos reservados.
+            </div>
         </div>
 
-        <!-- Tarjeta de detección en tiempo real del Vendedor -->
-        <div class="vendor-detected-card" id="vendorDetectedCard">
-            <div class="vendor-avatar" id="vendorAvatarInitial">V</div>
-            <div class="vendor-info">
-                <span>Vendedor Identificado</span>
-                <strong id="vendorDetectedName">Cargando...</strong>
+        <!-- MITAD DERECHA: FORMULARIO DE ACCESO -->
+        <div class="login-form-side">
+            <h3 class="form-header-title">Iniciar Sesión</h3>
+
+            <!-- Tarjeta de Detección en Tiempo Real del Vendedor -->
+            <div class="vendor-detected-card" id="vendorDetectedCard">
+                <div class="vendor-avatar" id="vendorAvatarInitial">V</div>
+                <div class="vendor-info">
+                    <span>Vendedor Detectado</span>
+                    <strong id="vendorDetectedName">Cargando...</strong>
+                </div>
             </div>
+
+            <form id="loginForm" onsubmit="window.handleLogin(event)">
+                <div class="form-group">
+                    <label>Usuario Asignado</label>
+                    <input type="text" id="usuarioInput" class="form-control" placeholder="Ingrese su usuario..." autocomplete="username" required oninput="window.detectarVendedorEnTiempoReal(this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="claveInput" class="form-control" placeholder="••••••••" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="login-btn" id="loginSubmitBtn">
+                    Acceder al Panel
+                </button>
+            </form>
         </div>
-
-        <form id="loginForm" onsubmit="window.handleLogin(event)">
-            <div class="form-group">
-                <label>Usuario Asignado</label>
-                <input type="text" id="usuarioInput" class="form-control" placeholder="Ingrese su usuario..." autocomplete="username" required oninput="window.detectarVendedorEnTiempoReal(this.value)">
-            </div>
-            <div class="form-group">
-                <label>Contraseña</label>
-                <input type="password" id="claveInput" class="form-control" placeholder="••••••••" autocomplete="current-password" required>
-            </div>
-            <button type="submit" class="login-btn" id="loginSubmitBtn">
-                Iniciar Sesión
-            </button>
-        </form>
-    </div>
-
-    <div class="public-footer-note">
-        Alertix Enterprise Security &bull; Acceso Autorizado Exclusivamente a Red de Ventas
     </div>
 
     <!-- Modal de Error con Cuenta Regresiva de 5 Segundos -->
@@ -387,7 +469,7 @@
                 <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
             </div>
             <h3 class="error-title">Acceso Denegado</h3>
-            <p class="error-desc">El usuario o la contraseña ingresados son incorrectos. Verifique sus credenciales e intente nuevamente.</p>
+            <p class="error-desc">El usuario o la contraseña ingresados son incorrectos. Verifique sus credenciales.</p>
             <div class="countdown-box" id="countdownBox">
                 Vuelve a intentarlo en 5 segundos...
             </div>
@@ -397,15 +479,14 @@
         </div>
     </div>
 
-    <!-- Script con Firebase para lectura de "usuariosvendedores" -->
+    <!-- Script con Firebase optimizado y sin trabas -->
     <script type="module">
         import { db } from "./app.js";
         import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         let listaVendedoresCache = [];
-        let timeoutBusqueda = null;
 
-        // Precargar lista de vendedores para detección instantánea en tiempo real
+        // Carga inicial optimizada y segura contra fallos de red
         async function cargarVendedoresCache() {
             try {
                 const snapshot = await getDocs(collection(db, "usuariosvendedores"));
@@ -414,12 +495,12 @@
                     listaVendedoresCache.push({ id: docSnap.id, ...docSnap.data() });
                 });
             } catch (e) {
-                console.error("Error cargando caché de vendedores:", e);
+                console.error("Error sincronizando caché de vendedores:", e);
             }
         }
         cargarVendedoresCache();
 
-        // Detectar en tiempo real al escribir el usuario
+        // Detección instantánea en tiempo real del vendedor
         window.detectarVendedorEnTiempoReal = function(val) {
             const trimmed = val.trim().toLowerCase();
             const card = document.getElementById("vendorDetectedCard");
@@ -431,7 +512,6 @@
                 return;
             }
 
-            // Buscar coincidencia en la caché local
             const encontrado = listaVendedoresCache.find(v => v.usuarioLogin?.toLowerCase() === trimmed);
 
             if (encontrado && encontrado.nombre) {
@@ -443,7 +523,7 @@
             }
         };
 
-        // Manejar envío de login
+        // Manejo de Login fluido sin bloqueos de UI
         window.handleLogin = async function(e) {
             e.preventDefault();
             const userVal = document.getElementById("usuarioInput").value.trim();
@@ -454,7 +534,6 @@
             btn.innerText = "Verificando credenciales...";
 
             try {
-                // Consultar colección "usuariosvendedores"
                 const q = query(collection(db, "usuariosvendedores"), where("usuarioLogin", "==", userVal));
                 const querySnapshot = await getDocs(q);
 
@@ -467,27 +546,25 @@
                 });
 
                 if (vendedorEncontrado) {
-                    // Guardar sesión del vendedor
                     sessionStorage.setItem("alertix_vendedor_id", vendedorEncontrado.id);
                     sessionStorage.setItem("alertix_vendedor_nombre", vendedorEncontrado.nombre);
                     sessionStorage.setItem("alertix_vendedor_usuario", vendedorEncontrado.usuarioLogin);
 
-                    // Transición fluida hacia panelrevendedor.html
+                    // Transición de salida ultra fluida
                     document.body.classList.add("page-exiting");
                     setTimeout(() => {
                         window.location.href = "panelrevendedor.html";
-                    }, 300);
+                    }, 280);
                 } else {
-                    // Mostrar modal de error empresarial
                     mostrarModalError();
                     btn.disabled = false;
-                    btn.innerText = "Iniciar Sesión";
+                    btn.innerText = "Acceder al Panel";
                 }
             } catch (err) {
                 console.error("Error en login:", err);
-                alert("Ocurrió un error de conexión con el servidor.");
+                alert("Ocurrió un error de conexión. Intente nuevamente.");
                 btn.disabled = false;
-                btn.innerText = "Iniciar Sesión";
+                btn.innerText = "Acceder al Panel";
             }
         };
 
