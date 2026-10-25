@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Alertix - Panel de Vendedor</title>
-    <!-- Librería HTML5-QRCode Oficial Estable -->
+    <!-- Librería HTML5-QRCode Oficial -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <style>
         :root {
@@ -620,10 +620,10 @@
     <main>
         <div class="main-dashboard-banner">
             <h2>Panel Comercial de Vendedores</h2>
-            <p>Utiliza el botón <strong>"Registrar Venta"</strong> en la barra superior para activar la cámara, escanear el código QR de una tarjeta oficial Alertix y asociarla al nuevo cliente.</p>
+            <p>Utiliza el botón <strong>"Registrar Venta"</strong> en la barra superior para activar la cámara, escanear el código QR de una tarjeta oficial Alertix de forma instantánea y asociarla al nuevo cliente.</p>
             <button class="register-sale-btn" style="margin: 0 auto;" onclick="window.iniciarEscaneoQR()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                Comenzar Escaneo QR
+                Comenzar Escaneo QR Turbo
             </button>
         </div>
     </main>
@@ -638,9 +638,9 @@
                 </button>
             </div>
             <div class="modal-body" id="modalBodyContent">
-                <!-- PASO 1: LECTOR QR CÁMARA -->
+                <!-- PASO 1: LECTOR QR TURBO -->
                 <div id="stepScanner">
-                    <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 12px; text-align: center;">Apunta la cámara de tu celular al código QR de la tarjeta Alertix.</p>
+                    <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 12px; text-align: center;">Apunta al código QR. La detección es instantánea.</p>
                     <div id="reader"></div>
                 </div>
 
@@ -688,7 +688,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT FIREBASE Y BÚSQUEDA ACTIVA -->
+    <!-- SCRIPT FIREBASE Y BÚSQUEDA ACTIVA TURBO -->
     <script type="module">
         import { db } from "./app.js";
         import { collection, addDoc, getDocs, query, where, updateDoc, doc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -705,6 +705,7 @@
 
         let html5QrCode = null;
         let tarjetaIdDetectada = null;
+        let isScanningActive = false;
 
         // CARGAR MENÚ LATERAL DESDE LA COLECCIÓN "menuvendedores"
         function escucharMenuHamburguesa() {
@@ -750,7 +751,7 @@
             document.getElementById("drawerOverlay").classList.toggle("open");
         };
 
-        // INICIAR ESCANEO DE QR ROBUSTO
+        // INICIAR ESCANEO DE QR A MÁXIMA VELOCIDAD (TURBO FPS)
         window.iniciarEscaneoQR = function() {
             document.getElementById("stepScanner").style.display = "block";
             document.getElementById("scanLoadingScreen").classList.remove("active");
@@ -764,33 +765,44 @@
                 if (!html5QrCode) {
                     html5QrCode = new Html5Qrcode("reader");
                 }
+
+                // Configuración optimizada para lectura instantánea (30 FPS)
+                const configCamera = { 
+                    fps: 30, 
+                    qrbox: { width: 250, height: 250 },
+                    aspectRatio: 1.0
+                };
                 
-                const configCamera = { fps: 15, qrbox: { width: 240, height: 240 } };
+                isScanningActive = true;
                 
                 html5QrCode.start(
                     { facingMode: "environment" },
                     configCamera,
                     (decodedText) => {
-                        detenerEscaneoYProcesar(decodedText);
+                        if (isScanningActive) {
+                            isScanningActive = false;
+                            detenerEscaneoYProcesar(decodedText);
+                        }
                     },
-                    (errorMessage) => {
-                        // Ignorar errores menores de cuadro por cuadro mientras busca
-                    }
+                    () => {}
                 ).catch(err => {
-                    console.warn("Cámara trasera no disponible, intentando cámara frontal...", err);
+                    console.warn("Cámara trasera no disponible, intentando frontal...", err);
                     html5QrCode.start(
                         { facingMode: "user" },
                         configCamera,
                         (decodedText) => {
-                            detenerEscaneoYProcesar(decodedText);
+                            if (isScanningActive) {
+                                isScanningActive = false;
+                                detenerEscaneoYProcesar(decodedText);
+                            }
                         },
                         () => {}
                     ).catch(e => {
                         console.error("Error total al abrir la cámara:", e);
-                        alert("No se pudo acceder a la cámara. Asegúrate de dar permisos HTTPS al navegador.");
+                        alert("No se pudo acceder a la cámara. Asegúrate de otorgar los permisos necesarios.");
                     });
                 });
-            }, 300);
+            }, 200);
         };
 
         function detenerEscaneoYProcesar(qrText) {
@@ -810,7 +822,7 @@
             tarjetaIdDetectada = qrText.trim();
             document.getElementById("stepScanner").style.display = "none";
             document.getElementById("scanLoadingScreen").classList.add("active");
-            document.getElementById("detectedIdText").innerText = `Buscando activo: ${tarjetaIdDetectada}`;
+            document.getElementById("detectedIdText").innerText = `Búsqueda activa: ${tarjetaIdDetectada}`;
 
             setTimeout(async () => {
                 try {
@@ -838,6 +850,7 @@
         }
 
         window.cerrarModalVenta = function() {
+            isScanningActive = false;
             if (html5QrCode && html5QrCode.isScanning) {
                 html5QrCode.stop().catch(() => {});
             }
