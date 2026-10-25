@@ -812,7 +812,7 @@
                 </div>
                 <div class="module-content">
                     <h3>Escanear QR y Registrar Venta</h3>
-                    <p>Activa el escáner láser de la cámara para la búsqueda activa en `idtarjetas`.</p>
+                    <p>Activa la cámara del dispositivo para reconocer y registrar tarjetas inteligentes al instante.</p>
                 </div>
                 <div class="module-arrow-icon">
                     <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
@@ -826,7 +826,7 @@
                 </div>
                 <div class="module-content">
                     <h3>Registrar Venta Manualmente</h3>
-                    <p>Introduce el ID de la tarjeta en `idtarjetas` para asociarla y registrarla.</p>
+                    <p>Introduce el código identificador de la tarjeta para validar y registrar la operación.</p>
                 </div>
                 <div class="module-arrow-icon">
                     <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
@@ -837,7 +837,7 @@
         <!-- TÍTULO DE AUDITORÍA RÁPIDA -->
         <div class="audit-section-title">Auditoría Rápida</div>
 
-        <!-- LISTADO COMPACTO DE VENTAS (usuariosvendedores) -->
+        <!-- LISTADO COMPACTO DE VENTAS -->
         <div class="sales-list-container" id="salesListContainer">
             <p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px;">Cargando registros de ventas...</p>
         </div>
@@ -866,7 +866,7 @@
                 <div class="scan-progress-screen" id="scanProgressScreen">
                     <div class="spinner-ring"></div>
                     <h4 style="color: #fff; margin-bottom: 4px;">Validando Código QR...</h4>
-                    <p style="color: var(--text-muted); font-size: 0.85rem;" id="detectedIdText">Buscando en la base de datos...</p>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;" id="detectedIdText">Buscando en el sistema...</p>
                 </div>
 
                 <div class="error-card-scan" id="errorCardScan">
@@ -874,7 +874,7 @@
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                     </div>
                     <h4 class="error-msg-title">Tarjeta No Reconocida</h4>
-                    <p class="error-msg-desc">Vuelve a intentarlo, esta tarjeta no es de ALERTIX o no contiene un ID adjuntado al sistema de la empresa.</p>
+                    <p class="error-msg-desc">Vuelve a intentarlo, esta tarjeta no es oficial o no está registrada en el inventario.</p>
                     <button class="logout-btn" style="margin: 0 auto; display: block;" onclick="window.iniciarEscaneoQR()">Reintentar Escaneo</button>
                 </div>
 
@@ -919,13 +919,13 @@
                         <label>Ingrese ID de Tarjeta</label>
                         <input type="text" id="manualTarjetaIdInput" class="action-input" placeholder="Ej. ALX-998234" required>
                     </div>
-                    <button type="button" class="action-btn" style="width: 100%; margin-top: 10px;" onclick="window.verificarIdManual()">Verificar ID en Base de Datos</button>
+                    <button type="button" class="action-btn" style="width: 100%; margin-top: 10px;" onclick="window.verificarIdManual()">Verificar ID en Sistema</button>
                 </div>
 
                 <div class="scan-progress-screen" id="manualProgressScreen">
                     <div class="spinner-ring"></div>
                     <h4 style="color: #fff; margin-bottom: 4px;">Buscando ID...</h4>
-                    <p style="color: var(--text-muted); font-size: 0.85rem;">Consultando `idtarjetas`...</p>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Consultando registros oficiales...</p>
                 </div>
 
                 <div class="error-card-scan" id="manualErrorCard">
@@ -933,7 +933,7 @@
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                     </div>
                     <h4 class="error-msg-title">ID No Encontrado</h4>
-                    <p class="error-msg-desc">El identificador ingresado no existe o no está registrado en `idtarjetas`.</p>
+                    <p class="error-msg-desc">El identificador ingresado no existe o no se encuentra disponible en el sistema.</p>
                     <button class="logout-btn" style="margin: 0 auto; display: block;" onclick="window.reiniciarModalManual()">Probar Otro ID</button>
                 </div>
 
@@ -984,7 +984,7 @@
     <!-- SCRIPT FIREBASE Y LÓGICA DE AUDITORÍA -->
     <script type="module">
         import { db } from "./app.js";
-        import { collection, addDoc, getDocs, query, where, updateDoc, doc, serverTimestamp, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { collection, addDoc, getDocs, query, where, updateDoc, doc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const vendedorId = sessionStorage.getItem("alertix_vendedor_id");
         const vendedorNombre = sessionStorage.getItem("alertix_vendedor_nombre");
@@ -1046,10 +1046,9 @@
             document.getElementById("drawerOverlay").classList.toggle("open");
         };
 
-        // 2. ESCUCHAR VENTAS EN TIEMPO REAL (usuariosvendedores)
+        // 2. ESCUCHAR VENTAS EN TIEMPO REAL
         function escucharVentasVendedor() {
             try {
-                // Consultamos la colección 'usuariosvendedores' filtrada por el vendedor actual (o por usuarioVendedor)
                 const q = query(collection(db, "usuariosvendedores"), where("vendedorId", "==", vendedorId));
                 
                 onSnapshot(q, (snapshot) => {
@@ -1063,9 +1062,7 @@
                         ventas.push({ id: d.id, ...data });
                     });
 
-                    // Si no hay por vendedorId estricto, intentamos buscar por nombre/usuario o colección general 'ventavendedores' si aplica
                     if (ventas.length === 0) {
-                        // Respaldo secundario para asegurar auditoría robusta
                         getDocs(collection(db, "usuariosvendedores")).then(snapAll => {
                             const backupVentas = [];
                             snapAll.forEach(d => {
@@ -1144,7 +1141,7 @@
                     <input type="text" class="action-input" value="${fechaStr}" readonly>
                 </div>
             `;
-            document.getElementById("detalleModal.open") || document.getElementById("detalleModal").classList.add("open");
+            document.getElementById("detalleModal").classList.add("open");
         };
 
         window.cerrarModalDetalle = function() {
@@ -1229,7 +1226,7 @@
                     document.getElementById("btnGuardarVenta").style.display = "inline-block";
                 }
             } catch (err) {
-                console.error("Error idtarjetas:", err);
+                console.error("Error validando tarjeta:", err);
                 document.getElementById("scanProgressScreen").classList.remove("active");
                 document.getElementById("errorCardScan").classList.add("active");
             }
@@ -1258,7 +1255,6 @@
             btn.innerText = "Registrando...";
 
             try {
-                // Registrar en 'usuariosvendedores'
                 await addDoc(collection(db, "usuariosvendedores"), {
                     vendedorId: vendedorId,
                     usuarioVendedor: vendedorNombre || vendedorUsuario || userEmail,
@@ -1269,7 +1265,6 @@
                     createdAt: serverTimestamp()
                 });
 
-                // Actualizar estado en 'idtarjetas'
                 const q = query(collection(db, "idtarjetas"), where("tarjetaId", "==", tarjetaIdDetectada));
                 const snap = await getDocs(q);
 
