@@ -349,7 +349,7 @@
             line-height: 1.4;
         }
 
-        /* MÓDULOS DE ACCIÓN CON ANIMACIÓN SUAVE EN HOVER */
+        /* MÓDULOS DE ACCIÓN */
         .tactical-action-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -1092,10 +1092,10 @@
             document.getElementById("drawerOverlay").classList.toggle("open");
         };
 
-        // 2. ESCUCHAR VENTAS EN TIEMPO REAL
+        // 2. ESCUCHAR VENTAS EN TIEMPO REAL DESDE "ventasvendedores"
         function escucharVentasVendedor() {
             try {
-                const q = query(collection(db, "usuariosvendedores"), where("vendedorId", "==", vendedorId));
+                const q = query(collection(db, "ventasvendedores"), where("vendedorId", "==", vendedorId));
                 
                 onSnapshot(q, (snapshot) => {
                     const container = document.getElementById("salesListContainer");
@@ -1109,7 +1109,7 @@
                     });
 
                     if (ventas.length === 0) {
-                        getDocs(collection(db, "usuariosvendedores")).then(snapAll => {
+                        getDocs(collection(db, "ventasvendedores")).then(snapAll => {
                             const backupVentas = [];
                             snapAll.forEach(d => {
                                 const data = d.data();
@@ -1301,7 +1301,8 @@
             btn.innerText = "Registrando...";
 
             try {
-                await addDoc(collection(db, "usuariosvendedores"), {
+                // Guardar en la colección correcta "ventasvendedores"
+                await addDoc(collection(db, "ventasvendedores"), {
                     vendedorId: vendedorId,
                     usuarioVendedor: vendedorNombre || vendedorUsuario || userEmail,
                     tarjetaId: tarjetaIdDetectada,
@@ -1396,7 +1397,8 @@
             }
 
             try {
-                await addDoc(collection(db, "usuariosvendedores"), {
+                // Guardar en la colección correcta "ventasvendedores"
+                await addDoc(collection(db, "ventasvendedores"), {
                     vendedorId: vendedorId,
                     usuarioVendedor: vendedorNombre || vendedorUsuario || userEmail,
                     tarjetaId: tarjetaIdDetectada,
@@ -1431,4 +1433,3 @@
     </script>
 </body>
 </html>
-
