@@ -34,12 +34,42 @@
             flex-direction: column;
             padding-top: 75px;
             overflow-x: hidden;
-            animation: fadeInPage 0.35s ease forwards;
+            animation: fadeInPage 0.4s ease forwards;
         }
 
         @keyframes fadeInPage {
-            from { opacity: 0; transform: translateY(6px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ANIMACIÓN PERMANENTE: PULSO DE ESTADO */
+        @keyframes pulseGlow {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+        }
+
+        .status-dot-animated {
+            width: 7px;
+            height: 7px;
+            background: var(--green-active);
+            border-radius: 50%;
+            animation: pulseGlow 2s infinite;
+        }
+
+        /* ANIMACIÓN PERMANENTE: BRILLO SUTIL DE MARCA */
+        @keyframes brandGlow {
+            0%, 100% { opacity: 0.85; }
+            50% { opacity: 1; text-shadow: 0 0 12px rgba(255, 26, 26, 0.4); }
+        }
+
+        .brand h2 {
+            color: #ffffff;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            animation: brandGlow 4s ease-in-out infinite;
         }
 
         /* HEADER SOBRIO Y PROFESIONAL */
@@ -86,6 +116,7 @@
         .hamburger-btn:hover {
             border-color: var(--text-muted);
             background: rgba(255, 255, 255, 0.08);
+            transform: scale(1.03);
         }
 
         .hamburger-btn svg {
@@ -107,14 +138,6 @@
             background: var(--red-alertix);
             border-radius: 50%;
             box-shadow: 0 0 6px var(--red-alertix);
-        }
-
-        .brand h2 {
-            color: #ffffff;
-            font-size: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 700;
         }
 
         .header-right {
@@ -194,6 +217,12 @@
             border: none;
             color: var(--text-muted);
             cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .drawer-close:hover {
+            transform: scale(1.1);
+            color: #fff;
         }
 
         .drawer-close svg {
@@ -275,6 +304,7 @@
         .drawer-link-item:hover {
             background: rgba(255, 255, 255, 0.05);
             color: #fff;
+            transform: translateX(4px);
         }
 
         .drawer-link-item img, .drawer-link-item svg {
@@ -319,7 +349,7 @@
             line-height: 1.4;
         }
 
-        /* MÓDULOS DE ACCIÓN PRINCIPAL */
+        /* MÓDULOS DE ACCIÓN CON ANIMACIÓN SUAVE EN HOVER */
         .tactical-action-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -337,14 +367,14 @@
             align-items: center;
             gap: 18px;
             cursor: pointer;
-            transition: all 0.22s ease;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
 
         .tactical-action-module:hover {
             border-color: var(--text-muted);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
-            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+            transform: translateY(-2px);
         }
 
         .module-icon-box {
@@ -358,6 +388,11 @@
             justify-content: center;
             color: #ffffff;
             flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+
+        .tactical-action-module:hover .module-icon-box {
+            transform: scale(1.05);
         }
 
         .module-icon-box svg {
@@ -388,7 +423,7 @@
         }
 
         .tactical-action-module:hover .module-arrow-icon {
-            transform: translateX(4px);
+            transform: translateX(5px);
             color: #fff;
         }
 
@@ -400,7 +435,7 @@
             stroke-width: 2.2;
         }
 
-        /* AUDITORÍA RÁPIDA (TÍTULO SUTIL) */
+        /* AUDITORÍA RÁPIDA */
         .audit-section-title {
             text-align: center;
             font-size: 0.78rem;
@@ -429,12 +464,14 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+            animation: fadeInPage 0.3s ease;
         }
 
         .sale-item-card:hover {
             border-color: var(--border-accent);
             background: #121218;
+            transform: translateX(2px);
         }
 
         .sale-item-info {
@@ -753,6 +790,15 @@
 </head>
 <body>
 
+    <!-- VALIDACIÓN DE SEGURIDAD: REDIRECCIÓN INMEDIATA SI NO HAY SESIÓN -->
+    <script>
+        const vendedorIdCheck = sessionStorage.getItem("alertix_vendedor_id");
+        const userEmailCheck = sessionStorage.getItem("alertix_user_email") || sessionStorage.getItem("alertix_vendedor_usuario");
+        if (!vendedorIdCheck && !userEmailCheck) {
+            window.location.replace("login.html");
+        }
+    </script>
+
     <!-- HEADER SOBRIO -->
     <header>
         <div class="header-left">
@@ -768,7 +814,7 @@
         </div>
         <div class="header-right">
             <div class="header-status-badge">
-                <span style="width:6px; height:6px; background:var(--green-active); border-radius:50%;"></span>
+                <div class="status-dot-animated"></div>
                 Sistema Activo
             </div>
         </div>
@@ -992,7 +1038,7 @@
         const userEmail = sessionStorage.getItem("alertix_user_email") || vendedorUsuario || "alertixsupport@gmail.com";
 
         if (!vendedorId && !userEmail) {
-            window.location.href = "login.html";
+            window.location.replace("login.html");
         } else {
             document.getElementById("drawerUserEmail").innerText = userEmail;
         }
@@ -1010,7 +1056,7 @@
                 snapshot.forEach(d => items.push(d.data()));
 
                 if (items.length === 0) {
-                    container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px;">No hay secciones configuradas en menuvendedores.</p>`;
+                    container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px;">No hay secciones configuradas.</p>`;
                     return;
                 }
 
@@ -1385,3 +1431,4 @@
     </script>
 </body>
 </html>
+
