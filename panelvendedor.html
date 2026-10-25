@@ -426,36 +426,80 @@
             max-height: 75vh;
         }
 
-        #reader {
+        /* CONTENEDOR DE CÁMARA CON EFECTO LÁSER TÁCTICO */
+        .scanner-wrapper-tactical {
+            position: relative;
             width: 100%;
             border-radius: 10px;
             overflow: hidden;
             border: 1px solid var(--border-subtle);
         }
 
-        .scan-loading-screen {
-            display: none;
-            text-align: center;
-            padding: 30px 0;
+        #reader {
+            width: 100%;
+            border: none !important;
         }
 
-        .scan-loading-screen.active {
+        /* Láser Animado de Escaneo */
+        .scanner-laser-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .laser-line {
+            position: absolute;
+            width: 80%;
+            height: 2px;
+            background: var(--red-primary);
+            box-shadow: 0 0 15px var(--red-primary), 0 0 30px var(--red-primary);
+            animation: scanLaserMove 1.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes scanLaserMove {
+            0% { top: 15%; opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { top: 85%; opacity: 0.4; }
+        }
+
+        /* EFECTO DE DETECCIÓN INSTANTÁNEA (TRANSICIÓN AL 100%) */
+        .scan-progress-screen {
+            display: none;
+            text-align: center;
+            padding: 24px 10px;
+        }
+
+        .scan-progress-screen.active {
             display: block;
         }
 
-        .spinner-ring {
-            width: 48px;
-            height: 48px;
-            border: 3px solid rgba(220, 20, 60, 0.2);
-            border-top-color: var(--red-primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 16px auto;
-            box-shadow: 0 0 15px var(--red-glow);
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 16px 0 10px 0;
+            border: 1px solid rgba(220, 20, 60, 0.2);
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .progress-bar-fill-dynamic {
+            width: 0%;
+            height: 100%;
+            background: var(--red-primary);
+            box-shadow: 0 0 12px var(--red-primary);
+            transition: width 0.05s linear;
+        }
+
+        .progress-percentage-text {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 1px;
         }
 
         .error-card-scan {
@@ -638,20 +682,28 @@
                 </button>
             </div>
             <div class="modal-body" id="modalBodyContent">
-                <!-- PASO 1: LECTOR QR TURBO -->
+                <!-- PASO 1: LECTOR QR CON LÁSER TÁCTICO EN VIVO -->
                 <div id="stepScanner">
-                    <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 12px; text-align: center;">Apunta al código QR. La detección es instantánea.</p>
-                    <div id="reader"></div>
+                    <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 12px; text-align: center;">Apunta al código QR. Detección instantánea con láser activo.</p>
+                    <div class="scanner-wrapper-tactical">
+                        <div class="scanner-laser-overlay">
+                            <div class="laser-line"></div>
+                        </div>
+                        <div id="reader"></div>
+                    </div>
                 </div>
 
-                <!-- PASO 2: CARGA DE 3 SEGUNDOS DE BÚSQUEDA ACTIVA -->
-                <div class="scan-loading-screen" id="scanLoadingScreen">
-                    <div class="spinner-ring"></div>
-                    <h4 style="color: #fff; margin-bottom: 6px;">Búsqueda Activa en el Sistema...</h4>
-                    <p style="color: var(--text-muted); font-size: 0.82rem;" id="detectedIdText">Verificando ID en la colección `idtarjetas`...</p>
+                <!-- PASO 2: EFECTO DE PROGRESO DE ESCANEO HASTA EL 100% -->
+                <div class="scan-progress-screen" id="scanProgressScreen">
+                    <h4 style="color: #fff; margin-bottom: 4px;">Código QR Capturado</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;" id="detectedIdText">Sincronizando con base de datos...</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill-dynamic" id="progressBarFill"></div>
+                    </div>
+                    <div class="progress-percentage-text" id="progressPercentageText">0%</div>
                 </div>
 
-                <!-- PASO ERROR: SI NO ES TARJETA DE ALERTIX O NO ESTá EN IDTARJETAS -->
+                <!-- PASO ERROR: SI NO ESTÁ EN IDTARJETAS -->
                 <div class="error-card-scan" id="errorCardScan">
                     <div class="error-icon-box">
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
@@ -688,7 +740,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT FIREBASE Y BÚSQUEDA ACTIVA TURBO -->
+    <!-- SCRIPT FIREBASE Y EFECTO DE PROGRESO DE ESCANEO -->
     <script type="module">
         import { db } from "./app.js";
         import { collection, addDoc, getDocs, query, where, updateDoc, doc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -754,7 +806,7 @@
         // INICIAR ESCANEO DE QR A MÁXIMA VELOCIDAD (TURBO FPS)
         window.iniciarEscaneoQR = function() {
             document.getElementById("stepScanner").style.display = "block";
-            document.getElementById("scanLoadingScreen").classList.remove("active");
+            document.getElementById("scanProgressScreen").classList.remove("active");
             document.getElementById("errorCardScan").classList.remove("active");
             document.getElementById("stepForm").style.display = "none";
             document.getElementById("btnGuardarVenta").style.display = "none";
@@ -766,7 +818,6 @@
                     html5QrCode = new Html5Qrcode("reader");
                 }
 
-                // Configuración optimizada para lectura instantánea (30 FPS)
                 const configCamera = { 
                     fps: 30, 
                     qrbox: { width: 250, height: 250 },
@@ -808,45 +859,66 @@
         function detenerEscaneoYProcesar(qrText) {
             if (html5QrCode && html5QrCode.isScanning) {
                 html5QrCode.stop().then(() => {
-                    ejecutarBusquedaActiva(qrText);
+                    ejecutarAnimacionProgresoYBusqueda(qrText);
                 }).catch(() => {
-                    ejecutarBusquedaActiva(qrText);
+                    ejecutarAnimacionProgresoYBusqueda(qrText);
                 });
             } else {
-                ejecutarBusquedaActiva(qrText);
+                ejecutarAnimacionProgresoYBusqueda(qrText);
             }
         }
 
-        // BÚSQUEDA ACTIVA ESTRICTA EN LA COLECCIÓN "idtarjetas"
-        async function ejecutarBusquedaActiva(qrText) {
+        // ANIMACIÓN FLUIDA DE 0% A 100% Y BÚSQUEDA EN FIREBASE
+        function ejecutarAnimacionProgresoYBusqueda(qrText) {
             tarjetaIdDetectada = qrText.trim();
             document.getElementById("stepScanner").style.display = "none";
-            document.getElementById("scanLoadingScreen").classList.add("active");
-            document.getElementById("detectedIdText").innerText = `Búsqueda activa: ${tarjetaIdDetectada}`;
+            document.getElementById("scanProgressScreen").classList.add("active");
+            
+            const fillBar = document.getElementById("progressBarFill");
+            const percentageText = document.getElementById("progressPercentageText");
+            const statusText = document.getElementById("detectedIdText");
+            
+            statusText.innerText = `ID detectado: ${tarjetaIdDetectada}`;
+            
+            let currentPercent = 0;
+            fillBar.style.width = "0%";
+            percentageText.innerText = "0%";
 
-            setTimeout(async () => {
-                try {
-                    const q = query(collection(db, "idtarjetas"), where("tarjetaId", "==", tarjetaIdDetectada));
-                    const querySnapshot = await getDocs(q);
-
-                    document.getElementById("scanLoadingScreen").classList.remove("active");
-
-                    if (querySnapshot.empty) {
-                        // Si no existe en idtarjetas, muestra el error corporativo exigido
-                        document.getElementById("errorCardScan").classList.add("active");
-                    } else {
-                        // Si existe en idtarjetas, pasa al formulario de venta
-                        document.getElementById("stepForm").style.display = "block";
-                        document.getElementById("formTarjetaId").value = tarjetaIdDetectada;
-                        document.getElementById("modalTitle").innerText = "Completar Datos de Venta";
-                        document.getElementById("btnGuardarVenta").style.display = "inline-block";
-                    }
-                } catch (err) {
-                    console.error("Error en búsqueda activa de idtarjetas:", err);
-                    document.getElementById("scanLoadingScreen").classList.remove("active");
-                    document.getElementById("errorCardScan").classList.add("active");
+            // Animación rápida de progreso estilo cyberpunk/táctico
+            const progressInterval = setInterval(() => {
+                currentPercent += 5;
+                if (currentPercent <= 100) {
+                    fillBar.style.width = currentPercent + "%";
+                    percentageText.innerText = currentPercent + "%";
+                } else {
+                    clearInterval(progressInterval);
+                    verificarIdEnBaseDeDatos(tarjetaIdDetectada);
                 }
-            }, 3000);
+            }, 35);
+        }
+
+        async function verificarIdEnBaseDeDatos(idTarjeta) {
+            try {
+                const q = query(collection(db, "idtarjetas"), where("tarjetaId", "==", idTarjeta));
+                const querySnapshot = await getDocs(q);
+
+                document.getElementById("scanProgressScreen").classList.remove("active");
+
+                if (querySnapshot.empty) {
+                    // Si no existe en idtarjetas, muestra el error corporativo exigido
+                    document.getElementById("errorCardScan").classList.add("active");
+                } else {
+                    // Si existe en idtarjetas, pasa al formulario de venta
+                    document.getElementById("stepForm").style.display = "block";
+                    document.getElementById("formTarjetaId").value = idTarjeta;
+                    document.getElementById("modalTitle").innerText = "Completar Datos de Venta";
+                    document.getElementById("btnGuardarVenta").style.display = "inline-block";
+                }
+            } catch (err) {
+                console.error("Error verificando en idtarjetas:", err);
+                document.getElementById("scanProgressScreen").classList.remove("active");
+                document.getElementById("errorCardScan").classList.add("active");
+            }
         }
 
         window.cerrarModalVenta = function() {
