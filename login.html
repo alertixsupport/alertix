@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Alertix - Acceso de Vendedores</title>
+    <style>
+        :root {
+            --bg-base: #070709;
+            --bg-surface: rgba(18, 18, 22, 0.85);
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-accent: rgba(220, 20, 60, 0.4);
+            --red-primary: #dc143c;
+            --red-glow: rgba(220, 20, 60, 0.35);
+            --text-main: #f1f1f5;
+            --text-muted: #8a8a9e;
+            --green-active: #34d399;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(circle at 50% 10%, rgba(220, 20, 60, 0.15) 0%, transparent 55%),
+                linear-gradient(180deg, #09090d 0%, #040406 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            animation: fadeInPage 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        body.page-exiting {
+            opacity: 0;
+            transform: translateY(-10px);
+            pointer-events: none;
+        }
+
+        /* Contenedor Principal del Login */
+        .login-wrapper {
+            width: 100%;
+            max-width: 420px;
+            background: var(--bg-surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-top: 2px solid var(--red-primary);
+            border-radius: 18px;
+            padding: 32px 28px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.85), 0 0 25px var(--red-glow);
+            position: relative;
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .brand-dot-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .brand-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--red-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--red-primary);
+        }
+
+        .brand-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #ffffff 40%, #a0a0b0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-subtitle {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        /* Detección de Vendedor en Tiempo Real */
+        .vendor-detected-card {
+            background: rgba(15, 15, 20, 0.8);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            animation: slideDown 0.3s ease;
+        }
+
+        .vendor-detected-card.active {
+            display: flex;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .vendor-avatar {
+            width: 36px;
+            height: 36px;
+            background: rgba(52, 211, 153, 0.15);
+            border: 1px solid var(--green-active);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--green-active);
+            font-weight: 700;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .vendor-info span {
+            display: block;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .vendor-info strong {
+            font-size: 0.92rem;
+            color: #fff;
+        }
+
+        /* Formulario */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(10, 10, 14, 0.9);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 16px; /* Evita zoom en iOS */
+            transition: all 0.25s;
+        }
+
+        @media(min-width: 768px) {
+            .form-control { font-size: 0.9rem; }
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--red-primary);
+            box-shadow: 0 0 12px var(--red-glow);
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(180deg, rgba(220, 20, 60, 0.95) 0%, rgba(140, 0, 30, 1) 100%);
+            border: 1px solid rgba(255, 50, 50, 0.5);
+            color: white;
+            padding: 13px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.92rem;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 20px var(--red-glow);
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(220, 20, 60, 0.6);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Modal de Error Empresarial */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 16px;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .error-modal-container {
+            background: #0f0f14;
+            border: 1px solid rgba(220, 20, 60, 0.6);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 380px;
+            padding: 28px 24px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.95), 0 0 30px rgba(220, 20, 60, 0.4);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.open .error-modal-container {
+            transform: scale(1);
+        }
+
+        .error-icon-box {
+            width: 56px;
+            height: 56px;
+            background: rgba(220, 20, 60, 0.15);
+            border: 1px solid var(--red-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px auto;
+            color: var(--red-primary);
+            box-shadow: 0 0 15px var(--red-glow);
+            animation: pulseError 2s infinite;
+        }
+
+        @keyframes pulseError {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .error-icon-box svg {
+            width: 28px;
+            height: 28px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.2;
+        }
+
+        .error-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .error-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .countdown-box {
+            background: rgba(220, 20, 60, 0.08);
+            border: 1px solid rgba(220, 20, 60, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.82rem;
+            color: #ff6b6b;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .error-close-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-subtle);
+            color: #fff;
+            width: 100%;
+            padding: 11px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .error-close-btn:hover:not(:disabled) {
+            background: rgba(220, 20, 60, 0.2);
+            border-color: var(--red-primary);
+        }
+
+        .error-close-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .public-footer-note {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-wrapper">
+        <div class="brand-header">
+            <div class="brand-dot-container">
+                <div class="brand-dot"></div>
+                <h1 class="brand-title">Alertix</h1>
+            </div>
+            <p class="brand-subtitle">Portal Oficial de Acceso para Vendedores</p>
+        </div>
+
+        <!-- Tarjeta de detección en tiempo real del Vendedor -->
+        <div class="vendor-detected-card" id="vendorDetectedCard">
+            <div class="vendor-avatar" id="vendorAvatarInitial">V</div>
+            <div class="vendor-info">
+                <span>Vendedor Identificado</span>
+                <strong id="vendorDetectedName">Cargando...</strong>
+            </div>
+        </div>
+
+        <form id="loginForm" onsubmit="window.handleLogin(event)">
+            <div class="form-group">
+                <label>Usuario Asignado</label>
+                <input type="text" id="usuarioInput" class="form-control" placeholder="Ingrese su usuario..." autocomplete="username" required oninput="window.detectarVendedorEnTiempoReal(this.value)">
+            </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" id="claveInput" class="form-control" placeholder="••••••••" autocomplete="current-password" required>
+            </div>
+            <button type="submit" class="login-btn" id="loginSubmitBtn">
+                Iniciar Sesión
+            </button>
+        </form>
+    </div>
+
+    <div class="public-footer-note">
+        Alertix Enterprise Security &bull; Acceso Autorizado Exclusivamente a Red de Ventas
+    </div>
+
+    <!-- Modal de Error con Cuenta Regresiva de 5 Segundos -->
+    <div class="modal-overlay" id="errorModal">
+        <div class="error-modal-container">
+            <div class="error-icon-box">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <h3 class="error-title">Acceso Denegado</h3>
+            <p class="error-desc">El usuario o la contraseña ingresados son incorrectos. Verifique sus credenciales e intente nuevamente.</p>
+            <div class="countdown-box" id="countdownBox">
+                Vuelve a intentarlo en 5 segundos...
+            </div>
+            <button class="error-close-btn" id="errorCloseBtn" onclick="window.cerrarModalError()" disabled>
+                Cerrar Ventana
+            </button>
+        </div>
+    </div>
+
+    <!-- Script con Firebase para lectura de "usuariosvendedores" -->
+    <script type="module">
+        import { db } from "./app.js";
+        import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        let listaVendedoresCache = [];
+        let timeoutBusqueda = null;
+
+        // Precargar lista de vendedores para detección instantánea en tiempo real
+        async function cargarVendedoresCache() {
+            try {
+                const snapshot = await getDocs(collection(db, "usuariosvendedores"));
+                listaVendedoresCache = [];
+                snapshot.forEach(docSnap => {
+                    listaVendedoresCache.push({ id: docSnap.id, ...docSnap.data() });
+                });
+            } catch (e) {
+                console.error("Error cargando caché de vendedores:", e);
+            }
+        }
+        cargarVendedoresCache();
+
+        // Detectar en tiempo real al escribir el usuario
+        window.detectarVendedorEnTiempoReal = function(val) {
+            const trimmed = val.trim().toLowerCase();
+            const card = document.getElementById("vendorDetectedCard");
+            const nameEl = document.getElementById("vendorDetectedName");
+            const avatarEl = document.getElementById("vendorAvatarInitial");
+
+            if (!trimmed || trimmed.length < 2) {
+                card.classList.remove("active");
+                return;
+            }
+
+            // Buscar coincidencia en la caché local
+            const encontrado = listaVendedoresCache.find(v => v.usuarioLogin?.toLowerCase() === trimmed);
+
+            if (encontrado && encontrado.nombre) {
+                nameEl.innerText = encontrado.nombre;
+                avatarEl.innerText = encontrado.nombre.charAt(0).toUpperCase();
+                card.classList.add("active");
+            } else {
+                card.classList.remove("active");
+            }
+        };
+
+        // Manejar envío de login
+        window.handleLogin = async function(e) {
+            e.preventDefault();
+            const userVal = document.getElementById("usuarioInput").value.trim();
+            const passVal = document.getElementById("claveInput").value.trim();
+            const btn = document.getElementById("loginSubmitBtn");
+
+            btn.disabled = true;
+            btn.innerText = "Verificando credenciales...";
+
+            try {
+                // Consultar colección "usuariosvendedores"
+                const q = query(collection(db, "usuariosvendedores"), where("usuarioLogin", "==", userVal));
+                const querySnapshot = await getDocs(q);
+
+                let vendedorEncontrado = null;
+                querySnapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (data.claveLogin === passVal) {
+                        vendedorEncontrado = { id: docSnap.id, ...data };
+                    }
+                });
+
+                if (vendedorEncontrado) {
+                    // Guardar sesión del vendedor
+                    sessionStorage.setItem("alertix_vendedor_id", vendedorEncontrado.id);
+                    sessionStorage.setItem("alertix_vendedor_nombre", vendedorEncontrado.nombre);
+                    sessionStorage.setItem("alertix_vendedor_usuario", vendedorEncontrado.usuarioLogin);
+
+                    // Transición fluida hacia panelrevendedor.html
+                    document.body.classList.add("page-exiting");
+                    setTimeout(() => {
+                        window.location.href = "panelrevendedor.html";
+                    }, 300);
+                } else {
+                    // Mostrar modal de error empresarial
+                    mostrarModalError();
+                    btn.disabled = false;
+                    btn.innerText = "Iniciar Sesión";
+                }
+            } catch (err) {
+                console.error("Error en login:", err);
+                alert("Ocurrió un error de conexión con el servidor.");
+                btn.disabled = false;
+                btn.innerText = "Iniciar Sesión";
+            }
+        };
+
+        let countdownInterval = null;
+        function mostrarModalError() {
+            const modal = document.getElementById("errorModal");
+            const closeBtn = document.getElementById("errorCloseBtn");
+            const countdownBox = document.getElementById("countdownBox");
+            
+            modal.classList.add("open");
+            closeBtn.disabled = true;
+            
+            let segundosRestantes = 5;
+            countdownBox.innerText = `Vuelve a intentarlo en ${segundosRestantes} segundos...`;
+
+            if (countdownInterval) clearInterval(countdownInterval);
+
+            countdownInterval = setInterval(() => {
+                segundosRestantes--;
+                if (segundosRestantes > 0) {
+                    countdownBox.innerText = `Vuelve a intentarlo en ${segundosRestantes} segundos...`;
+                } else {
+                    countdownBox.innerText = "Ya puedes reintentar el acceso.";
+                    closeBtn.disabled = false;
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+        }
+
+        window.cerrarModalError = function() {
+            const modal = document.getElementById("errorModal");
+            modal.classList.remove("open");
+            document.getElementById("claveInput").value = "";
+            document.getElementById("claveInput").focus();
+        };
+    </script>
+</body>
+</html>
