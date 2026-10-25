@@ -36,7 +36,6 @@
             overflow-x: hidden;
         }
 
-        /* Header Profesional */
         header {
             position: fixed;
             top: 0;
@@ -155,7 +154,6 @@
             box-shadow: 0 6px 20px rgba(220, 20, 60, 0.5);
         }
 
-        /* Contenido Principal */
         main {
             flex: 1;
             padding: 24px 16px;
@@ -242,7 +240,6 @@
             color: #fff;
         }
 
-        /* Grid de Cards de Vendedores */
         .vendedores-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -341,7 +338,6 @@
             color: #fff;
         }
 
-        /* Modal Paso a Paso (Wizard) y Visor */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -416,7 +412,6 @@
             max-height: 70vh;
         }
 
-        /* Wizard Steps */
         .wizard-step {
             display: none;
             animation: fadeInStep 0.3s ease forwards;
@@ -522,11 +517,14 @@
             box-shadow: 0 4px 15px var(--red-glow);
         }
 
-        /* Pantalla de Carga de 3 Segundos */
         #loading-screen {
             display: none;
             text-align: center;
             padding: 30px 0;
+        }
+
+        #loading-screen.active {
+            display: block;
         }
 
         .spinner-ring {
@@ -544,7 +542,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Visor Detallado */
         .detail-row {
             display: flex;
             justify-content: space-between;
@@ -565,7 +562,6 @@
 </head>
 <body>
 
-    <!-- Header -->
     <header>
         <div class="header-left">
             <a href="paneladmin.html" class="back-btn">
@@ -581,7 +577,7 @@
             <div class="counter-badge-header" id="header-counter">
                 Vendedores Registrados: <strong>0</strong>
             </div>
-            <button class="register-btn" onclick="abrirWizard()">
+            <button class="register-btn" onclick="window.abrirWizard()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 Registrar Vendedor
             </button>
@@ -589,18 +585,16 @@
     </header>
 
     <main>
-        <!-- Controles de búsqueda y filtros -->
         <div class="controls-row">
             <div class="search-box">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" id="searchInput" placeholder="Buscar por nombre, usuario o provincia..." oninput="filtrarVendedores()">
+                <input type="text" id="searchInput" placeholder="Buscar por nombre, usuario o provincia..." oninput="window.filtrarVendedores()">
             </div>
             <div class="filter-provincias" id="filterChipsContainer">
-                <div class="filter-chip active" onclick="filtrarPorProvincia('TODAS', this)">Todas (<span id="count-todas">0</span>)</div>
+                <div class="filter-chip active" onclick="window.filtrarPorProvincia('TODAS', this)">Todas (<span id="count-todas">0</span>)</div>
             </div>
         </div>
 
-        <!-- Grid de Tarjetas -->
         <div class="vendedores-grid" id="vendedoresGrid">
             <p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 40px;">Cargando vendedores oficiales...</p>
         </div>
@@ -611,7 +605,7 @@
         <div class="modal-container">
             <div class="modal-header">
                 <h3 id="wizardTitle">Registrar Nuevo Vendedor</h3>
-                <button class="modal-close" onclick="cerrarWizard()">
+                <button class="modal-close" onclick="window.cerrarWizard()">
                     <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
@@ -704,9 +698,9 @@
                 </form>
             </div>
             <div class="modal-footer" id="wizardFooter">
-                <button type="button" class="btn-wizard" id="prevBtn" onclick="cambiarPaso(-1)" style="display: none;">Anterior</button>
+                <button type="button" class="btn-wizard" id="prevBtn" onclick="window.cambiarPaso(-1)" style="display: none;">Anterior</button>
                 <div style="flex:1"></div>
-                <button type="button" class="btn-wizard primary" id="nextBtn" onclick="siguientePaso()">Siguiente</button>
+                <button type="button" class="btn-wizard primary" id="nextBtn" onclick="window.siguientePaso()">Siguiente</button>
             </div>
         </div>
     </div>
@@ -716,24 +710,22 @@
         <div class="modal-container">
             <div class="modal-header">
                 <h3 id="visorHeaderTitle">Detalle del Vendedor</h3>
-                <button class="modal-close" onclick="cerrarVisor()">
+                <button class="modal-close" onclick="window.cerrarVisor()">
                     <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
             <div class="modal-body" id="visorBodyContent">
-                <!-- Se llena dinámicamente -->
             </div>
             <div class="modal-footer" id="visorFooter">
-                <button type="button" class="btn-wizard" onclick="cerrarVisor()">Cerrar</button>
+                <button type="button" class="btn-wizard" onclick="window.cerrarVisor()">Cerrar</button>
                 <button type="button" class="btn-wizard primary" id="btnActivarEdicion">Editar Datos</button>
             </div>
         </div>
     </div>
 
-    <!-- Script con Firebase, Carga en Tiempo Real, Asistente y Filtros -->
     <script type="module">
         import { db } from "./app.js";
-        import { collection, addDoc, getDocs, doc, updatedoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { collection, addDoc, getDocs, doc, updateDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const userEmail = sessionStorage.getItem("alertix_user_email");
         if (!userEmail) window.location.href = "googleadmin.html";
@@ -743,9 +735,7 @@
         let ventasCache = {};
         let provinciaSeleccionadaFiltro = "TODAS";
 
-        // --- 1. ESCUCHA EN TIEMPO REAL (VENDEDORES Y VENTAS) ---
         function inicializarDatosEnTiempoReal() {
-            // Leer ventas de la colección "ventasvendedores"
             onSnapshot(collection(db, "ventasvendedores"), (snapVentas) => {
                 ventasCache = {};
                 snapVentas.forEach(d => {
@@ -758,7 +748,6 @@
                 renderizarVendedores(vendedoresCache);
             });
 
-            // Leer vendedores de "usuariosvendedores"
             const q = query(collection(db, "usuariosvendedores"), orderBy("createdAt", "desc"));
             onSnapshot(q, (snapshot) => {
                 vendedoresCache = [];
@@ -772,7 +761,6 @@
             });
         }
 
-        // Caché local instantánea
         const cached = sessionStorage.getItem("alertix_vendedores_cache");
         if (cached) {
             try {
@@ -782,7 +770,6 @@
         }
         inicializarDatosEnTiempoReal();
 
-        // --- 2. RENDERIZADO Y FILTROS ---
         function calcularAntiguedad(fechaCreacion) {
             if (!fechaCreacion?.toDate) return "Recién registrado";
             const diffMs = new Date() - fechaCreacion.toDate();
@@ -796,8 +783,6 @@
 
         function renderizarVendedores(lista) {
             const grid = document.getElementById("vendedoresGrid");
-            
-            // Filtrar por provincia activa y buscador
             const busqueda = document.getElementById("searchInput").value.toLowerCase();
             const filtrados = lista.filter(v => {
                 const matchProv = (provinciaSeleccionadaFiltro === "TODAS" || v.provincia === provinciaSeleccionadaFiltro);
@@ -824,7 +809,7 @@
                                         ${v.provincia}
                                     </div>
                                 </div>
-                                <button class="visor-btn" onclick="abrirVisor('${v.id}')" title="Ver detalles y antigüedad">
+                                <button class="visor-btn" onclick="window.abrirVisor('${v.id}')" title="Ver detalles y antigüedad">
                                     <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                                 </button>
                             </div>
@@ -851,10 +836,10 @@
             });
 
             document.getElementById("count-todas").innerText = lista.length;
-            let chipsHtml = `<div class="filter-chip ${provinciaSeleccionadaFiltro === 'TODAS' ? 'active' : ''}" onclick="filtrarPorProvincia('TODAS', this)">Todas (${lista.length})</div>`;
+            let chipsHtml = `<div class="filter-chip ${provinciaSeleccionadaFiltro === 'TODAS' ? 'active' : ''}" onclick="window.filtrarPorProvincia('TODAS', this)">Todas (${lista.length})</div>`;
             
             for (const [prov, count] of Object.entries(conteoProv)) {
-                chipsHtml += `<div class="filter-chip ${provinciaSeleccionadaFiltro === prov ? 'active' : ''}" onclick="filtrarPorProvincia('${prov}', this)">${prov} (${count})</div>`;
+                chipsHtml += `<div class="filter-chip ${provinciaSeleccionadaFiltro === prov ? 'active' : ''}" onclick="window.filtrarPorProvincia('${prov}', this)">${prov} (${count})</div>`;
             }
             container.innerHTML = chipsHtml;
         }
@@ -862,7 +847,7 @@
         window.filtrarPorProvincia = function(prov, el) {
             provinciaSeleccionadaFiltro = prov;
             document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active"));
-            el.classList.add("active");
+            if(el) el.classList.add("active");
             renderizarVendedores(vendedoresCache);
         };
 
@@ -870,7 +855,6 @@
             renderizarVendedores(vendedoresCache);
         };
 
-        // --- 3. WIZARD PASO A PASO ---
         window.abrirWizard = function(isEdit = false, vendorData = null) {
             currentStep = 1;
             document.getElementById("vendedorForm").reset();
@@ -880,6 +864,7 @@
             document.getElementById("step-3").classList.remove("active");
             document.getElementById("prevBtn").style.display = "none";
             document.getElementById("nextBtn").innerText = "Siguiente";
+            document.getElementById("wizardFooter").style.display = "flex";
             
             if (isEdit && vendorData) {
                 document.getElementById("wizardTitle").innerText = "Editar Datos del Vendedor";
@@ -939,14 +924,13 @@
                 currentStep = 2;
                 document.getElementById("nextBtn").innerText = "Siguiente";
             } else if (currentStep === 3 && dir === 1) {
-                // Registrar oficialmente con 3 segundos de animación
                 ejecutarCargaRegistro();
             }
             actualizarProgdots();
         };
 
         window.siguientePaso = function() {
-            cambiarPaso(1);
+            window.cambiarPaso(1);
         };
 
         function actualizarProgdots() {
@@ -971,7 +955,6 @@
                 return;
             }
 
-            // Ocultar pasos y mostrar pantalla de carga de 3 segundos
             document.getElementById("step-3").classList.remove("active");
             document.getElementById("loading-screen").classList.add("active");
             document.getElementById("wizardFooter").style.display = "none";
@@ -983,22 +966,22 @@
                     };
 
                     if (editId) {
-                        await updatedoc(doc(db, "usuariosvendedores", editId), payload);
+                        await updateDoc(doc(db, "usuariosvendedores", editId), payload);
                     } else {
                         payload.createdAt = serverTimestamp();
                         await addDoc(collection(db, "usuariosvendedores"), payload);
                     }
-                    cerrarWizard();
+                    window.cerrarWizard();
                 } catch (err) {
                     console.error("Error guardando vendedor:", err);
                     alert("Error al registrar el vendedor en la base de datos.");
-                } finally {
                     document.getElementById("wizardFooter").style.display = "flex";
+                    document.getElementById("loading-screen").classList.remove("active");
+                    document.getElementById("step-3").classList.add("active");
                 }
             }, 3000);
         }
 
-        // --- 4. VISOR / OJO & EDICIÓN ---
         window.abrirVisor = function(id) {
             const v = vendedoresCache.find(x => x.id === id);
             if (!v) return;
@@ -1022,8 +1005,8 @@
             `;
 
             document.getElementById("btnActivarEdicion").onclick = () => {
-                cerrarVisor();
-                abrirWizard(true, v);
+                window.cerrarVisor();
+                window.abrirWizard(true, v);
             };
 
             document.getElementById("visorModal").classList.add("open");
