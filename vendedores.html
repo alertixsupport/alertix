@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alertix - Gestión de Vendedores</title>
+    <style>
+        :root {
+            --bg-base: #070709;
+            --bg-surface: rgba(18, 18, 22, 0.85);
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-accent: rgba(220, 20, 60, 0.4);
+            --red-primary: #dc143c;
+            --red-glow: rgba(220, 20, 60, 0.35);
+            --text-main: #f1f1f5;
+            --text-muted: #8a8a9e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(180, 0, 0, 0.12) 0%, transparent 60%),
+                linear-gradient(180deg, #09090d 0%, #040406 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-top: 75px;
+            overflow-x: hidden;
+        }
+
+        /* Header Profesional */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 75px;
+            z-index: 1000;
+            background: rgba(10, 10, 14, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.8);
+        }
+
+        @media(min-width: 768px) {
+            header { padding: 0 32px; }
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            border-color: var(--border-accent);
+            background: rgba(220, 20, 60, 0.1);
+            box-shadow: 0 0 12px var(--red-glow);
+        }
+
+        .brand-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--red-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--red-primary);
+        }
+
+        .brand-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #ffffff 40%, #a0a0b0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .counter-badge-header {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            padding: 7px 14px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        @media(min-width: 768px) {
+            .counter-badge-header { display: block; }
+        }
+
+        .counter-badge-header strong {
+            color: #fff;
+        }
+
+        .register-btn {
+            background: linear-gradient(180deg, rgba(220, 20, 60, 0.9) 0%, rgba(140, 0, 30, 1) 100%);
+            border: 1px solid rgba(255, 50, 50, 0.4);
+            color: white;
+            padding: 9px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.84rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px var(--red-glow);
+        }
+
+        .register-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(220, 20, 60, 0.5);
+        }
+
+        /* Contenido Principal */
+        main {
+            flex: 1;
+            padding: 24px 16px;
+            max-width: 1280px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @media(min-width: 768px) {
+            main { padding: 40px 32px; }
+        }
+
+        .controls-row {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        @media(min-width: 768px) {
+            .controls-row {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 450px;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 12px 16px 12px 42px;
+            color: #fff;
+            font-size: 0.9rem;
+            transition: all 0.25s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--red-primary);
+            box-shadow: 0 0 12px var(--red-glow);
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-muted);
+        }
+
+        .filter-provincias {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .filter-chip {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .filter-chip.active, .filter-chip:hover {
+            background: rgba(220, 20, 60, 0.15);
+            border-color: var(--red-primary);
+            color: #fff;
+        }
+
+        /* Grid de Cards de Vendedores */
+        .vendedores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .vendedor-card {
+            background: var(--bg-surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.25s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .vendedor-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(220, 20, 60, 0.3);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .vendedor-name {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .vendedor-provincia {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .visor-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .visor-btn:hover {
+            background: var(--red-primary);
+            border-color: var(--red-primary);
+            color: #fff;
+            box-shadow: 0 0 10px var(--red-glow);
+        }
+
+        .visor-btn svg {
+            width: 17px;
+            height: 17px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .card-metrics {
+            background: rgba(10, 10, 14, 0.6);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+        }
+
+        .metric-number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Modal Paso a Paso (Wizard) y Visor */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 16px;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-container {
+            background: #0f0f14;
+            border: 1px solid var(--border-accent);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 540px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.95), 0 0 25px var(--red-glow);
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-overlay.open .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(18, 18, 22, 0.6);
+        }
+
+        .modal-header h3 {
+            color: #fff;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .modal-close svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            max-height: 70vh;
+        }
+
+        /* Wizard Steps */
+        .wizard-step {
+            display: none;
+            animation: fadeInStep 0.3s ease forwards;
+        }
+
+        .wizard-step.active {
+            display: block;
+        }
+
+        @keyframes fadeInStep {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .wizard-progress {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 22px;
+        }
+
+        .progress-dot {
+            flex: 1;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            transition: background 0.3s;
+        }
+
+        .progress-dot.active {
+            background: var(--red-primary);
+            box-shadow: 0 0 8px var(--red-primary);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(10, 10, 14, 0.8);
+            border: 1px solid var(--border-subtle);
+            border-radius: 9px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 0.9rem;
+            transition: all 0.25s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--red-primary);
+            box-shadow: 0 0 12px var(--red-glow);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a9e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 16px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(18, 18, 22, 0.4);
+        }
+
+        .btn-wizard {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-wizard:hover {
+            border-color: var(--border-accent);
+            background: rgba(220, 20, 60, 0.1);
+        }
+
+        .btn-wizard.primary {
+            background: linear-gradient(180deg, rgba(220, 20, 60, 0.9) 0%, rgba(140, 0, 30, 1) 100%);
+            border-color: rgba(255, 50, 50, 0.4);
+            color: #fff;
+            box-shadow: 0 4px 15px var(--red-glow);
+        }
+
+        /* Pantalla de Carga de 3 Segundos */
+        #loading-screen {
+            display: none;
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .spinner-ring {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(220, 20, 60, 0.2);
+            border-top-color: var(--red-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 0 15px var(--red-glow);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Visor Detallado */
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.88rem;
+        }
+
+        .detail-row span:first-child {
+            color: var(--text-muted);
+        }
+
+        .detail-row span:last-child {
+            color: #fff;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <a href="paneladmin.html" class="back-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Panel
+            </a>
+            <div class="brand-area">
+                <div class="brand-dot"></div>
+                <h1 class="brand-title">Alertix</h1>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="counter-badge-header" id="header-counter">
+                Vendedores Registrados: <strong>0</strong>
+            </div>
+            <button class="register-btn" onclick="abrirWizard()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Registrar Vendedor
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Controles de búsqueda y filtros -->
+        <div class="controls-row">
+            <div class="search-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="searchInput" placeholder="Buscar por nombre, usuario o provincia..." oninput="filtrarVendedores()">
+            </div>
+            <div class="filter-provincias" id="filterChipsContainer">
+                <div class="filter-chip active" onclick="filtrarPorProvincia('TODAS', this)">Todas (<span id="count-todas">0</span>)</div>
+            </div>
+        </div>
+
+        <!-- Grid de Tarjetas -->
+        <div class="vendedores-grid" id="vendedoresGrid">
+            <p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 40px;">Cargando vendedores oficiales...</p>
+        </div>
+    </main>
+
+    <!-- Modal Paso a Paso (Wizard Registro) -->
+    <div class="modal-overlay" id="wizardModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="wizardTitle">Registrar Nuevo Vendedor</h3>
+                <button class="modal-close" onclick="cerrarWizard()">
+                    <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="wizard-progress">
+                    <div class="progress-dot active" id="dot-1"></div>
+                    <div class="progress-dot" id="dot-2"></div>
+                    <div class="progress-dot" id="dot-3"></div>
+                </div>
+
+                <form id="vendedorForm" onsubmit="event.preventDefault();">
+                    <input type="hidden" id="editVendorId" value="">
+
+                    <!-- PASO 1 -->
+                    <div class="wizard-step active" id="step-1">
+                        <div class="form-group">
+                            <label>Nombre y Apellido</label>
+                            <input type="text" id="nombre" class="form-control" placeholder="Ej. Juan Pérez" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Edad</label>
+                            <input type="number" id="edad" class="form-control" placeholder="Ej. 28" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Provincia (Argentina)</label>
+                            <select id="provincia" class="form-control" required>
+                                <option value="" disabled selected>Seleccione una provincia...</option>
+                                <option value="Buenos Aires">Buenos Aires</option>
+                                <option value="Capital Federal (CABA)">Capital Federal (CABA)</option>
+                                <option value="Catamarca">Catamarca</option>
+                                <option value="Chaco">Chaco</option>
+                                <option value="Chubut">Chubut</option>
+                                <option value="Córdoba">Córdoba</option>
+                                <option value="Corrientes">Corrientes</option>
+                                <option value="Entre Ríos">Entre Ríos</option>
+                                <option value="Formosa">Formosa</option>
+                                <option value="Jujuy">Jujuy</option>
+                                <option value="La Pampa">La Pampa</option>
+                                <option value="La Rioja">La Rioja</option>
+                                <option value="Mendoza">Mendoza</option>
+                                <option value="Misiones">Misiones</option>
+                                <option value="Neuquén">Neuquén</option>
+                                <option value="Río Negro">Río Negro</option>
+                                <option value="Salta">Salta</option>
+                                <option value="San Juan">San Juan</option>
+                                <option value="San Luis">San Luis</option>
+                                <option value="Santa Cruz">Santa Cruz</option>
+                                <option value="Santa Fe">Santa Fe</option>
+                                <option value="Santiago del Estero">Santiago del Estero</option>
+                                <option value="Tierra del Fuego">Tierra del Fuego</option>
+                                <option value="Tucumán">Tucumán</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- PASO 2 -->
+                    <div class="wizard-step" id="step-2">
+                        <div class="form-group">
+                            <label>WhatsApp</label>
+                            <input type="text" id="whatsapp" class="form-control" placeholder="Ej. +54 9 11..." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Instagram (Opcional)</label>
+                            <input type="text" id="instagram" class="form-control" placeholder="Ej. @juanperez.sales">
+                        </div>
+                        <div class="form-group">
+                            <label>Gmail (Opcional)</label>
+                            <input type="email" id="gmail" class="form-control" placeholder="Ej. juan@alertix.com">
+                        </div>
+                    </div>
+
+                    <!-- PASO 3 -->
+                    <div class="wizard-step" id="step-3">
+                        <div class="form-group">
+                            <label>Usuario Asignado (Login)</label>
+                            <input type="text" id="usuarioLogin" class="form-control" placeholder="Ej. jperez" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Clave Asignada (Login)</label>
+                            <input type="text" id="claveLogin" class="form-control" placeholder="Ej. Segura123!" required>
+                        </div>
+                    </div>
+
+                    <!-- PANTALLA DE CARGA 3 SEGUNDOS -->
+                    <div class="wizard-step" id="loading-screen">
+                        <div class="spinner-ring"></div>
+                        <h4 style="color: #fff; margin-bottom: 6px;">Registrando Vendedor Oficialmente...</h4>
+                        <p style="color: var(--text-muted); font-size: 0.82rem;">Sincronizando credenciales en `usuariosvendedores`</p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" id="wizardFooter">
+                <button type="button" class="btn-wizard" id="prevBtn" onclick="cambiarPaso(-1)" style="display: none;">Anterior</button>
+                <div style="flex:1"></div>
+                <button type="button" class="btn-wizard primary" id="nextBtn" onclick="siguientePaso()">Siguiente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Visor / Ojo & Edición de Vendedor -->
+    <div class="modal-overlay" id="visorModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="visorHeaderTitle">Detalle del Vendedor</h3>
+                <button class="modal-close" onclick="cerrarVisor()">
+                    <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="visorBodyContent">
+                <!-- Se llena dinámicamente -->
+            </div>
+            <div class="modal-footer" id="visorFooter">
+                <button type="button" class="btn-wizard" onclick="cerrarVisor()">Cerrar</button>
+                <button type="button" class="btn-wizard primary" id="btnActivarEdicion">Editar Datos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script con Firebase, Carga en Tiempo Real, Asistente y Filtros -->
+    <script type="module">
+        import { db } from "./app.js";
+        import { collection, addDoc, getDocs, doc, updatedoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const userEmail = sessionStorage.getItem("alertix_user_email");
+        if (!userEmail) window.location.href = "googleadmin.html";
+
+        let currentStep = 1;
+        let vendedoresCache = [];
+        let ventasCache = {};
+        let provinciaSeleccionadaFiltro = "TODAS";
+
+        // --- 1. ESCUCHA EN TIEMPO REAL (VENDEDORES Y VENTAS) ---
+        function inicializarDatosEnTiempoReal() {
+            // Leer ventas de la colección "ventasvendedores"
+            onSnapshot(collection(db, "ventasvendedores"), (snapVentas) => {
+                ventasCache = {};
+                snapVentas.forEach(d => {
+                    const dat = d.data();
+                    if (dat.vendedorId || dat.usuario) {
+                        const key = dat.vendedorId || dat.usuario;
+                        ventasCache[key] = dat.totalVentas || dat.cantidad || 0;
+                    }
+                });
+                renderizarVendedores(vendedoresCache);
+            });
+
+            // Leer vendedores de "usuariosvendedores"
+            const q = query(collection(db, "usuariosvendedores"), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snapshot) => {
+                vendedoresCache = [];
+                snapshot.forEach(docSnap => {
+                    vendedoresCache.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                sessionStorage.setItem("alertix_vendedores_cache", JSON.stringify(vendedoresCache));
+                document.getElementById("header-counter").innerHTML = `Vendedores Registrados: <strong>${vendedoresCache.length}</strong>`;
+                actualizarChipsProvincias(vendedoresCache);
+                renderizarVendedores(vendedoresCache);
+            });
+        }
+
+        // Caché local instantánea
+        const cached = sessionStorage.getItem("alertix_vendedores_cache");
+        if (cached) {
+            try {
+                vendedoresCache = JSON.parse(cached);
+                renderizarVendedores(vendedoresCache);
+            } catch(e) {}
+        }
+        inicializarDatosEnTiempoReal();
+
+        // --- 2. RENDERIZADO Y FILTROS ---
+        function calcularAntiguedad(fechaCreacion) {
+            if (!fechaCreacion?.toDate) return "Recién registrado";
+            const diffMs = new Date() - fechaCreacion.toDate();
+            const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            if (diffDias === 0) return "Hoy mismo";
+            if (diffDias === 1) return "Hace 1 día";
+            if (diffDias < 30) return `Hace ${diffDias} días`;
+            const diffMeses = Math.floor(diffDias / 30);
+            return `Hace ${diffMeses} ${diffMeses === 1 ? 'mes' : 'meses'}`;
+        }
+
+        function renderizarVendedores(lista) {
+            const grid = document.getElementById("vendedoresGrid");
+            
+            // Filtrar por provincia activa y buscador
+            const busqueda = document.getElementById("searchInput").value.toLowerCase();
+            const filtrados = lista.filter(v => {
+                const matchProv = (provinciaSeleccionadaFiltro === "TODAS" || v.provincia === provinciaSeleccionadaFiltro);
+                const matchSearch = (!busqueda || (v.nombre?.toLowerCase().includes(busqueda)) || (v.usuarioLogin?.toLowerCase().includes(busqueda)) || (v.provincia?.toLowerCase().includes(busqueda)));
+                return matchProv && matchSearch;
+            });
+
+            if (filtrados.length === 0) {
+                grid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 40px;">No se encontraron vendedores registrados.</p>`;
+                return;
+            }
+
+            let html = "";
+            filtrados.forEach(v => {
+                const totalVentas = ventasCache[v.id] || ventasCache[v.usuarioLogin] || 0;
+                html += `
+                    <div class="vendedor-card">
+                        <div>
+                            <div class="card-top">
+                                <div>
+                                    <div class="vendedor-name">${v.nombre}</div>
+                                    <div class="vendedor-provincia">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                        ${v.provincia}
+                                    </div>
+                                </div>
+                                <button class="visor-btn" onclick="abrirVisor('${v.id}')" title="Ver detalles y antigüedad">
+                                    <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-metrics">
+                            <div>
+                                <span class="metric-label">Ventas Totales</span>
+                                <div class="metric-number">${totalVentas}</div>
+                            </div>
+                            <span style="font-size:0.75rem; color:#34d399; font-weight:600;">● Activo</span>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        function actualizarChipsProvincias(lista) {
+            const container = document.getElementById("filterChipsContainer");
+            const conteoProv = {};
+            lista.forEach(v => {
+                const p = v.provincia || "Otras";
+                conteoProv[p] = (conteoProv[p] || 0) + 1;
+            });
+
+            document.getElementById("count-todas").innerText = lista.length;
+            let chipsHtml = `<div class="filter-chip ${provinciaSeleccionadaFiltro === 'TODAS' ? 'active' : ''}" onclick="filtrarPorProvincia('TODAS', this)">Todas (${lista.length})</div>`;
+            
+            for (const [prov, count] of Object.entries(conteoProv)) {
+                chipsHtml += `<div class="filter-chip ${provinciaSeleccionadaFiltro === prov ? 'active' : ''}" onclick="filtrarPorProvincia('${prov}', this)">${prov} (${count})</div>`;
+            }
+            container.innerHTML = chipsHtml;
+        }
+
+        window.filtrarPorProvincia = function(prov, el) {
+            provinciaSeleccionadaFiltro = prov;
+            document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active"));
+            el.classList.add("active");
+            renderizarVendedores(vendedoresCache);
+        };
+
+        window.filtrarVendedores = function() {
+            renderizarVendedores(vendedoresCache);
+        };
+
+        // --- 3. WIZARD PASO A PASO ---
+        window.abrirWizard = function(isEdit = false, vendorData = null) {
+            currentStep = 1;
+            document.getElementById("vendedorForm").reset();
+            document.getElementById("loading-screen").classList.remove("active");
+            document.getElementById("step-1").classList.add("active");
+            document.getElementById("step-2").classList.remove("active");
+            document.getElementById("step-3").classList.remove("active");
+            document.getElementById("prevBtn").style.display = "none";
+            document.getElementById("nextBtn").innerText = "Siguiente";
+            
+            if (isEdit && vendorData) {
+                document.getElementById("wizardTitle").innerText = "Editar Datos del Vendedor";
+                document.getElementById("editVendorId").value = vendorData.id;
+                document.getElementById("nombre").value = vendorData.nombre || "";
+                document.getElementById("edad").value = vendorData.edad || "";
+                document.getElementById("provincia").value = vendorData.provincia || "";
+                document.getElementById("whatsapp").value = vendorData.whatsapp || "";
+                document.getElementById("instagram").value = vendorData.instagram || "";
+                document.getElementById("gmail").value = vendorData.gmail || "";
+                document.getElementById("usuarioLogin").value = vendorData.usuarioLogin || "";
+                document.getElementById("claveLogin").value = vendorData.claveLogin || "";
+            } else {
+                document.getElementById("wizardTitle").innerText = "Registrar Nuevo Vendedor";
+                document.getElementById("editVendorId").value = "";
+            }
+
+            actualizarProgdots();
+            document.getElementById("wizardModal").classList.add("open");
+        };
+
+        window.cerrarWizard = function() {
+            document.getElementById("wizardModal").classList.remove("open");
+        };
+
+        window.cambiarPaso = function(dir) {
+            const step1 = document.getElementById("step-1");
+            const step2 = document.getElementById("step-2");
+            const step3 = document.getElementById("step-3");
+
+            if (currentStep === 1 && dir === 1) {
+                if (!document.getElementById("nombre").value || !document.getElementById("edad").value || !document.getElementById("provincia").value) {
+                    alert("Por favor complete los campos obligatorios del Paso 1.");
+                    return;
+                }
+                step1.classList.remove("active");
+                step2.classList.add("active");
+                currentStep = 2;
+                document.getElementById("prevBtn").style.display = "inline-block";
+            } else if (currentStep === 2 && dir === 1) {
+                if (!document.getElementById("whatsapp").value) {
+                    alert("El número de WhatsApp es obligatorio.");
+                    return;
+                }
+                step2.classList.remove("active");
+                step3.classList.add("active");
+                currentStep = 3;
+                document.getElementById("nextBtn").innerText = "Registrar Vendedor Oficialmente";
+            } else if (currentStep === 2 && dir === -1) {
+                step2.classList.remove("active");
+                step1.classList.add("active");
+                currentStep = 1;
+                document.getElementById("prevBtn").style.display = "none";
+            } else if (currentStep === 3 && dir === -1) {
+                step3.classList.remove("active");
+                step2.classList.add("active");
+                currentStep = 2;
+                document.getElementById("nextBtn").innerText = "Siguiente";
+            } else if (currentStep === 3 && dir === 1) {
+                // Registrar oficialmente con 3 segundos de animación
+                ejecutarCargaRegistro();
+            }
+            actualizarProgdots();
+        };
+
+        window.siguientePaso = function() {
+            cambiarPaso(1);
+        };
+
+        function actualizarProgdots() {
+            document.getElementById("dot-1").className = `progress-dot ${currentStep >= 1 ? 'active' : ''}`;
+            document.getElementById("dot-2").className = `progress-dot ${currentStep >= 2 ? 'active' : ''}`;
+            document.getElementById("dot-3").className = `progress-dot ${currentStep >= 3 ? 'active' : ''}`;
+        }
+
+        async function ejecutarCargaRegistro() {
+            const editId = document.getElementById("editVendorId").value;
+            const nombre = document.getElementById("nombre").value.trim();
+            const edad = document.getElementById("edad").value.trim();
+            const provincia = document.getElementById("provincia").value;
+            const whatsapp = document.getElementById("whatsapp").value.trim();
+            const instagram = document.getElementById("instagram").value.trim();
+            const gmail = document.getElementById("gmail").value.trim();
+            const usuarioLogin = document.getElementById("usuarioLogin").value.trim();
+            const claveLogin = document.getElementById("claveLogin").value.trim();
+
+            if (!usuarioLogin || !claveLogin) {
+                alert("Debe ingresar usuario y clave para el login.");
+                return;
+            }
+
+            // Ocultar pasos y mostrar pantalla de carga de 3 segundos
+            document.getElementById("step-3").classList.remove("active");
+            document.getElementById("loading-screen").classList.add("active");
+            document.getElementById("wizardFooter").style.display = "none";
+
+            setTimeout(async () => {
+                try {
+                    const payload = {
+                        nombre, edad, provincia, whatsapp, instagram, gmail, usuarioLogin, claveLogin
+                    };
+
+                    if (editId) {
+                        await updatedoc(doc(db, "usuariosvendedores", editId), payload);
+                    } else {
+                        payload.createdAt = serverTimestamp();
+                        await addDoc(collection(db, "usuariosvendedores"), payload);
+                    }
+                    cerrarWizard();
+                } catch (err) {
+                    console.error("Error guardando vendedor:", err);
+                    alert("Error al registrar el vendedor en la base de datos.");
+                } finally {
+                    document.getElementById("wizardFooter").style.display = "flex";
+                }
+            }, 3000);
+        }
+
+        // --- 4. VISOR / OJO & EDICIÓN ---
+        window.abrirVisor = function(id) {
+            const v = vendedoresCache.find(x => x.id === id);
+            if (!v) return;
+
+            const fechaReg = v.createdAt?.toDate ? v.createdAt.toDate().toLocaleString() : "Fecha no disponible";
+            const antiguedad = calcularAntiguedad(v.createdAt);
+            const totalVentas = ventasCache[v.id] || ventasCache[v.usuarioLogin] || 0;
+
+            document.getElementById("visorHeaderTitle").innerText = `Perfil: ${v.nombre}`;
+            document.getElementById("visorBodyContent").innerHTML = `
+                <div class="detail-row"><span>Nombre y Apellido</span><span>${v.nombre}</span></div>
+                <div class="detail-row"><span>Edad</span><span>${v.edad} años</span></div>
+                <div class="detail-row"><span>Provincia</span><span>${v.provincia}</span></div>
+                <div class="detail-row"><span>WhatsApp</span><span>${v.whatsapp}</span></div>
+                <div class="detail-row"><span>Instagram</span><span>${v.instagram || 'No especificado'}</span></div>
+                <div class="detail-row"><span>Gmail</span><span>${v.gmail || 'No especificado'}</span></div>
+                <div class="detail-row"><span>Usuario de Acceso</span><span>${v.usuarioLogin}</span></div>
+                <div class="detail-row"><span>Ventas Totales</span><span>${totalVentas}</span></div>
+                <div class="detail-row"><span>Fecha de Registro</span><span>${fechaReg}</span></div>
+                <div class="detail-row"><span>Tiempo en la Empresa</span><span style="color:#ff6b6b">${antiguedad}</span></div>
+            `;
+
+            document.getElementById("btnActivarEdicion").onclick = () => {
+                cerrarVisor();
+                abrirWizard(true, v);
+            };
+
+            document.getElementById("visorModal").classList.add("open");
+        };
+
+        window.cerrarVisor = function() {
+            document.getElementById("visorModal").classList.remove("open");
+        };
+    </script>
+</body>
+</html>
