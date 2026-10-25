@@ -17,11 +17,10 @@
 
         :root {
             --bg-base: #050505;
-            --bg-surface: linear-gradient(145deg, #121212, #080808);
-            --border-subtle: #260000;
-            --border-accent: #4d0000;
+            --bg-surface: #121212;
+            --border-subtle: #222222;
+            --border-accent: #333333;
             --red-alertix: #ff1a1a;
-            --red-glow: rgba(255, 0, 0, 0.15);
             --text-main: #ffffff;
             --text-muted: #a6a6a6;
             --green-active: #34d399;
@@ -43,7 +42,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* HEADER IDÉNTICO AL DE TUS CAPTURAS */
+        /* HEADER SOBRIO Y PROFESIONAL */
         header {
             position: fixed;
             top: 0;
@@ -51,13 +50,13 @@
             width: 100%;
             height: 75px;
             z-index: 1000;
-            background: linear-gradient(90deg, #140000, #260000, #0a0a0a);
-            border-bottom: 2px solid var(--border-accent);
+            background: #0a0a0a;
+            border-bottom: 1px solid var(--border-subtle);
             padding: 0 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.15);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
 
         @media(min-width: 768px) {
@@ -85,9 +84,8 @@
         }
 
         .hamburger-btn:hover {
-            border-color: var(--red-alertix);
-            background: rgba(255, 26, 26, 0.1);
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            border-color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .hamburger-btn svg {
@@ -108,78 +106,40 @@
             height: 7px;
             background: var(--red-alertix);
             border-radius: 50%;
-            box-shadow: 0 0 8px var(--red-alertix);
+            box-shadow: 0 0 6px var(--red-alertix);
         }
 
         .brand h2 {
-            background: linear-gradient(90deg, #ff1a1a, #cc0000);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 1.6rem;
+            color: #ffffff;
+            font-size: 1.5rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             font-weight: 700;
         }
 
         .header-right {
             display: flex;
             align-items: center;
-            gap: 12px;
         }
 
-        .notification-icon-btn {
-            background: rgba(255, 255, 255, 0.04);
+        .header-status-badge {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: #121212;
             border: 1px solid var(--border-subtle);
-            color: var(--text-main);
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.25s ease;
-        }
-
-        .notification-icon-btn:hover {
-            border-color: var(--red-alertix);
-            background: rgba(255, 26, 26, 0.1);
-        }
-
-        .notification-icon-btn svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2;
-        }
-
-        .logout-btn {
-            background: linear-gradient(135deg, #800000, #4d0000);
-            color: white;
-            border: 1px solid #ff1a1a;
-            padding: 8px 15px;
+            padding: 6px 12px;
             border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-            text-decoration: none;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 6px;
+            font-weight: 600;
         }
 
-        .logout-btn:hover {
-            background: linear-gradient(135deg, #ff1a1a, #800000);
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-        }
-
-        /* DRAWER LATERAL / MENÚ HAMBURGUESA IDÉNTICO A TU IMAGEN */
+        /* DRAWER LATERAL / MENÚ HAMBURGUESA LIMPIO */
         .drawer-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(6px);
             z-index: 2500;
             opacity: 0;
@@ -196,7 +156,7 @@
             position: fixed;
             top: 0; left: -320px; width: 300px; height: 100%;
             background: #0d0d12;
-            border-right: 1px solid var(--border-accent);
+            border-right: 1px solid var(--border-subtle);
             z-index: 2600;
             display: flex;
             flex-direction: column;
@@ -248,16 +208,39 @@
             align-items: center;
             gap: 8px;
             font-size: 0.85rem;
-            color: #ff4d4d;
+            color: #ffffff;
             font-weight: 500;
+            margin-bottom: 10px;
         }
 
         .drawer-user-email svg {
             width: 16px;
             height: 16px;
-            stroke: currentColor;
+            stroke: var(--text-muted);
             fill: none;
             stroke-width: 2;
+        }
+
+        .logout-menu-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid var(--border-subtle);
+            padding: 7px 12px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logout-menu-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--text-muted);
         }
 
         .drawer-body {
@@ -270,7 +253,7 @@
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #ff3333;
+            color: var(--text-muted);
             margin: 18px 0 8px 0;
             font-weight: 700;
         }
@@ -290,7 +273,7 @@
         }
 
         .drawer-link-item:hover {
-            background: rgba(255, 26, 26, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             color: #fff;
         }
 
@@ -339,7 +322,7 @@
             line-height: 1.5;
         }
 
-        /* MÓDULO DE ACCIÓN ESTILO CARD DE ADMIN */
+        /* MÓDULO DE ACCIÓN PROFESIONAL */
         .tactical-action-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -365,21 +348,21 @@
         }
 
         .tactical-action-module:hover {
-            border-color: #ff1a1a;
-            box-shadow: 0 6px 15px rgba(255, 0, 0, 0.2);
+            border-color: var(--text-muted);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
             transform: translateY(-2px);
         }
 
         .module-icon-box {
             width: 50px;
             height: 50px;
-            background: rgba(255, 26, 26, 0.1);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #ff3333;
+            color: #ffffff;
             flex-shrink: 0;
         }
 
@@ -394,7 +377,7 @@
         .module-content h3 {
             font-size: 1.15rem;
             font-weight: 600;
-            color: #ff3333;
+            color: #ffffff;
             margin-bottom: 6px;
         }
 
@@ -472,7 +455,7 @@
         }
 
         .modal-header h3 {
-            color: #ff3333;
+            color: #ffffff;
             font-size: 1.1rem;
             font-weight: 600;
         }
@@ -526,8 +509,8 @@
             position: absolute;
             width: 80%;
             height: 2px;
-            background: #ff1a1a;
-            box-shadow: 0 0 10px #ff1a1a, 0 0 20px #ff1a1a;
+            background: var(--red-alertix);
+            box-shadow: 0 0 10px var(--red-alertix), 0 0 20px var(--red-alertix);
             animation: scanLaserMove 1.5s ease-in-out infinite alternate;
         }
 
@@ -551,8 +534,8 @@
         .spinner-ring {
             width: 40px;
             height: 40px;
-            border: 3px solid rgba(255, 26, 26, 0.2);
-            border-top-color: #ff1a1a;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #ffffff;
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
             margin: 0 auto 12px auto;
@@ -575,14 +558,14 @@
         .error-icon-box {
             width: 48px;
             height: 48px;
-            background: rgba(255, 26, 26, 0.1);
-            border: 1px solid #ff1a1a;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 12px auto;
-            color: #ff1a1a;
+            color: #ffffff;
         }
 
         .error-icon-box svg {
@@ -625,7 +608,7 @@
             width: 100%;
             padding: 10px 12px;
             background: #1a1a1a;
-            border: 1px solid #400000;
+            border: 1px solid var(--border-subtle);
             color: white;
             border-radius: 6px;
             font-size: 0.95rem;
@@ -634,8 +617,7 @@
 
         .action-input:focus {
             outline: none;
-            border-color: #ff1a1a;
-            box-shadow: 0 0 8px rgba(255, 26, 26, 0.3);
+            border-color: var(--text-muted);
         }
 
         .modal-footer {
@@ -647,25 +629,41 @@
             background: #0d0d12;
         }
 
-        .action-btn {
-            background: linear-gradient(135deg, #cc0000, #800000);
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.05);
             color: white;
+            border: 1px solid var(--border-subtle);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .action-btn {
+            background: #ffffff;
+            color: #000000;
             border: none;
             padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
             font-size: 0.88rem;
+            transition: all 0.2s;
         }
 
         .action-btn:hover {
-            background: linear-gradient(135deg, #ff1a1a, #cc0000);
+            background: #e0e0e0;
         }
     </style>
 </head>
 <body>
 
-    <!-- HEADER IDÉNTICO A TUS CAPTURAS -->
+    <!-- HEADER LIMPIO Y PROFESIONAL -->
     <header>
         <div class="header-left">
             <button class="hamburger-btn" onclick="window.toggleDrawer()" title="Abrir Menú de Navegación">
@@ -679,14 +677,14 @@
             </div>
         </div>
         <div class="header-right">
-            <button class="notification-icon-btn" title="Notificaciones">
-                <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-            </button>
-            <a href="login.html" class="logout-btn" onclick="sessionStorage.clear()">Cerrar Sesión</a>
+            <div class="header-status-badge">
+                <span style="width:6px; height:6px; background:var(--green-active); border-radius:50%;"></span>
+                Sistema Activo
+            </div>
         </div>
     </header>
 
-    <!-- DRAWER LATERAL / MENÚ HAMBURGUESA SINCRONIZADO -->
+    <!-- DRAWER LATERAL / MENÚ HAMBURGUESA -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="window.toggleDrawer()">
         <div class="drawer-container" onclick="event.stopPropagation()">
             <div class="drawer-header">
@@ -700,6 +698,7 @@
                     <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                     <span id="drawerUserEmail">alertixsupport@gmail.com</span>
                 </div>
+                <a href="login.html" class="logout-menu-btn" onclick="sessionStorage.clear()">Cerrar Sesión</a>
             </div>
             
             <div class="drawer-body" id="drawerMenuContainer">
@@ -816,7 +815,7 @@
         let tarjetaIdDetectada = null;
         let isScanningActive = false;
 
-        // CARGAR MENÚ DESDE FIREBASE (IGUAL QUE EN LAS CAPTURAS)
+        // CARGAR MENÚ DESDE FIREBASE
         function escucharMenuHamburguesa() {
             onSnapshot(collection(db, "menuvendedores"), (snapshot) => {
                 const container = document.getElementById("drawerMenuContainer");
