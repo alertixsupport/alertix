@@ -39,7 +39,6 @@
             touch-action: manipulation;
         }
 
-        /* HEADER FIX MOBILE */
         header {
             position: fixed;
             top: 0;
@@ -174,7 +173,6 @@
             main { padding: 36px 32px; }
         }
 
-        /* BARRA DE CONTROLES Y BUSQUEDA */
         .controls-row {
             display: flex;
             gap: 10px;
@@ -187,7 +185,6 @@
             flex: 1;
         }
 
-        /* font-size: 16px evita zoom automático en dispositivos móviles */
         .search-box input {
             width: 100%;
             background: var(--bg-surface);
@@ -219,7 +216,6 @@
             stroke: var(--text-muted);
         }
 
-        /* BOTON E ICONO PROVINCIAS CUSTOM DROPDOWN */
         .provincia-dropdown-wrapper {
             position: relative;
         }
@@ -254,7 +250,6 @@
             flex-shrink: 0;
         }
 
-        /* DROPDOWN MENU PERSONALIZADO */
         .provincia-menu-custom {
             position: absolute;
             top: 50px;
@@ -306,58 +301,62 @@
             color: var(--red-primary);
         }
 
-        /* GRID Y CARDS PROFESIONALES */
+        /* --- CARDS EMPRESARIALES ULTRA COMPACTAS DE ALTO NIVEL --- */
         .vendedores-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
+            gap: 14px;
         }
 
         @media(min-width: 768px) {
             .vendedores-grid {
-                grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-                gap: 20px;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 18px;
             }
         }
 
         .vendedor-card {
-            background: var(--bg-surface);
-            backdrop-filter: blur(12px);
+            background: linear-gradient(180deg, rgba(22, 22, 28, 0.9) 0%, rgba(12, 12, 16, 0.95) 100%);
             border: 1px solid var(--border-subtle);
-            border-radius: 14px;
-            padding: 18px 20px;
+            border-top: 2px solid rgba(220, 20, 60, 0.6); /* Detalle de acento superior estilo enterprise */
+            border-radius: 12px;
+            padding: 16px 18px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            gap: 14px;
             transition: all 0.25s ease;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
         }
 
         .vendedor-card:hover {
             transform: translateY(-2px);
-            border-color: rgba(220, 20, 60, 0.35);
+            border-color: rgba(220, 20, 60, 0.45);
+            box-shadow: 0 10px 30px rgba(220, 20, 60, 0.15);
         }
 
         .card-top {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 14px;
+            align-items: center;
+        }
+
+        .vendedor-info-area {
+            min-width: 0;
         }
 
         .vendedor-name {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: #fff;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 200px;
         }
 
         .vendedor-provincia {
-            font-size: 0.76rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             display: flex;
             align-items: center;
@@ -365,12 +364,12 @@
         }
 
         .visor-btn {
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-subtle);
             color: var(--text-main);
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -387,44 +386,45 @@
         }
 
         .visor-btn svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             stroke: currentColor;
             fill: none;
             stroke-width: 2;
         }
 
-        .card-metrics {
-            background: rgba(10, 10, 14, 0.6);
-            border: 1px solid var(--border-subtle);
-            border-radius: 10px;
-            padding: 12px 14px;
+        .card-metrics-row {
+            background: rgba(10, 10, 13, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            padding: 10px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .metric-label {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             color: var(--text-muted);
         }
 
         .metric-number {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: #fff;
+            line-height: 1.1;
         }
 
-        /* ANIMACION DE TITILEO LENTO HILIGHT VERDE */
+        /* ANIMACIÓN TITILEO LENTO VERDE */
         .active-status-badge {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--green-active);
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             animation: pulseGlow 2.5s ease-in-out infinite;
         }
 
@@ -439,7 +439,7 @@
             }
         }
 
-        /* MODALES Y RESPONSIVE WIZARD */
+        /* MODALES Y ESTILOS WIZARD */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -561,7 +561,6 @@
             letter-spacing: 0.8px;
         }
 
-        /* font-size: 16px para evitar auto-zoom iOS */
         .form-control {
             width: 100%;
             background: rgba(10, 10, 14, 0.8);
@@ -692,7 +691,6 @@
     </header>
 
     <main>
-        <!-- BUSCADOR Y DROPDOWN CON ICONO SVG SOLICITADO -->
         <div class="controls-row">
             <div class="search-box">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -707,7 +705,6 @@
                     <span id="selectedProvText">Todas</span>
                 </button>
 
-                <!-- Menú desplegable personalizado estilizado -->
                 <div class="provincia-menu-custom" id="provinciaMenuCustom">
                     <!-- Se llena dinámicamente -->
                 </div>
@@ -719,7 +716,7 @@
         </div>
     </main>
 
-    <!-- Modal Paso a Paso (Wizard) -->
+    <!-- Modal Wizard -->
     <div class="modal-overlay" id="wizardModal">
         <div class="modal-container">
             <div class="modal-header">
@@ -738,7 +735,6 @@
                 <form id="vendedorForm" onsubmit="event.preventDefault();">
                     <input type="hidden" id="editVendorId" value="">
 
-                    <!-- PASO 1 -->
                     <div class="wizard-step active" id="step-1">
                         <div class="form-group">
                             <label>Nombre y Apellido</label>
@@ -780,7 +776,6 @@
                         </div>
                     </div>
 
-                    <!-- PASO 2 -->
                     <div class="wizard-step" id="step-2">
                         <div class="form-group">
                             <label>WhatsApp</label>
@@ -796,7 +791,6 @@
                         </div>
                     </div>
 
-                    <!-- PASO 3 -->
                     <div class="wizard-step" id="step-3">
                         <div class="form-group">
                             <label>Usuario Asignado (Login)</label>
@@ -808,7 +802,6 @@
                         </div>
                     </div>
 
-                    <!-- CARGA DE 3 SEGUNDOS -->
                     <div class="wizard-step" id="loading-screen">
                         <div class="spinner-ring"></div>
                         <h4 style="color: #fff; margin-bottom: 6px;">Registrando Vendedor Oficialmente...</h4>
@@ -854,7 +847,6 @@
         let ventasCache = {};
         let provinciaSeleccionadaFiltro = "TODAS";
 
-        // --- 1. TIEMPO REAL CON FIRESTORE ---
         function inicializarDatosEnTiempoReal() {
             onSnapshot(collection(db, "ventasvendedores"), (snapVentas) => {
                 ventasCache = {};
@@ -881,7 +873,6 @@
             });
         }
 
-        // Carga rápida instantánea desde caché
         const cached = sessionStorage.getItem("alertix_vendedores_cache");
         if (cached) {
             try {
@@ -903,7 +894,6 @@
             return `Hace ${diffMeses} ${diffMeses === 1 ? 'mes' : 'meses'}`;
         }
 
-        // --- 2. RENDERIZADO DE VENDEDORES CON ANIMACION DE TITILEO ---
         function renderizarVendedores(lista) {
             const grid = document.getElementById("vendedoresGrid");
             const busqueda = document.getElementById("searchInput").value.toLowerCase();
@@ -923,23 +913,21 @@
                 const totalVentas = ventasCache[v.id] || ventasCache[v.usuarioLogin] || 0;
                 html += `
                     <div class="vendedor-card">
-                        <div>
-                            <div class="card-top">
-                                <div>
-                                    <div class="vendedor-name">${v.nombre}</div>
-                                    <div class="vendedor-provincia">
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                        ${v.provincia}
-                                    </div>
+                        <div class="card-top">
+                            <div class="vendedor-info-area">
+                                <div class="vendedor-name">${v.nombre}</div>
+                                <div class="vendedor-provincia">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                    ${v.provincia}
                                 </div>
-                                <button class="visor-btn" onclick="window.abrirVisor('${v.id}')" title="Ver detalles y antigüedad">
-                                    <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                </button>
                             </div>
+                            <button class="visor-btn" onclick="window.abrirVisor('${v.id}')" title="Ver detalles y antigüedad">
+                                <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
                         </div>
-                        <div class="card-metrics">
+                        <div class="card-metrics-row">
                             <div>
-                                <span class="metric-label">Ventas Totales</span>
+                                <span class="metric-label">Ventas</span>
                                 <div class="metric-number">${totalVentas}</div>
                             </div>
                             <span class="active-status-badge">● Activo</span>
@@ -950,7 +938,6 @@
             grid.innerHTML = html;
         }
 
-        // --- 3. MENÚ DESPLEGABLE PERSONALIZADO PARA PROVINCIAS CON ICONO ---
         function actualizarMenuDropdownProvincias(lista) {
             const menuEl = document.getElementById("provinciaMenuCustom");
             const conteoProv = {};
@@ -993,7 +980,6 @@
             renderizarVendedores(vendedoresCache);
         };
 
-        // Cerrar dropdown al hacer clic fuera
         document.addEventListener("click", (e) => {
             const wrapper = document.querySelector(".provincia-dropdown-wrapper");
             if (wrapper && !wrapper.contains(e.target)) {
@@ -1006,7 +992,6 @@
             renderizarVendedores(vendedoresCache);
         };
 
-        // --- 4. WIZARD PASO A PASO ---
         window.abrirWizard = function(isEdit = false, vendorData = null) {
             currentStep = 1;
             document.getElementById("vendedorForm").reset();
@@ -1134,7 +1119,6 @@
             }, 3000);
         }
 
-        // --- 5. VISOR DETALLADO ---
         window.abrirVisor = function(id) {
             const v = vendedoresCache.find(x => x.id === id);
             if (!v) return;
