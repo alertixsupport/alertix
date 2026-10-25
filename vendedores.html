@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Alertix - Gestión de Vendedores</title>
     <style>
         :root {
@@ -14,6 +14,7 @@
             --red-glow: rgba(220, 20, 60, 0.35);
             --text-main: #f1f1f5;
             --text-muted: #8a8a9e;
+            --green-active: #34d399;
         }
 
         * {
@@ -21,6 +22,7 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -34,8 +36,10 @@
             flex-direction: column;
             padding-top: 75px;
             overflow-x: hidden;
+            touch-action: manipulation;
         }
 
+        /* HEADER FIX MOBILE */
         header {
             position: fixed;
             top: 0;
@@ -43,10 +47,10 @@
             width: 100%;
             height: 75px;
             z-index: 1000;
-            background: rgba(10, 10, 14, 0.9);
+            background: rgba(10, 10, 14, 0.92);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-subtle);
-            padding: 0 20px;
+            padding: 0 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -60,14 +64,14 @@
         .header-left {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
 
         .back-btn {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-subtle);
             color: var(--text-main);
-            padding: 8px 14px;
+            padding: 8px 12px;
             border-radius: 8px;
             cursor: pointer;
             font-size: 0.8rem;
@@ -100,7 +104,7 @@
         }
 
         .brand-title {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: 700;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -112,20 +116,20 @@
         .header-right {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
 
         .counter-badge-header {
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-subtle);
-            padding: 7px 14px;
+            padding: 7px 12px;
             border-radius: 8px;
             display: none;
         }
 
-        @media(min-width: 768px) {
+        @media(min-width: 850px) {
             .counter-badge-header { display: block; }
         }
 
@@ -137,16 +141,20 @@
             background: linear-gradient(180deg, rgba(220, 20, 60, 0.9) 0%, rgba(140, 0, 30, 1) 100%);
             border: 1px solid rgba(255, 50, 50, 0.4);
             color: white;
-            padding: 9px 18px;
+            padding: 8px 14px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.84rem;
+            font-size: 0.8rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             transition: all 0.25s ease;
             box-shadow: 0 4px 15px var(--red-glow);
+        }
+
+        @media(min-width: 768px) {
+            .register-btn { padding: 9px 18px; font-size: 0.84rem; gap: 8px; }
         }
 
         .register-btn:hover {
@@ -156,46 +164,43 @@
 
         main {
             flex: 1;
-            padding: 24px 16px;
+            padding: 20px 14px;
             max-width: 1280px;
             margin: 0 auto;
             width: 100%;
         }
 
         @media(min-width: 768px) {
-            main { padding: 40px 32px; }
+            main { padding: 36px 32px; }
         }
 
+        /* BARRA DE CONTROLES Y BUSQUEDA */
         .controls-row {
             display: flex;
-            flex-direction: column;
-            gap: 14px;
-            margin-bottom: 24px;
-        }
-
-        @media(min-width: 768px) {
-            .controls-row {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
         }
 
         .search-box {
             position: relative;
             flex: 1;
-            max-width: 450px;
         }
 
+        /* font-size: 16px evita zoom automático en dispositivos móviles */
         .search-box input {
             width: 100%;
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
             border-radius: 10px;
-            padding: 12px 16px 12px 42px;
+            padding: 11px 16px 11px 40px;
             color: #fff;
-            font-size: 0.9rem;
+            font-size: 16px;
             transition: all 0.25s;
+        }
+
+        @media(min-width: 768px) {
+            .search-box input { font-size: 0.9rem; }
         }
 
         .search-box input:focus {
@@ -206,7 +211,7 @@
 
         .search-box svg {
             position: absolute;
-            left: 14px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
             width: 18px;
@@ -214,39 +219,105 @@
             stroke: var(--text-muted);
         }
 
-        /* Selector de Provincia Profesional */
-        .filter-select-wrapper {
+        /* BOTON E ICONO PROVINCIAS CUSTOM DROPDOWN */
+        .provincia-dropdown-wrapper {
             position: relative;
-            min-width: 260px;
         }
 
-        .filter-select {
-            width: 100%;
+        .btn-provincia-icon {
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            height: 44px;
+            padding: 0 14px;
             border-radius: 10px;
-            padding: 12px 16px;
-            color: #fff;
-            font-size: 0.9rem;
-            appearance: none;
             cursor: pointer;
-            transition: all 0.25s;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a9e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            background-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+            font-size: 0.85rem;
+            font-weight: 500;
+            white-space: nowrap;
         }
 
-        .filter-select:focus {
-            outline: none;
+        .btn-provincia-icon:hover, .btn-provincia-icon.active {
             border-color: var(--red-primary);
+            background: rgba(220, 20, 60, 0.12);
             box-shadow: 0 0 12px var(--red-glow);
         }
 
+        .btn-provincia-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--red-primary);
+            flex-shrink: 0;
+        }
+
+        /* DROPDOWN MENU PERSONALIZADO */
+        .provincia-menu-custom {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 260px;
+            max-height: 320px;
+            background: #0d0d12;
+            border: 1px solid var(--border-accent);
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.95), 0 0 15px var(--red-glow);
+            z-index: 1500;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 6px;
+        }
+
+        .provincia-menu-custom.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .provincia-option-item {
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-size: 0.84rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.15s ease;
+        }
+
+        .provincia-option-item:hover, .provincia-option-item.selected {
+            background: rgba(220, 20, 60, 0.15);
+            color: #fff;
+        }
+
+        .provincia-option-item span.count-badge {
+            background: rgba(255,255,255,0.06);
+            padding: 2px 7px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--red-primary);
+        }
+
+        /* GRID Y CARDS PROFESIONALES */
         .vendedores-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        @media(min-width: 768px) {
+            .vendedores-grid {
+                grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+                gap: 20px;
+            }
         }
 
         .vendedor-card {
@@ -254,35 +325,39 @@
             backdrop-filter: blur(12px);
             border: 1px solid var(--border-subtle);
             border-radius: 14px;
-            padding: 22px;
+            padding: 18px 20px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             transition: all 0.25s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
         }
 
         .vendedor-card:hover {
             transform: translateY(-2px);
-            border-color: rgba(220, 20, 60, 0.3);
+            border-color: rgba(220, 20, 60, 0.35);
         }
 
         .card-top {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .vendedor-name {
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #fff;
             margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
         }
 
         .vendedor-provincia {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             color: var(--text-muted);
             display: flex;
             align-items: center;
@@ -293,14 +368,15 @@
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border-subtle);
             color: var(--text-main);
-            width: 34px;
-            height: 34px;
+            width: 36px;
+            height: 36px;
             border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
 
         .visor-btn:hover {
@@ -311,8 +387,8 @@
         }
 
         .visor-btn svg {
-            width: 17px;
-            height: 17px;
+            width: 18px;
+            height: 18px;
             stroke: currentColor;
             fill: none;
             stroke-width: 2;
@@ -322,29 +398,52 @@
             background: rgba(10, 10, 14, 0.6);
             border: 1px solid var(--border-subtle);
             border-radius: 10px;
-            padding: 14px;
+            padding: 12px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .metric-label {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             color: var(--text-muted);
         }
 
         .metric-number {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: #fff;
         }
 
+        /* ANIMACION DE TITILEO LENTO HILIGHT VERDE */
+        .active-status-badge {
+            font-size: 0.75rem;
+            color: var(--green-active);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            animation: pulseGlow 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                opacity: 1;
+                filter: drop-shadow(0 0 2px rgba(52, 211, 153, 0.3));
+            }
+            50% {
+                opacity: 0.35;
+                filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.8));
+            }
+        }
+
+        /* MODALES Y RESPONSIVE WIZARD */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.82);
             backdrop-filter: blur(8px);
             display: flex;
             justify-content: center;
@@ -353,7 +452,7 @@
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            padding: 16px;
+            padding: 14px;
         }
 
         .modal-overlay.open {
@@ -366,7 +465,7 @@
             border: 1px solid var(--border-accent);
             border-radius: 16px;
             width: 100%;
-            max-width: 540px;
+            max-width: 520px;
             box-shadow: 0 25px 60px rgba(0,0,0,0.95), 0 0 25px var(--red-glow);
             transform: scale(0.95);
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -380,7 +479,7 @@
         }
 
         .modal-header {
-            padding: 18px 24px;
+            padding: 16px 20px;
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
             justify-content: space-between;
@@ -390,7 +489,7 @@
 
         .modal-header h3 {
             color: #fff;
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 600;
         }
 
@@ -410,7 +509,7 @@
         }
 
         .modal-body {
-            padding: 24px;
+            padding: 20px;
             overflow-y: auto;
             max-height: 70vh;
         }
@@ -432,7 +531,7 @@
         .wizard-progress {
             display: flex;
             gap: 6px;
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         .progress-dot {
@@ -454,7 +553,7 @@
 
         .form-group label {
             display: block;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-muted);
             margin-bottom: 6px;
@@ -462,15 +561,20 @@
             letter-spacing: 0.8px;
         }
 
+        /* font-size: 16px para evitar auto-zoom iOS */
         .form-control {
             width: 100%;
             background: rgba(10, 10, 14, 0.8);
             border: 1px solid var(--border-subtle);
             border-radius: 9px;
-            padding: 12px 16px;
+            padding: 12px 14px;
             color: #fff;
-            font-size: 0.9rem;
+            font-size: 16px;
             transition: all 0.25s;
+        }
+
+        @media(min-width: 768px) {
+            .form-control { font-size: 0.9rem; }
         }
 
         .form-control:focus {
@@ -488,7 +592,7 @@
         }
 
         .modal-footer {
-            padding: 16px 24px;
+            padding: 14px 20px;
             border-top: 1px solid var(--border-subtle);
             display: flex;
             justify-content: space-between;
@@ -500,11 +604,11 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-subtle);
             color: var(--text-main);
-            padding: 10px 20px;
+            padding: 10px 18px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             transition: all 0.2s;
         }
 
@@ -523,7 +627,7 @@
         #loading-screen {
             display: none;
             text-align: center;
-            padding: 30px 0;
+            padding: 24px 0;
         }
 
         #loading-screen.active {
@@ -531,13 +635,13 @@
         }
 
         .spinner-ring {
-            width: 50px;
-            height: 50px;
+            width: 46px;
+            height: 46px;
             border: 3px solid rgba(220, 20, 60, 0.2);
             border-top-color: var(--red-primary);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin: 0 auto 20px auto;
+            margin: 0 auto 16px auto;
             box-shadow: 0 0 15px var(--red-glow);
         }
 
@@ -550,7 +654,7 @@
             justify-content: space-between;
             padding: 10px 0;
             border-bottom: 1px solid var(--border-subtle);
-            font-size: 0.88rem;
+            font-size: 0.85rem;
         }
 
         .detail-row span:first-child {
@@ -588,26 +692,34 @@
     </header>
 
     <main>
+        <!-- BUSCADOR Y DROPDOWN CON ICONO SVG SOLICITADO -->
         <div class="controls-row">
             <div class="search-box">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" id="searchInput" placeholder="Buscar por nombre, usuario o provincia..." oninput="window.filtrarVendedores()">
+                <input type="text" id="searchInput" placeholder="Buscar vendedor, usuario o provincia..." oninput="window.filtrarVendedores()">
             </div>
             
-            <!-- Selector Desplegable de Provincias con conteos -->
-            <div class="filter-select-wrapper">
-                <select id="provinciaFilterSelect" class="filter-select" onchange="window.cambiarFiltroProvincia(this.value)">
-                    <option value="TODAS">Seleccionar provincia (Todas)</option>
-                </select>
+            <div class="provincia-dropdown-wrapper">
+                <button class="btn-provincia-icon" id="btnDropdownProvincia" onclick="window.toggleProvinciaMenu()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.01.216 1.49l-.51.766a2.25 2.25 0 0 1-1.161.886l-.143.048a1.107 1.107 0 0 0-.57 1.664c.369.555.169 1.307-.427 1.605L9 13.125l.423 1.059a.956.956 0 0 1-1.652.928l-.679-.906a1.125 1.125 0 0 0-1.906.172L4.5 15.75l-.612.153M12.75 3.031a9 9 0 0 0-8.862 12.872M12.75 3.031a9 9 0 0 1 6.69 14.036m0 0-.177-.529A2.25 2.25 0 0 0 17.128 15H16.5l-.324-.324a1.453 1.453 0 0 0-2.328.377l-.036.073a1.586 1.586 0 0 1-.982.816l-.99.282c-.55.157-.894.702-.8 1.267l.073.438c.08.474.49.821.97.821.846 0 1.598.542 1.865 1.345l.215.643m5.276-3.67a9.012 9.012 0 0 1-5.276 3.67m0 0a9 9 0 0 1-10.275-4.835M15.75 9c0 .896-.393 1.7-1.016 2.25" />
+                    </svg>
+                    <span id="selectedProvText">Todas</span>
+                </button>
+
+                <!-- Menú desplegable personalizado estilizado -->
+                <div class="provincia-menu-custom" id="provinciaMenuCustom">
+                    <!-- Se llena dinámicamente -->
+                </div>
             </div>
         </div>
 
         <div class="vendedores-grid" id="vendedoresGrid">
-            <p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 40px;">Cargando vendedores oficiales...</p>
+            <p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 40px;">Sincronizando lista de vendedores...</p>
         </div>
     </main>
 
-    <!-- Modal Paso a Paso (Wizard Registro) -->
+    <!-- Modal Paso a Paso (Wizard) -->
     <div class="modal-overlay" id="wizardModal">
         <div class="modal-container">
             <div class="modal-header">
@@ -696,7 +808,7 @@
                         </div>
                     </div>
 
-                    <!-- PANTALLA DE CARGA 3 SEGUNDOS -->
+                    <!-- CARGA DE 3 SEGUNDOS -->
                     <div class="wizard-step" id="loading-screen">
                         <div class="spinner-ring"></div>
                         <h4 style="color: #fff; margin-bottom: 6px;">Registrando Vendedor Oficialmente...</h4>
@@ -712,7 +824,7 @@
         </div>
     </div>
 
-    <!-- Modal Visor / Ojo & Edición de Vendedor -->
+    <!-- Modal Visor Detallado -->
     <div class="modal-overlay" id="visorModal">
         <div class="modal-container">
             <div class="modal-header">
@@ -732,7 +844,7 @@
 
     <script type="module">
         import { db } from "./app.js";
-        import { collection, addDoc, getDocs, doc, updateDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { collection, addDoc, doc, updateDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const userEmail = sessionStorage.getItem("alertix_user_email");
         if (!userEmail) window.location.href = "googleadmin.html";
@@ -742,6 +854,7 @@
         let ventasCache = {};
         let provinciaSeleccionadaFiltro = "TODAS";
 
+        // --- 1. TIEMPO REAL CON FIRESTORE ---
         function inicializarDatosEnTiempoReal() {
             onSnapshot(collection(db, "ventasvendedores"), (snapVentas) => {
                 ventasCache = {};
@@ -763,16 +876,17 @@
                 });
                 sessionStorage.setItem("alertix_vendedores_cache", JSON.stringify(vendedoresCache));
                 document.getElementById("header-counter").innerHTML = `Vendedores Registrados: <strong>${vendedoresCache.length}</strong>`;
-                actualizarSelectProvincias(vendedoresCache);
+                actualizarMenuDropdownProvincias(vendedoresCache);
                 renderizarVendedores(vendedoresCache);
             });
         }
 
+        // Carga rápida instantánea desde caché
         const cached = sessionStorage.getItem("alertix_vendedores_cache");
         if (cached) {
             try {
                 vendedoresCache = JSON.parse(cached);
-                actualizarSelectProvincias(vendedoresCache);
+                actualizarMenuDropdownProvincias(vendedoresCache);
                 renderizarVendedores(vendedoresCache);
             } catch(e) {}
         }
@@ -789,6 +903,7 @@
             return `Hace ${diffMeses} ${diffMeses === 1 ? 'mes' : 'meses'}`;
         }
 
+        // --- 2. RENDERIZADO DE VENDEDORES CON ANIMACION DE TITILEO ---
         function renderizarVendedores(lista) {
             const grid = document.getElementById("vendedoresGrid");
             const busqueda = document.getElementById("searchInput").value.toLowerCase();
@@ -827,7 +942,7 @@
                                 <span class="metric-label">Ventas Totales</span>
                                 <div class="metric-number">${totalVentas}</div>
                             </div>
-                            <span style="font-size:0.75rem; color:#34d399; font-weight:600;">● Activo</span>
+                            <span class="active-status-badge">● Activo</span>
                         </div>
                     </div>
                 `;
@@ -835,31 +950,63 @@
             grid.innerHTML = html;
         }
 
-        function actualizarSelectProvincias(lista) {
-            const selectEl = document.getElementById("provinciaFilterSelect");
+        // --- 3. MENÚ DESPLEGABLE PERSONALIZADO PARA PROVINCIAS CON ICONO ---
+        function actualizarMenuDropdownProvincias(lista) {
+            const menuEl = document.getElementById("provinciaMenuCustom");
             const conteoProv = {};
             lista.forEach(v => {
                 const p = v.provincia || "Otras";
                 conteoProv[p] = (conteoProv[p] || 0) + 1;
             });
 
-            let optionsHtml = `<option value="TODAS">Todas las provincias (${lista.length})</option>`;
+            let itemsHtml = `
+                <div class="provincia-option-item ${provinciaSeleccionadaFiltro === 'TODAS' ? 'selected' : ''}" onclick="window.seleccionarProvincia('TODAS', 'Todas')">
+                    <span>Todas las provincias</span>
+                    <span class="count-badge">${lista.length}</span>
+                </div>
+            `;
+
             for (const [prov, count] of Object.entries(conteoProv)) {
-                const selectedAttr = (provinciaSeleccionadaFiltro === prov) ? 'selected' : '';
-                optionsHtml += `<option value="${prov}" ${selectedAttr}>${prov} (${count})</option>`;
+                itemsHtml += `
+                    <div class="provincia-option-item ${provinciaSeleccionadaFiltro === prov ? 'selected' : ''}" onclick="window.seleccionarProvincia('${prov}', '${prov}')">
+                        <span>${prov}</span>
+                        <span class="count-badge">${count}</span>
+                    </div>
+                `;
             }
-            selectEl.innerHTML = optionsHtml;
+            menuEl.innerHTML = itemsHtml;
         }
 
-        window.cambiarFiltroProvincia = function(valor) {
+        window.toggleProvinciaMenu = function() {
+            const menu = document.getElementById("provinciaMenuCustom");
+            const btn = document.getElementById("btnDropdownProvincia");
+            menu.classList.toggle("open");
+            btn.classList.toggle("active");
+        };
+
+        window.seleccionarProvincia = function(valor, label) {
             provinciaSeleccionadaFiltro = valor;
+            document.getElementById("selectedProvText").innerText = label;
+            document.getElementById("provinciaMenuCustom").classList.remove("open");
+            document.getElementById("btnDropdownProvincia").classList.remove("active");
+            actualizarMenuDropdownProvincias(vendedoresCache);
             renderizarVendedores(vendedoresCache);
         };
+
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener("click", (e) => {
+            const wrapper = document.querySelector(".provincia-dropdown-wrapper");
+            if (wrapper && !wrapper.contains(e.target)) {
+                document.getElementById("provinciaMenuCustom").classList.remove("open");
+                document.getElementById("btnDropdownProvincia").classList.remove("active");
+            }
+        });
 
         window.filtrarVendedores = function() {
             renderizarVendedores(vendedoresCache);
         };
 
+        // --- 4. WIZARD PASO A PASO ---
         window.abrirWizard = function(isEdit = false, vendorData = null) {
             currentStep = 1;
             document.getElementById("vendedorForm").reset();
@@ -979,7 +1126,7 @@
                     window.cerrarWizard();
                 } catch (err) {
                     console.error("Error guardando vendedor:", err);
-                    alert("Error al registrar el vendedor en la base de datos.");
+                    alert("Error al registrar el vendedor.");
                     document.getElementById("wizardFooter").style.display = "flex";
                     document.getElementById("loading-screen").classList.remove("active");
                     document.getElementById("step-3").classList.add("active");
@@ -987,6 +1134,7 @@
             }, 3000);
         }
 
+        // --- 5. VISOR DETALLADO ---
         window.abrirVisor = function(id) {
             const v = vendedoresCache.find(x => x.id === id);
             if (!v) return;
