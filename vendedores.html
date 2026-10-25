@@ -214,30 +214,33 @@
             stroke: var(--text-muted);
         }
 
-        .filter-provincias {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 4px;
+        /* Selector de Provincia Profesional */
+        .filter-select-wrapper {
+            position: relative;
+            min-width: 260px;
         }
 
-        .filter-chip {
+        .filter-select {
+            width: 100%;
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
-            color: var(--text-muted);
-            padding: 8px 14px;
-            border-radius: 8px;
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 0.9rem;
+            appearance: none;
             cursor: pointer;
-            font-size: 0.78rem;
-            font-weight: 600;
-            white-space: nowrap;
-            transition: all 0.2s;
+            transition: all 0.25s;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a9e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 16px;
         }
 
-        .filter-chip.active, .filter-chip:hover {
-            background: rgba(220, 20, 60, 0.15);
+        .filter-select:focus {
+            outline: none;
             border-color: var(--red-primary);
-            color: #fff;
+            box-shadow: 0 0 12px var(--red-glow);
         }
 
         .vendedores-grid {
@@ -590,8 +593,12 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 <input type="text" id="searchInput" placeholder="Buscar por nombre, usuario o provincia..." oninput="window.filtrarVendedores()">
             </div>
-            <div class="filter-provincias" id="filterChipsContainer">
-                <div class="filter-chip active" onclick="window.filtrarPorProvincia('TODAS', this)">Todas (<span id="count-todas">0</span>)</div>
+            
+            <!-- Selector Desplegable de Provincias con conteos -->
+            <div class="filter-select-wrapper">
+                <select id="provinciaFilterSelect" class="filter-select" onchange="window.cambiarFiltroProvincia(this.value)">
+                    <option value="TODAS">Seleccionar provincia (Todas)</option>
+                </select>
             </div>
         </div>
 
@@ -756,7 +763,7 @@
                 });
                 sessionStorage.setItem("alertix_vendedores_cache", JSON.stringify(vendedoresCache));
                 document.getElementById("header-counter").innerHTML = `Vendedores Registrados: <strong>${vendedoresCache.length}</strong>`;
-                actualizarChipsProvincias(vendedoresCache);
+                actualizarSelectProvincias(vendedoresCache);
                 renderizarVendedores(vendedoresCache);
             });
         }
@@ -765,6 +772,7 @@
         if (cached) {
             try {
                 vendedoresCache = JSON.parse(cached);
+                actualizarSelectProvincias(vendedoresCache);
                 renderizarVendedores(vendedoresCache);
             } catch(e) {}
         }
@@ -827,27 +835,24 @@
             grid.innerHTML = html;
         }
 
-        function actualizarChipsProvincias(lista) {
-            const container = document.getElementById("filterChipsContainer");
+        function actualizarSelectProvincias(lista) {
+            const selectEl = document.getElementById("provinciaFilterSelect");
             const conteoProv = {};
             lista.forEach(v => {
                 const p = v.provincia || "Otras";
                 conteoProv[p] = (conteoProv[p] || 0) + 1;
             });
 
-            document.getElementById("count-todas").innerText = lista.length;
-            let chipsHtml = `<div class="filter-chip ${provinciaSeleccionadaFiltro === 'TODAS' ? 'active' : ''}" onclick="window.filtrarPorProvincia('TODAS', this)">Todas (${lista.length})</div>`;
-            
+            let optionsHtml = `<option value="TODAS">Todas las provincias (${lista.length})</option>`;
             for (const [prov, count] of Object.entries(conteoProv)) {
-                chipsHtml += `<div class="filter-chip ${provinciaSeleccionadaFiltro === prov ? 'active' : ''}" onclick="window.filtrarPorProvincia('${prov}', this)">${prov} (${count})</div>`;
+                const selectedAttr = (provinciaSeleccionadaFiltro === prov) ? 'selected' : '';
+                optionsHtml += `<option value="${prov}" ${selectedAttr}>${prov} (${count})</option>`;
             }
-            container.innerHTML = chipsHtml;
+            selectEl.innerHTML = optionsHtml;
         }
 
-        window.filtrarPorProvincia = function(prov, el) {
-            provinciaSeleccionadaFiltro = prov;
-            document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active"));
-            if(el) el.classList.add("active");
+        window.cambiarFiltroProvincia = function(valor) {
+            provinciaSeleccionadaFiltro = valor;
             renderizarVendedores(vendedoresCache);
         };
 
