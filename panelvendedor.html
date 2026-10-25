@@ -7,38 +7,35 @@
     <!-- Librería HTML5-QRCode Oficial -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <style>
-        :root {
-            --bg-base: #07070a;
-            --bg-surface: #0d0d12;
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-accent: rgba(220, 20, 60, 0.4);
-            --red-alertix: #dc143c;
-            --red-glow: rgba(220, 20, 60, 0.35);
-            --text-main: #f1f1f5;
-            --text-muted: #8a8a9e;
-            --green-active: #34d399;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-base: #050505;
+            --bg-surface: linear-gradient(145deg, #121212, #080808);
+            --border-subtle: #260000;
+            --border-accent: #4d0000;
+            --red-alertix: #ff1a1a;
+            --red-glow: rgba(255, 0, 0, 0.15);
+            --text-main: #ffffff;
+            --text-muted: #a6a6a6;
+            --green-active: #34d399;
         }
 
         body {
             background-color: var(--bg-base);
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(220, 20, 60, 0.08) 0%, transparent 60%),
-                linear-gradient(180deg, #09090d 0%, #030305 100%);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             padding-top: 75px;
             overflow-x: hidden;
-            animation: fadeInPage 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeInPage 0.35s ease forwards;
         }
 
         @keyframes fadeInPage {
@@ -46,7 +43,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* HEADER IDENTICO AL SITIO WEB */
+        /* HEADER IDÉNTICO AL DE TUS CAPTURAS */
         header {
             position: fixed;
             top: 0;
@@ -54,33 +51,32 @@
             width: 100%;
             height: 75px;
             z-index: 1000;
-            background: rgba(10, 10, 14, 0.92);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-subtle);
-            padding: 0 20px;
+            background: linear-gradient(90deg, #140000, #260000, #0a0a0a);
+            border-bottom: 2px solid var(--border-accent);
+            padding: 0 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 25px rgba(0,0,0,0.8);
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.15);
         }
 
         @media(min-width: 768px) {
-            header { padding: 0 32px; }
+            header { padding: 0 30px; }
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 15px;
         }
 
         .hamburger-btn {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border-subtle);
             color: var(--text-main);
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -89,9 +85,9 @@
         }
 
         .hamburger-btn:hover {
-            border-color: var(--border-accent);
-            background: rgba(220, 20, 60, 0.1);
-            box-shadow: 0 0 12px var(--red-glow);
+            border-color: var(--red-alertix);
+            background: rgba(255, 26, 26, 0.1);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
         }
 
         .hamburger-btn svg {
@@ -112,15 +108,17 @@
             height: 7px;
             background: var(--red-alertix);
             border-radius: 50%;
-            box-shadow: 0 0 10px var(--red-alertix);
+            box-shadow: 0 0 8px var(--red-alertix);
         }
 
-        .brand-title {
-            font-size: 1.15rem;
-            font-weight: 800;
-            letter-spacing: 2.5px;
+        .brand h2 {
+            background: linear-gradient(90deg, #ff1a1a, #cc0000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.6rem;
             text-transform: uppercase;
-            color: #fff;
+            letter-spacing: 1px;
+            font-weight: 700;
         }
 
         .header-right {
@@ -129,26 +127,60 @@
             gap: 12px;
         }
 
-        .header-status-badge {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            background: rgba(255, 255, 255, 0.03);
+        .notification-icon-btn {
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border-subtle);
-            padding: 7px 12px;
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
             border-radius: 8px;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            justify-content: center;
+            transition: all 0.25s ease;
         }
 
-        /* DRAWER LATERAL / MENÚ HAMBURGUESA */
+        .notification-icon-btn:hover {
+            border-color: var(--red-alertix);
+            background: rgba(255, 26, 26, 0.1);
+        }
+
+        .notification-icon-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #800000, #4d0000);
+            color: white;
+            border: 1px solid #ff1a1a;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #ff1a1a, #800000);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        /* DRAWER LATERAL / MENÚ HAMBURGUESA IDÉNTICO A TU IMAGEN */
         .drawer-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(6px);
             z-index: 2500;
             opacity: 0;
             visibility: hidden;
@@ -179,21 +211,21 @@
         .drawer-header {
             padding: 20px;
             border-bottom: 1px solid var(--border-subtle);
-            background: rgba(18, 18, 22, 0.7);
+            background: #121212;
         }
 
         .drawer-top-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .drawer-top-row h3 {
             font-size: 0.85rem;
             color: var(--text-muted);
             font-weight: 700;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
@@ -211,55 +243,21 @@
             stroke-width: 2;
         }
 
-        .user-profile-box {
-            background: rgba(220, 20, 60, 0.08);
-            border: 1px solid rgba(220, 20, 60, 0.3);
-            border-radius: 10px;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .user-profile-info span {
-            display: block;
-            font-size: 0.68rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .user-profile-info strong {
-            display: block;
-            font-size: 1.05rem;
-            color: #fff;
-            font-weight: 800;
-            margin-top: 2px;
-        }
-
-        .logout-menu-btn {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border-subtle);
-            color: #ff6b72;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            transition: all 0.2s;
+        .drawer-user-email {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 6px;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #ff4d4d;
+            font-weight: 500;
         }
 
-        .logout-menu-btn:hover {
-            background: rgba(220, 20, 60, 0.2);
-            border-color: var(--red-alertix);
-            color: #fff;
+        .drawer-user-email svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
         }
 
         .drawer-body {
@@ -269,10 +267,10 @@
         }
 
         .drawer-category-title {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: var(--red-alertix);
+            color: #ff3333;
             margin: 18px 0 8px 0;
             font-weight: 700;
         }
@@ -281,18 +279,18 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 11px 12px;
+            padding: 10px 12px;
             color: var(--text-muted);
             text-decoration: none;
-            border-radius: 8px;
-            font-size: 0.86rem;
+            border-radius: 6px;
+            font-size: 0.88rem;
             font-weight: 500;
             transition: all 0.2s;
             margin-bottom: 4px;
         }
 
         .drawer-link-item:hover {
-            background: rgba(220, 20, 60, 0.15);
+            background: rgba(255, 26, 26, 0.1);
             color: #fff;
         }
 
@@ -305,7 +303,7 @@
             stroke-width: 2;
         }
 
-        /* CONTENIDO PRINCIPAL CON EL ESTILO PROFESIONAL DEL SITIO */
+        /* CONTENIDO PRINCIPAL */
         main {
             flex: 1;
             padding: 40px 20px;
@@ -318,31 +316,30 @@
         }
 
         @media(min-width: 768px) {
-            main { padding: 60px 40px; }
+            main { padding: 60px 30px; }
         }
 
         .panel-hero-section {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 35px;
         }
 
         .panel-hero-section h2 {
-            font-size: 1.75rem;
-            font-weight: 800;
+            font-size: 1.6rem;
+            font-weight: 700;
             color: #fff;
-            letter-spacing: -0.02em;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .panel-hero-section p {
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
-            max-width: 550px;
+            max-width: 520px;
             margin: 0 auto;
             line-height: 1.5;
         }
 
-        /* MÓDULO PROFESIONAL DE ACCIÓN */
+        /* MÓDULO DE ACCIÓN ESTILO CARD DE ADMIN */
         .tactical-action-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -355,56 +352,54 @@
         .tactical-action-module {
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
-            border-left: 3px solid var(--red-alertix);
-            border-radius: 14px;
-            padding: 26px 24px;
+            border-radius: 10px;
+            padding: 25px;
             display: flex;
             align-items: center;
             gap: 20px;
             cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             position: relative;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .tactical-action-module:hover {
-            border-color: rgba(220, 20, 60, 0.5);
+            border-color: #ff1a1a;
+            box-shadow: 0 6px 15px rgba(255, 0, 0, 0.2);
             transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 20px var(--red-glow);
         }
 
         .module-icon-box {
-            width: 54px;
-            height: 54px;
-            background: rgba(220, 20, 60, 0.08);
-            border: 1px solid rgba(220, 20, 60, 0.3);
-            border-radius: 12px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 26, 26, 0.1);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--red-alertix);
+            color: #ff3333;
             flex-shrink: 0;
-            box-shadow: 0 0 15px var(--red-glow);
         }
 
         .module-icon-box svg {
-            width: 26px;
-            height: 26px;
+            width: 24px;
+            height: 24px;
             stroke: currentColor;
             fill: none;
-            stroke-width: 2.2;
+            stroke-width: 2;
         }
 
         .module-content h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 4px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #ff3333;
+            margin-bottom: 6px;
         }
 
         .module-content p {
-            font-size: 0.84rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
             line-height: 1.4;
         }
@@ -425,7 +420,7 @@
             height: 20px;
             stroke: currentColor;
             fill: none;
-            stroke-width: 2.5;
+            stroke-width: 2.2;
         }
 
         /* MODAL / ESCÁNER Y REGISTRO DE VENTA */
@@ -433,15 +428,15 @@
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(6px);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 3000;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            padding: 14px;
+            transition: all 0.3s ease;
+            padding: 15px;
         }
 
         .modal-overlay.open {
@@ -450,14 +445,14 @@
         }
 
         .modal-container {
-            background: #0f0f14;
-            border: 1px solid var(--border-accent);
-            border-radius: 16px;
+            background: #121212;
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
             width: 100%;
-            max-width: 500px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.95), 0 0 25px var(--red-glow);
+            max-width: 480px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
             transform: scale(0.95);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.3s ease;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -468,17 +463,17 @@
         }
 
         .modal-header {
-            padding: 16px 20px;
+            padding: 15px 20px;
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(18, 18, 22, 0.6);
+            background: #0d0d12;
         }
 
         .modal-header h3 {
-            color: #fff;
-            font-size: 1rem;
+            color: #ff3333;
+            font-size: 1.1rem;
             font-weight: 600;
         }
 
@@ -503,11 +498,11 @@
             max-height: 75vh;
         }
 
-        /* CONTENEDOR DE CÁMARA CON LÁSER TÁCTICO */
+        /* CONTENEDOR DE CÁMARA CON LÁSER */
         .scanner-wrapper-tactical {
             position: relative;
             width: 100%;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border-subtle);
         }
@@ -531,8 +526,8 @@
             position: absolute;
             width: 80%;
             height: 2px;
-            background: var(--red-alertix);
-            box-shadow: 0 0 15px var(--red-alertix), 0 0 30px var(--red-alertix);
+            background: #ff1a1a;
+            box-shadow: 0 0 10px #ff1a1a, 0 0 20px #ff1a1a;
             animation: scanLaserMove 1.5s ease-in-out infinite alternate;
         }
 
@@ -542,11 +537,11 @@
             100% { top: 85%; opacity: 0.4; }
         }
 
-        /* PANTALLA DE PROGRESO INSTANTÁNEA */
+        /* PANTALLA DE PROGRESO DE BÚSQUEDA */
         .scan-progress-screen {
             display: none;
             text-align: center;
-            padding: 24px 10px;
+            padding: 25px 10px;
         }
 
         .scan-progress-screen.active {
@@ -556,12 +551,11 @@
         .spinner-ring {
             width: 40px;
             height: 40px;
-            border: 3px solid rgba(220, 20, 60, 0.2);
-            border-top-color: var(--red-alertix);
+            border: 3px solid rgba(255, 26, 26, 0.2);
+            border-top-color: #ff1a1a;
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
             margin: 0 auto 12px auto;
-            box-shadow: 0 0 12px var(--red-glow);
         }
 
         @keyframes spin {
@@ -571,7 +565,7 @@
         .error-card-scan {
             display: none;
             text-align: center;
-            padding: 20px 10px;
+            padding: 15px 5px;
         }
 
         .error-card-scan.active {
@@ -579,43 +573,42 @@
         }
 
         .error-icon-box {
-            width: 52px;
-            height: 52px;
-            background: rgba(220, 20, 60, 0.15);
-            border: 1px solid var(--red-alertix);
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 26, 26, 0.1);
+            border: 1px solid #ff1a1a;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 14px auto;
-            color: var(--red-alertix);
-            box-shadow: 0 0 15px var(--red-glow);
+            margin: 0 auto 12px auto;
+            color: #ff1a1a;
         }
 
         .error-icon-box svg {
-            width: 26px;
-            height: 26px;
+            width: 24px;
+            height: 24px;
             stroke: currentColor;
             fill: none;
-            stroke-width: 2.2;
+            stroke-width: 2;
         }
 
         .error-msg-title {
             font-size: 1.05rem;
-            font-weight: 700;
+            font-weight: 600;
             color: #fff;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .error-msg-desc {
-            font-size: 0.84rem;
+            font-size: 0.88rem;
             color: var(--text-muted);
-            line-height: 1.5;
+            line-height: 1.4;
             margin-bottom: 20px;
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 15px;
         }
 
         .form-group label {
@@ -625,62 +618,54 @@
             color: var(--text-muted);
             margin-bottom: 6px;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.5px;
         }
 
-        .form-control {
+        .action-input {
             width: 100%;
-            background: rgba(10, 10, 14, 0.8);
-            border: 1px solid var(--border-subtle);
-            border-radius: 9px;
-            padding: 12px 14px;
-            color: #fff;
-            font-size: 16px;
-            transition: all 0.25s;
+            padding: 10px 12px;
+            background: #1a1a1a;
+            border: 1px solid #400000;
+            color: white;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
         }
 
-        .form-control:focus {
+        .action-input:focus {
             outline: none;
-            border-color: var(--red-alertix);
-            box-shadow: 0 0 12px var(--red-glow);
+            border-color: #ff1a1a;
+            box-shadow: 0 0 8px rgba(255, 26, 26, 0.3);
         }
 
         .modal-footer {
-            padding: 14px 20px;
+            padding: 12px 20px;
             border-top: 1px solid var(--border-subtle);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(18, 18, 22, 0.4);
+            background: #0d0d12;
         }
 
-        .btn-action {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-subtle);
-            color: var(--text-main);
-            padding: 10px 18px;
-            border-radius: 8px;
+        .action-btn {
+            background: linear-gradient(135deg, #cc0000, #800000);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.82rem;
-            transition: all 0.2s;
+            font-size: 0.88rem;
         }
 
-        .btn-action.primary {
-            background: linear-gradient(180deg, rgba(220, 20, 60, 0.9) 0%, rgba(140, 0, 30, 1) 100%);
-            border-color: rgba(255, 50, 50, 0.4);
-            color: #fff;
-            box-shadow: 0 4px 15px var(--red-glow);
-        }
-
-        .btn-action:hover {
-            border-color: var(--border-accent);
-            background: rgba(220, 20, 60, 0.1);
+        .action-btn:hover {
+            background: linear-gradient(135deg, #ff1a1a, #cc0000);
         }
     </style>
 </head>
 <body>
 
+    <!-- HEADER IDÉNTICO A TUS CAPTURAS -->
     <header>
         <div class="header-left">
             <button class="hamburger-btn" onclick="window.toggleDrawer()" title="Abrir Menú de Navegación">
@@ -688,18 +673,20 @@
             </button>
             <div class="brand-area">
                 <div class="brand-dot"></div>
-                <h1 class="brand-title">Alertix</h1>
+                <div class="brand">
+                    <h2>ALERTIX</h2>
+                </div>
             </div>
         </div>
         <div class="header-right">
-            <div class="header-status-badge">
-                <span style="width:6px; height:6px; background:var(--green-active); border-radius:50%; box-shadow:0 0 8px var(--green-active);"></span>
-                Sistema Activo
-            </div>
+            <button class="notification-icon-btn" title="Notificaciones">
+                <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            </button>
+            <a href="login.html" class="logout-btn" onclick="sessionStorage.clear()">Cerrar Sesión</a>
         </div>
     </header>
 
-    <!-- DRAWER LATERAL -->
+    <!-- DRAWER LATERAL / MENÚ HAMBURGUESA SINCRONIZADO -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="window.toggleDrawer()">
         <div class="drawer-container" onclick="event.stopPropagation()">
             <div class="drawer-header">
@@ -709,15 +696,9 @@
                         <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                 </div>
-                <div class="user-profile-box">
-                    <div class="user-profile-info">
-                        <span>Estas Aquí:</span>
-                        <strong id="drawerUserName">Damián Escobar</strong>
-                    </div>
-                    <a href="login.html" class="logout-menu-btn" onclick="sessionStorage.clear()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                        Cerrar Sesión
-                    </a>
+                <div class="drawer-user-email">
+                    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <span id="drawerUserEmail">alertixsupport@gmail.com</span>
                 </div>
             </div>
             
@@ -729,11 +710,11 @@
 
     <main>
         <div class="panel-hero-section">
-            <h2>Panel de Control Comercial</h2>
-            <p>Seleccione la operación táctica requerida para validación de tarjetas y registro en red.</p>
+            <h2>Panel de Control Vendedor</h2>
+            <p>Seleccione la operación requerida para la validación de tarjetas inteligentes en la red.</p>
         </div>
 
-        <!-- MÓDULO PROFESIONAL DE ACCIÓN -->
+        <!-- MÓDULO DE ACCIÓN -->
         <div class="tactical-action-grid">
             <div class="tactical-action-module" onclick="window.iniciarEscaneoQR()">
                 <div class="module-icon-box">
@@ -741,7 +722,7 @@
                 </div>
                 <div class="module-content">
                     <h3>Escanear QR y Registrar Venta</h3>
-                    <p>Activa el escáner láser de la cámara para validación estricta en `idtarjetas`.</p>
+                    <p>Activa el escáner láser de la cámara para la búsqueda activa en `idtarjetas`.</p>
                 </div>
                 <div class="module-arrow-icon">
                     <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
@@ -760,9 +741,9 @@
                 </button>
             </div>
             <div class="modal-body" id="modalBodyContent">
-                <!-- PASO 1: LECTOR QR CON LÁSER TÁCTICO -->
+                <!-- PASO 1: LECTOR QR CON LÁSER -->
                 <div id="stepScanner">
-                    <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 12px; text-align: center;">Enfoca el código QR. Detección instantánea.</p>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px; text-align: center;">Enfoca el código QR. Detección instantánea.</p>
                     <div class="scanner-wrapper-tactical">
                         <div class="scanner-laser-overlay">
                             <div class="laser-line"></div>
@@ -771,51 +752,51 @@
                     </div>
                 </div>
 
-                <!-- PASO 2: VERIFICACIÓN ULTRARRÁPIDA -->
+                <!-- PASO 2: VERIFICACIÓN -->
                 <div class="scan-progress-screen" id="scanProgressScreen">
                     <div class="spinner-ring"></div>
                     <h4 style="color: #fff; margin-bottom: 4px;">Validando Código QR...</h4>
-                    <p style="color: var(--text-muted); font-size: 0.8rem;" id="detectedIdText">Buscando en la base de datos...</p>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;" id="detectedIdText">Buscando en la base de datos...</p>
                 </div>
 
-                <!-- PASO ERROR: SI NO ESTÁ EN IDTARJETAS -->
+                <!-- PASO ERROR -->
                 <div class="error-card-scan" id="errorCardScan">
                     <div class="error-icon-box">
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                     </div>
                     <h4 class="error-msg-title">Tarjeta No Reconocida</h4>
                     <p class="error-msg-desc">Vuelve a intentarlo, esta tarjeta no es de ALERTIX o no contiene un ID adjuntado al sistema de la empresa.</p>
-                    <button class="btn-action primary" onclick="window.iniciarEscaneoQR()">Reintentar Escaneo</button>
+                    <button class="logout-btn" style="margin: 0 auto; display: block;" onclick="window.iniciarEscaneoQR()">Reintentar Escaneo</button>
                 </div>
 
-                <!-- PASO 3: FORMULARIO DE REGISTRO DE VENTA -->
+                <!-- PASO 3: FORMULARIO DE REGISTRO -->
                 <div id="stepForm" style="display: none;">
                     <div class="form-group">
                         <label>ID de Tarjeta Verificado</label>
-                        <input type="text" id="formTarjetaId" class="form-control" readonly style="color: var(--green-active); font-weight: 700;">
+                        <input type="text" id="formTarjetaId" class="action-input" readonly style="color: var(--green-active); font-weight: 700;">
                     </div>
                     <div class="form-group">
                         <label>Nombre del Cliente</label>
-                        <input type="text" id="clienteNombre" class="form-control" placeholder="Ej. Juan Carlos Pérez" required>
+                        <input type="text" id="clienteNombre" class="action-input" placeholder="Ej. Juan Carlos Pérez" required>
                     </div>
                     <div class="form-group">
                         <label>Ubicación Exacta</label>
-                        <input type="text" id="clienteUbicacion" class="form-control" placeholder="Ej. Av. Rivadavia 2450, CABA" required>
+                        <input type="text" id="clienteUbicacion" class="action-input" placeholder="Ej. Av. Rivadavia 2450, CABA" required>
                     </div>
                     <div class="form-group">
                         <label>Servicio Asignado</label>
-                        <input type="text" id="servicioAsignado" class="form-control" value="Tarjeta + Sistema de Alertas" readonly>
+                        <input type="text" id="servicioAsignado" class="action-input" value="Tarjeta + Sistema de Alertas" readonly>
                     </div>
                 </div>
             </div>
             <div class="modal-footer" id="modalFooter">
-                <button type="button" class="btn-action" onclick="window.cerrarModalVenta()">Cancelar</button>
-                <button type="button" class="btn-action primary" id="btnGuardarVenta" style="display: none;" onclick="window.confirmarRegistroVenta()">Registrar Venta Oficial</button>
+                <button type="button" class="logout-btn" onclick="window.cerrarModalVenta()">Cancelar</button>
+                <button type="button" class="action-btn" id="btnGuardarVenta" style="display: none;" onclick="window.confirmarRegistroVenta()">Registrar Venta Oficial</button>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT FIREBASE Y DETECCIÓN INSTANTÁNEA -->
+    <!-- SCRIPT FIREBASE Y MENÚ HAMBURGUESA DINÁMICO -->
     <script type="module">
         import { db } from "./app.js";
         import { collection, addDoc, getDocs, query, where, updateDoc, doc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -823,17 +804,19 @@
         const vendedorId = sessionStorage.getItem("alertix_vendedor_id");
         const vendedorNombre = sessionStorage.getItem("alertix_vendedor_nombre");
         const vendedorUsuario = sessionStorage.getItem("alertix_vendedor_usuario");
+        const userEmail = sessionStorage.getItem("alertix_user_email") || vendedorUsuario || "alertixsupport@gmail.com";
 
-        if (!vendedorId) {
+        if (!vendedorId && !userEmail) {
             window.location.href = "login.html";
         } else {
-            document.getElementById("drawerUserName").innerText = vendedorNombre || vendedorUsuario || "Damián Escobar";
+            document.getElementById("drawerUserEmail").innerText = userEmail;
         }
 
         let html5QrCode = null;
         let tarjetaIdDetectada = null;
         let isScanningActive = false;
 
+        // CARGAR MENÚ DESDE FIREBASE (IGUAL QUE EN LAS CAPTURAS)
         function escucharMenuHamburguesa() {
             onSnapshot(collection(db, "menuvendedores"), (snapshot) => {
                 const container = document.getElementById("drawerMenuContainer");
@@ -877,7 +860,6 @@
             document.getElementById("drawerOverlay").classList.toggle("open");
         };
 
-        // ESCANEO A VELOCIDAD MÁXIMA TURBO
         window.iniciarEscaneoQR = function() {
             document.getElementById("stepScanner").style.display = "block";
             document.getElementById("scanProgressScreen").classList.remove("active");
@@ -941,7 +923,6 @@
             }
         }
 
-        // VERIFICACIÓN DIRECTA Y VELOZ CONTRA FIREBASE
         async function verificarIdInstantaneo(qrText) {
             tarjetaIdDetectada = qrText.trim();
             document.getElementById("stepScanner").style.display = "none";
@@ -977,7 +958,6 @@
             document.getElementById("ventaModal").classList.remove("open");
         };
 
-        // CONFIRMAR Y REGISTRAR VENTA
         window.confirmarRegistroVenta = async function() {
             const clienteNombre = document.getElementById("clienteNombre").value.trim();
             const clienteUbicacion = document.getElementById("clienteUbicacion").value.trim();
