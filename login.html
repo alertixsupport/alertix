@@ -6,14 +6,14 @@
     <title>Alertix - Acceso de Vendedores</title>
     <style>
         :root {
-            --bg-base: #070709;
-            --bg-surface: rgba(18, 18, 22, 0.9);
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-accent: rgba(220, 20, 60, 0.4);
+            --bg-base: #050507;
+            --bg-surface: rgba(14, 14, 18, 0.95);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(220, 20, 60, 0.45);
             --red-primary: #dc143c;
-            --red-glow: rgba(220, 20, 60, 0.35);
-            --text-main: #f1f1f5;
-            --text-muted: #8a8a9e;
+            --red-glow: rgba(220, 20, 60, 0.4);
+            --text-main: #f4f4f8;
+            --text-muted: #828296;
             --green-active: #34d399;
         }
 
@@ -28,69 +28,64 @@
         body {
             background-color: var(--bg-base);
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(220, 20, 60, 0.12) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(140, 0, 30, 0.08) 0%, transparent 50%),
-                linear-gradient(180deg, #09090d 0%, #040406 100%);
+                radial-gradient(circle at 15% 15%, rgba(220, 20, 60, 0.14) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(20, 20, 30, 0.8) 0%, transparent 50%),
+                linear-gradient(180deg, #07070a 0%, #030305 100%);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 16px;
+            padding: 12px;
             overflow-x: hidden;
             animation: fadeInPage 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         @keyframes fadeInPage {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        body.page-exiting {
-            opacity: 0;
-            transform: translateY(-8px);
-            pointer-events: none;
-        }
-
-        /* CARD GRANDE SPLIT SCREEN (PC) Y VERTICAL (CELULAR) */
+        /* CARD PRINCIPAL SPLIT-SCREEN ENTERPRISE */
         .login-main-card {
             width: 100%;
-            max-width: 900px;
+            max-width: 880px;
             background: var(--bg-surface);
-            backdrop-filter: blur(25px);
+            backdrop-filter: blur(30px);
             border: 1px solid var(--border-subtle);
             border-radius: 20px;
-            box-shadow: 0 30px 70px rgba(0,0,0,0.9), 0 0 30px var(--red-glow);
+            box-shadow: 0 35px 80px rgba(0,0,0,0.95), 0 0 35px rgba(220, 20, 60, 0.18);
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
+            z-index: 10;
         }
 
         @media(min-width: 768px) {
             .login-main-card {
                 flex-direction: row;
-                min-height: 520px;
+                min-height: 500px;
             }
         }
 
-        /* MITAD IZQUIERDA: PRESENTACIÓN EMPRESARIAL */
+        /* MITAD IZQUIERDA: HERO INSTITUCIONAL */
         .login-hero-side {
-            background: linear-gradient(135deg, rgba(220, 20, 60, 0.12) 0%, rgba(10, 10, 14, 0.95) 100%);
+            background: linear-gradient(145deg, rgba(220, 20, 60, 0.1) 0%, rgba(8, 8, 12, 0.98) 100%);
             border-bottom: 1px solid var(--border-subtle);
-            padding: 36px 28px;
+            padding: 28px 22px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            position: relative;
         }
 
         @media(min-width: 768px) {
             .login-hero-side {
-                width: 45%;
+                width: 44%;
                 border-bottom: none;
                 border-right: 1px solid var(--border-subtle);
-                padding: 48px 36px;
+                padding: 42px 34px;
             }
         }
 
@@ -98,97 +93,97 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .brand-dot {
-            width: 9px;
-            height: 9px;
+            width: 8px;
+            height: 8px;
             background: var(--red-primary);
             border-radius: 50%;
-            box-shadow: 0 0 12px var(--red-primary);
+            box-shadow: 0 0 10px var(--red-primary);
         }
 
         .brand-title {
-            font-size: 1.35rem;
+            font-size: 1.25rem;
             font-weight: 800;
             letter-spacing: 3px;
             text-transform: uppercase;
-            background: linear-gradient(180deg, #ffffff 40%, #a0a0b0 100%);
+            background: linear-gradient(180deg, #ffffff 40%, #9090a0 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .hero-content h2 {
-            font-size: 1.45rem;
+            font-size: 1.35rem;
             font-weight: 700;
             color: #fff;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             line-height: 1.25;
         }
 
         .hero-content p {
-            font-size: 0.88rem;
+            font-size: 0.84rem;
             color: var(--text-muted);
             line-height: 1.5;
-            margin-bottom: 24px;
+            margin-bottom: 18px;
         }
 
         .badge-sector {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: rgba(220, 20, 60, 0.12);
-            border: 1px solid rgba(220, 20, 60, 0.3);
+            background: rgba(220, 20, 60, 0.1);
+            border: 1px solid rgba(220, 20, 60, 0.28);
             padding: 6px 12px;
             border-radius: 8px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 600;
-            color: #ff8090;
+            color: #ff7585;
             width: fit-content;
         }
 
         .hero-footer-note {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
-            letter-spacing: 0.5px;
-            margin-top: 20px;
+            letter-spacing: 0.4px;
+            margin-top: 14px;
         }
 
-        /* MITAD DERECHA: FORMULARIO DE LOGIN */
+        /* MITAD DERECHA: FORMULARIO */
         .login-form-side {
-            padding: 36px 28px;
+            padding: 28px 22px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             flex: 1;
-            background: rgba(12, 12, 16, 0.6);
+            background: rgba(10, 10, 14, 0.5);
         }
 
         @media(min-width: 768px) {
             .login-form-side {
-                padding: 48px 40px;
+                padding: 42px 36px;
             }
         }
 
         .form-header-title {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #fff;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         /* DETECCIÓN EN TIEMPO REAL DEL VENDEDOR */
         .vendor-detected-card {
-            background: rgba(15, 15, 22, 0.9);
-            border: 1px solid rgba(52, 211, 153, 0.35);
+            background: rgba(15, 15, 22, 0.92);
+            border: 1px solid rgba(52, 211, 153, 0.4);
             border-radius: 10px;
-            padding: 12px 14px;
-            margin-bottom: 18px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
             display: none;
             align-items: center;
             gap: 12px;
-            animation: slideDown 0.25s ease;
+            animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .vendor-detected-card.active {
@@ -196,13 +191,13 @@
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-6px); }
+            from { opacity: 0; transform: translateY(-8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .vendor-avatar {
-            width: 34px;
-            height: 34px;
+            width: 32px;
+            height: 32px;
             background: rgba(52, 211, 153, 0.15);
             border: 1px solid var(--green-active);
             border-radius: 50%;
@@ -211,51 +206,51 @@
             justify-content: center;
             color: var(--green-active);
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             flex-shrink: 0;
         }
 
         .vendor-info span {
             display: block;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.8px;
         }
 
         .vendor-info strong {
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             color: #fff;
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .form-group label {
             display: block;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 600;
             color: var(--text-muted);
-            margin-bottom: 6px;
+            margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 0.8px;
         }
 
-        /* font-size: 16px evita el zoom automático en celulares iOS y Android */
+        /* 16px previene zoom en iOS y Android */
         .form-control {
             width: 100%;
-            background: rgba(10, 10, 14, 0.85);
+            background: rgba(8, 8, 12, 0.9);
             border: 1px solid var(--border-subtle);
-            border-radius: 10px;
-            padding: 12px 14px;
+            border-radius: 9px;
+            padding: 11px 14px;
             color: #fff;
             font-size: 16px;
             transition: all 0.25s;
         }
 
         @media(min-width: 768px) {
-            .form-control { font-size: 0.88rem; }
+            .form-control { font-size: 0.86rem; }
         }
 
         .form-control:focus {
@@ -266,17 +261,17 @@
 
         .login-btn {
             width: 100%;
-            background: linear-gradient(180deg, rgba(220, 20, 60, 0.95) 0%, rgba(140, 0, 30, 1) 100%);
-            border: 1px solid rgba(255, 50, 50, 0.5);
+            background: linear-gradient(180deg, rgba(220, 20, 60, 0.95) 0%, rgba(130, 0, 28, 1) 100%);
+            border: 1px solid rgba(255, 50, 50, 0.45);
             color: white;
             padding: 12px;
-            border-radius: 10px;
+            border-radius: 9px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             transition: all 0.25s ease;
             box-shadow: 0 5px 18px var(--red-glow);
-            margin-top: 6px;
+            margin-top: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -285,13 +280,78 @@
 
         .login-btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 7px 22px rgba(220, 20, 60, 0.6);
+            box-shadow: 0 7px 22px rgba(220, 20, 60, 0.55);
         }
 
         .login-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
+        }
+
+        /* PANTALLA DE TRANSICIÓN INMERSIVA "Alertix - Tu seguridad aumenta" */
+        .splash-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #030305;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease;
+        }
+
+        .splash-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .splash-content {
+            text-align: center;
+            animation: scaleInSplash 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            padding: 20px;
+        }
+
+        @keyframes scaleInSplash {
+            from { transform: scale(0.92); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .splash-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--red-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--red-primary);
+            margin: 0 auto 16px auto;
+            animation: pulseSplashDot 1.5s infinite;
+        }
+
+        @keyframes pulseSplashDot {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px var(--red-primary); }
+            50% { transform: scale(1.35); box-shadow: 0 0 30px var(--red-primary); }
+        }
+
+        .splash-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .splash-subtitle {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #fff, #8a8a9e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         /* MODAL DE ERROR EMPRESARIAL */
@@ -320,10 +380,10 @@
             border: 1px solid rgba(220, 20, 60, 0.6);
             border-radius: 16px;
             width: 100%;
-            max-width: 380px;
-            padding: 28px 24px;
+            max-width: 370px;
+            padding: 26px 22px;
             text-align: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.95), 0 0 30px rgba(220, 20, 60, 0.4);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.95), 0 0 30px rgba(220, 20, 60, 0.35);
             transform: scale(0.9);
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -333,15 +393,15 @@
         }
 
         .error-icon-box {
-            width: 52px;
-            height: 52px;
+            width: 50px;
+            height: 50px;
             background: rgba(220, 20, 60, 0.15);
             border: 1px solid var(--red-primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 16px auto;
+            margin: 0 auto 14px auto;
             color: var(--red-primary);
             box-shadow: 0 0 15px var(--red-glow);
             animation: pulseError 2s infinite;
@@ -353,24 +413,24 @@
         }
 
         .error-icon-box svg {
-            width: 26px;
-            height: 26px;
+            width: 24px;
+            height: 24px;
             stroke: currentColor;
             fill: none;
             stroke-width: 2.2;
         }
 
         .error-title {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 700;
             color: #fff;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .error-desc {
-            font-size: 0.84rem;
+            font-size: 0.82rem;
             color: var(--text-muted);
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             line-height: 1.4;
         }
 
@@ -378,11 +438,11 @@
             background: rgba(220, 20, 60, 0.08);
             border: 1px solid rgba(220, 20, 60, 0.3);
             border-radius: 8px;
-            padding: 10px;
-            font-size: 0.82rem;
+            padding: 9px;
+            font-size: 0.8rem;
             color: #ff6b6b;
             font-weight: 600;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
         .error-close-btn {
@@ -390,10 +450,10 @@
             border: 1px solid var(--border-subtle);
             color: #fff;
             width: 100%;
-            padding: 11px;
+            padding: 10px;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -411,29 +471,39 @@
 </head>
 <body>
 
+    <!-- Pantalla de Transición Inmersiva -->
+    <div class="splash-overlay" id="splashOverlay">
+        <div class="splash-content">
+            <div class="splash-dot"></div>
+            <h2 class="splash-title">Alertix</h2>
+            <p class="splash-subtitle">Tu seguridad aumenta.</p>
+        </div>
+    </div>
+
+    <!-- Main Card -->
     <div class="login-main-card">
-        <!-- MITAD IZQUIERDA: PRESENTACIÓN CORPORATIVA -->
+        <!-- MITAD IZQUIERDA: HERO -->
         <div class="login-hero-side">
             <div>
                 <div class="hero-brand-area">
                     <div class="brand-dot"></div>
                     <h1 class="brand-title">Alertix</h1>
                 </div>
-                <div class="hero-content" style="margin-top: 24px;">
+                <div class="hero-content" style="margin-top: 18px;">
                     <h2>Seguridad de Alto Rendimiento</h2>
-                    <p>Plataforma corporativa de monitoreo avanzado y gestión de operaciones para nuestra red comercial oficial.</p>
+                    <p>Plataforma corporativa de monitoreo avanzado y gestión comercial para distribuidores autorizados.</p>
                     <div class="badge-sector">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        Sector de Vendedores Profesionales
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        Red de Vendedores Profesionales
                     </div>
                 </div>
             </div>
             <div class="hero-footer-note">
-                &copy; 2026 Alertix Security Systems &bull; Todos los derechos reservados.
+                &copy; 2026 Alertix Security Systems &bull; Entorno Seguro
             </div>
         </div>
 
-        <!-- MITAD DERECHA: FORMULARIO DE ACCESO -->
+        <!-- MITAD DERECHA: FORMULARIO -->
         <div class="login-form-side">
             <h3 class="form-header-title">Iniciar Sesión</h3>
 
@@ -479,14 +549,42 @@
         </div>
     </div>
 
-    <!-- Script con Firebase optimizado y sin trabas -->
+    <!-- Script con Audio Web API y Transición Perfecta -->
     <script type="module">
         import { db } from "./app.js";
         import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         let listaVendedoresCache = [];
+        let usuarioYaDetectado = false;
 
-        // Carga inicial optimizada y segura contra fallos de red
+        // Efecto de Sonido Web Audio API (Sin archivos externos)
+        function reproducirSonidoNotificacion() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = "sine";
+                // Tono agradable y corporativo (Acorde tipo campanita suave)
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12); // A5
+
+                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start();
+                osc.stop(ctx.currentTime + 0.35);
+            } catch (e) {
+                // Navegadores que bloquean audio sin interacción previa
+            }
+        }
+
         async function cargarVendedoresCache() {
             try {
                 const snapshot = await getDocs(collection(db, "usuariosvendedores"));
@@ -500,7 +598,7 @@
         }
         cargarVendedoresCache();
 
-        // Detección instantánea en tiempo real del vendedor
+        // Detección en tiempo real con efecto de sonido único
         window.detectarVendedorEnTiempoReal = function(val) {
             const trimmed = val.trim().toLowerCase();
             const card = document.getElementById("vendorDetectedCard");
@@ -509,6 +607,7 @@
 
             if (!trimmed || trimmed.length < 2) {
                 card.classList.remove("active");
+                usuarioYaDetectado = false;
                 return;
             }
 
@@ -517,13 +616,19 @@
             if (encontrado && encontrado.nombre) {
                 nameEl.innerText = encontrado.nombre;
                 avatarEl.innerText = encontrado.nombre.charAt(0).toUpperCase();
-                card.classList.add("active");
+                
+                if (!usuarioYaDetectado) {
+                    card.classList.add("active");
+                    reproducirSonidoNotificacion(); // Suena el efectito sutil
+                    usuarioYaDetectado = true;
+                }
             } else {
                 card.classList.remove("active");
+                usuarioYaDetectado = false;
             }
         };
 
-        // Manejo de Login fluido sin bloqueos de UI
+        // Manejo de Login e Inmersión Splash Screen
         window.handleLogin = async function(e) {
             e.preventDefault();
             const userVal = document.getElementById("usuarioInput").value.trim();
@@ -531,7 +636,7 @@
             const btn = document.getElementById("loginSubmitBtn");
 
             btn.disabled = true;
-            btn.innerText = "Verificando credenciales...";
+            btn.innerText = "Verificando...";
 
             try {
                 const q = query(collection(db, "usuariosvendedores"), where("usuarioLogin", "==", userVal));
@@ -550,11 +655,13 @@
                     sessionStorage.setItem("alertix_vendedor_nombre", vendedorEncontrado.nombre);
                     sessionStorage.setItem("alertix_vendedor_usuario", vendedorEncontrado.usuarioLogin);
 
-                    // Transición de salida ultra fluida
-                    document.body.classList.add("page-exiting");
+                    // Activar pantalla de transición inmersiva "Alertix - Tu seguridad aumenta"
+                    const splash = document.getElementById("splashOverlay");
+                    splash.classList.add("active");
+
                     setTimeout(() => {
                         window.location.href = "panelrevendedor.html";
-                    }, 280);
+                    }, 1200); // 1.2 segundos de animación imponente
                 } else {
                     mostrarModalError();
                     btn.disabled = false;
