@@ -220,7 +220,7 @@
             stroke-width: 2;
         }
 
-        /* SECCIÓN DEL USUARIO EN EL MENÚ */
+        /* BLOQUE DEL USUARIO EN EL MENÚ */
         .user-profile-box {
             background: rgba(220, 20, 60, 0.08);
             border: 1px solid rgba(220, 20, 60, 0.3);
@@ -594,7 +594,7 @@
         </div>
     </header>
 
-    <!-- DRAWER LATERAL: CONTIENE EL USUARIO, DMIÁN ESCOBAR Y EL MENÚ MENUVENDEDORES -->
+    <!-- DRAWER LATERAL: CONTIENE EL USUARIO Y EL MENÚ MENUVENDEDORES -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="window.toggleDrawer()">
         <div class="drawer-container" onclick="event.stopPropagation()">
             <div class="drawer-header">
@@ -651,14 +651,14 @@
                     <div id="reader"></div>
                 </div>
 
-                <!-- PASO 2: CARGA DE 3 SEGUNDOS DE DETECCIÓN -->
+                <!-- PASO 2: CARGA DE 3 SEGUNDOS DE BÚSQUEDA ACTIVA -->
                 <div class="scan-loading-screen" id="scanLoadingScreen">
                     <div class="spinner-ring"></div>
-                    <h4 style="color: #fff; margin-bottom: 6px;">Detectando ID de la Tarjeta...</h4>
-                    <p style="color: var(--text-muted); font-size: 0.82rem;" id="detectedIdText">Verificando en el sistema de la empresa...</p>
+                    <h4 style="color: #fff; margin-bottom: 6px;">Búsqueda Activa en el Sistema...</h4>
+                    <p style="color: var(--text-muted); font-size: 0.82rem;" id="detectedIdText">Verificando ID en la colección `idtarjetas`...</p>
                 </div>
 
-                <!-- PASO ERROR: SI NO ES TARJETA DE ALERTIX O NO POSEE ID VÁLIDO -->
+                <!-- PASO ERROR: SI NO ES TARJETA DE ALERTIX O NO ESTá EN IDTARJETAS -->
                 <div class="error-card-scan" id="errorCardScan">
                     <div class="error-icon-box">
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
@@ -671,7 +671,7 @@
                 <!-- PASO 3: FORMULARIO DE REGISTRO DE VENTA -->
                 <div id="stepForm" style="display: none;">
                     <div class="form-group">
-                        <label>ID de Tarjeta Detectado</label>
+                        <label>ID de Tarjeta Verificado</label>
                         <input type="text" id="formTarjetaId" class="form-control" readonly style="color: var(--green-active); font-weight: 700;">
                     </div>
                     <div class="form-group">
@@ -695,7 +695,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT FIREBASE Y NAVEGACIÓN -->
+    <!-- SCRIPT FIREBASE Y BÚSQUEDA ACTIVA -->
     <script type="module">
         import { db } from "./app.js";
         import { collection, addDoc, getDocs, query, where, updateDoc, doc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -704,11 +704,9 @@
         const vendedorNombre = sessionStorage.getItem("alertix_vendedor_nombre");
         const vendedorUsuario = sessionStorage.getItem("alertix_vendedor_usuario");
 
-        // Si no está logueado, redirigir
         if (!vendedorId) {
             window.location.href = "login.html";
         } else {
-            // Cargar nombre en el menú hamburguesa
             document.getElementById("drawerUserName").innerText = vendedorNombre || vendedorUsuario || "Damián Escobar";
         }
 
@@ -727,7 +725,6 @@
                     return;
                 }
 
-                // Agrupar por categorías declaradas en menuvendedores.html
                 const categorias = {};
                 items.forEach(item => {
                     const cat = item.categoria || "General";
@@ -791,45 +788,43 @@
         function detenerEscaneoYProcesar(qrText) {
             if (html5QrCode && html5QrCode.isScanning) {
                 html5QrCode.stop().then(() => {
-                    procesarIdTarjetaDetectado(qrText);
+                    ejecutarBusquedaActiva(qrText);
                 }).catch(() => {
-                    procesarIdTarjetaDetectado(qrText);
+                    ejecutarBusquedaActiva(qrText);
                 });
             } else {
-                procesarIdTarjetaDetectado(qrText);
+                ejecutarBusquedaActiva(qrText);
             }
         }
 
-        async function procesarIdTarjetaDetectado(qrText) {
+        // BÚSQUEDA ACTIVA EN TIEMPO REAL EN LA COLECCIÓN "idtarjetas"
+        async function ejecutarBusquedaActiva(qrText) {
             tarjetaIdDetectada = qrText.trim();
             document.getElementById("stepScanner").style.display = "none";
             document.getElementById("scanLoadingScreen").classList.add("active");
-            document.getElementById("detectedIdText").innerText = `Validando lectura en 'idtarjetas'...`;
+            document.getElementById("detectedIdText").innerText = `Buscando activo: ${tarjetaIdDetectada}`;
 
-            // Simulación de carga de 3 segundos para verificación corporativa
+            // Simulación de carga de 3 segundos con consulta activa a Firebase
             setTimeout(async () => {
                 try {
-                    // Verificar si el QR escaneado existe en la colección "idtarjetas" o tiene un formato de Alertix
+                    // Consulta activa y estricta en la colección "idtarjetas"
                     const q = query(collection(db, "idtarjetas"), where("tarjetaId", "==", tarjetaIdDetectada));
-                    const snap = await getDocs(q);
-
-                    // Si no es un QR registrado en idtarjetas o no contiene palabras clave de Alertix
-                    const esAlertixFormat = tarjetaIdDetectada.toLowerCase().includes("alertix") || !snap.empty;
+                    const querySnapshot = await getDocs(q);
 
                     document.getElementById("scanLoadingScreen").classList.remove("active");
 
-                    if (!esAlertixFormat) {
-                        // Desplegar mensaje de error oficial
+                    if (querySnapshot.empty) {
+                        // Si no existe en idtarjetas, muestra el error corporativo acordado
                         document.getElementById("errorCardScan").classList.add("active");
                     } else {
-                        // Pasar al formulario de venta
+                        // Si existe en idtarjetas, pasa al formulario de venta
                         document.getElementById("stepForm").style.display = "block";
                         document.getElementById("formTarjetaId").value = tarjetaIdDetectada;
                         document.getElementById("modalTitle").innerText = "Completar Datos de Venta";
                         document.getElementById("btnGuardarVenta").style.display = "inline-block";
                     }
-                } catch (e) {
-                    console.error("Error al validar tarjeta:", e);
+                } catch (err) {
+                    console.error("Error en búsqueda activa de idtarjetas:", err);
                     document.getElementById("scanLoadingScreen").classList.remove("active");
                     document.getElementById("errorCardScan").classList.add("active");
                 }
@@ -850,7 +845,7 @@
             const servicio = document.getElementById("servicioAsignado").value;
 
             if (!clienteNombre || !clienteUbicacion) {
-                alert("Por favor complete el nombre del cliente y la ubicación.");
+                alert("Por favor complete el nombre del cliente y la ubicación exacta.");
                 return;
             }
 
@@ -870,40 +865,27 @@
                     createdAt: serverTimestamp()
                 });
 
-                // 2. Actualizar estado en la colección "idtarjetas" asignándole la venta
+                // 2. Actualizar estado en la colección "idtarjetas" marcándola como vendida
                 const q = query(collection(db, "idtarjetas"), where("tarjetaId", "==", tarjetaIdDetectada));
                 const snap = await getDocs(q);
 
-                if (!snap.empty) {
-                    snap.forEach(async (d) => {
-                        await updateDoc(doc(db, "idtarjetas", d.id), {
-                            vendida: true,
-                            vendedorId: vendedorId,
-                            vendedorNombre: vendedorNombre || vendedorUsuario,
-                            clienteNombre: clienteNombre,
-                            ubicacion: clienteUbicacion,
-                            updatedAt: serverTimestamp()
-                        });
-                    });
-                } else {
-                    // Si no existía, crear la entrada en idtarjetas
-                    await addDoc(collection(db, "idtarjetas"), {
-                        tarjetaId: tarjetaIdDetectada,
+                snap.forEach(async (d) => {
+                    await updateDoc(doc(db, "idtarjetas", d.id), {
                         vendida: true,
                         vendedorId: vendedorId,
                         vendedorNombre: vendedorNombre || vendedorUsuario,
                         clienteNombre: clienteNombre,
                         ubicacion: clienteUbicacion,
-                        createdAt: serverTimestamp()
+                        updatedAt: serverTimestamp()
                     });
-                }
+                });
 
-                alert("¡Venta registrada exitosamente y tarjeta asociada!");
+                alert("¡Venta registrada exitosamente y tarjeta asociada en el sistema!");
                 window.cerrarModalVenta();
                 location.reload();
             } catch (err) {
                 console.error("Error registrando la venta:", err);
-                alert("Ocurrió un error al registrar la venta.");
+                alert("Ocurrió un error al registrar la venta en el servidor.");
                 btn.disabled = false;
                 btn.innerText = "Registrar Venta Oficial";
             }
