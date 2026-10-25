@@ -135,7 +135,7 @@
             font-weight: 600;
         }
 
-        /* DRAWER LATERAL / MENÚ HAMBURGUESA LIMPIO */
+        /* DRAWER LATERAL / MENÚ HAMBURGUESA */
         .drawer-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -290,72 +290,66 @@
         main {
             flex: 1;
             padding: 40px 20px;
-            max-width: 900px;
+            max-width: 850px;
             margin: 0 auto;
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
 
         @media(min-width: 768px) {
-            main { padding: 60px 30px; }
+            main { padding: 50px 30px; }
         }
 
         .panel-hero-section {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
 
         .panel-hero-section h2 {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #fff;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .panel-hero-section p {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             color: var(--text-muted);
-            max-width: 520px;
+            max-width: 500px;
             margin: 0 auto;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
-        /* MÓDULO DE ACCIÓN PROFESIONAL */
+        /* MÓDULOS DE ACCIÓN PRINCIPAL */
         .tactical-action-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 20px;
+            gap: 16px;
             max-width: 600px;
-            margin: 0 auto;
-            width: 100%;
+            margin: 0 auto 40px auto;
         }
 
         .tactical-action-module {
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
             border-radius: 10px;
-            padding: 25px;
+            padding: 20px;
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 18px;
             cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.22s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
 
         .tactical-action-module:hover {
             border-color: var(--text-muted);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
-            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+            transform: translateY(-1px);
         }
 
         .module-icon-box {
-            width: 50px;
-            height: 50px;
+            width: 46px;
+            height: 46px;
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
@@ -367,22 +361,22 @@
         }
 
         .module-icon-box svg {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             stroke: currentColor;
             fill: none;
             stroke-width: 2;
         }
 
         .module-content h3 {
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             font-weight: 600;
             color: #ffffff;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .module-content p {
-            font-size: 0.9rem;
+            font-size: 0.84rem;
             color: var(--text-muted);
             line-height: 1.4;
         }
@@ -399,14 +393,112 @@
         }
 
         .module-arrow-icon svg {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             stroke: currentColor;
             fill: none;
             stroke-width: 2.2;
         }
 
-        /* MODAL / ESCÁNER Y REGISTRO DE VENTA */
+        /* AUDITORÍA RÁPIDA (TÍTULO SUTIL) */
+        .audit-section-title {
+            text-align: center;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            opacity: 0.55;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        /* LISTADO COMPACTO DE VENTAS */
+        .sales-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .sale-item-card {
+            background: #0d0d12;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+
+        .sale-item-card:hover {
+            border-color: var(--border-accent);
+            background: #121218;
+        }
+
+        .sale-item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .sale-client-name {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .sale-meta-text {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+        }
+
+        .sale-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sale-card-badge {
+            font-size: 0.72rem;
+            background: rgba(52, 211, 153, 0.1);
+            color: var(--green-active);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .btn-inspect {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-inspect:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: var(--text-muted);
+        }
+
+        .btn-inspect svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* MODALES */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -481,7 +573,6 @@
             max-height: 75vh;
         }
 
-        /* CONTENEDOR DE CÁMARA CON LÁSER */
         .scanner-wrapper-tactical {
             position: relative;
             width: 100%;
@@ -520,7 +611,6 @@
             100% { top: 85%; opacity: 0.4; }
         }
 
-        /* PANTALLA DE PROGRESO DE BÚSQUEDA */
         .scan-progress-screen {
             display: none;
             text-align: center;
@@ -663,7 +753,7 @@
 </head>
 <body>
 
-    <!-- HEADER LIMPIO Y PROFESIONAL -->
+    <!-- HEADER SOBRIO -->
     <header>
         <div class="header-left">
             <button class="hamburger-btn" onclick="window.toggleDrawer()" title="Abrir Menú de Navegación">
@@ -684,7 +774,7 @@
         </div>
     </header>
 
-    <!-- DRAWER LATERAL / MENÚ HAMBURGUESA -->
+    <!-- DRAWER LATERAL -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="window.toggleDrawer()">
         <div class="drawer-container" onclick="event.stopPropagation()">
             <div class="drawer-header">
@@ -710,11 +800,12 @@
     <main>
         <div class="panel-hero-section">
             <h2>Panel de Control Vendedor</h2>
-            <p>Seleccione la operación requerida para la validación de tarjetas inteligentes en la red.</p>
+            <p>Operaciones de campo, validación de tarjetas inteligentes y auditoría de red.</p>
         </div>
 
-        <!-- MÓDULO DE ACCIÓN -->
+        <!-- MÓDULOS DE ACCIÓN PRINCIPALES -->
         <div class="tactical-action-grid">
+            <!-- 1. ESCANEAR QR -->
             <div class="tactical-action-module" onclick="window.iniciarEscaneoQR()">
                 <div class="module-icon-box">
                     <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
@@ -727,10 +818,32 @@
                     <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </div>
             </div>
+
+            <!-- 2. REGISTRAR VENTA MANUALMENTE -->
+            <div class="tactical-action-module" onclick="window.abrirModalManual()">
+                <div class="module-icon-box">
+                    <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                </div>
+                <div class="module-content">
+                    <h3>Registrar Venta Manualmente</h3>
+                    <p>Introduce el ID de la tarjeta en `idtarjetas` para asociarla y registrarla.</p>
+                </div>
+                <div class="module-arrow-icon">
+                    <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- TÍTULO DE AUDITORÍA RÁPIDA -->
+        <div class="audit-section-title">Auditoría Rápida</div>
+
+        <!-- LISTADO COMPACTO DE VENTAS (usuariosvendedores) -->
+        <div class="sales-list-container" id="salesListContainer">
+            <p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px;">Cargando registros de ventas...</p>
         </div>
     </main>
 
-    <!-- MODAL DE ESCANEO Y REGISTRO DE VENTA -->
+    <!-- MODAL DE ESCANEO QR -->
     <div class="modal-overlay" id="ventaModal">
         <div class="modal-container">
             <div class="modal-header">
@@ -740,7 +853,6 @@
                 </button>
             </div>
             <div class="modal-body" id="modalBodyContent">
-                <!-- PASO 1: LECTOR QR CON LÁSER -->
                 <div id="stepScanner">
                     <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px; text-align: center;">Enfoca el código QR. Detección instantánea.</p>
                     <div class="scanner-wrapper-tactical">
@@ -751,14 +863,12 @@
                     </div>
                 </div>
 
-                <!-- PASO 2: VERIFICACIÓN -->
                 <div class="scan-progress-screen" id="scanProgressScreen">
                     <div class="spinner-ring"></div>
                     <h4 style="color: #fff; margin-bottom: 4px;">Validando Código QR...</h4>
                     <p style="color: var(--text-muted); font-size: 0.85rem;" id="detectedIdText">Buscando en la base de datos...</p>
                 </div>
 
-                <!-- PASO ERROR -->
                 <div class="error-card-scan" id="errorCardScan">
                     <div class="error-icon-box">
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
@@ -768,7 +878,6 @@
                     <button class="logout-btn" style="margin: 0 auto; display: block;" onclick="window.iniciarEscaneoQR()">Reintentar Escaneo</button>
                 </div>
 
-                <!-- PASO 3: FORMULARIO DE REGISTRO -->
                 <div id="stepForm" style="display: none;">
                     <div class="form-group">
                         <label>ID de Tarjeta Verificado</label>
@@ -795,10 +904,87 @@
         </div>
     </div>
 
-    <!-- SCRIPT FIREBASE Y MENÚ HAMBURGUESA DINÁMICO -->
+    <!-- MODAL DE REGISTRO MANUAL -->
+    <div class="modal-overlay" id="manualModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>Registro Manual de Tarjeta</h3>
+                <button class="modal-close" onclick="window.cerrarModalManual()">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="manualStepInput">
+                    <div class="form-group">
+                        <label>Ingrese ID de Tarjeta</label>
+                        <input type="text" id="manualTarjetaIdInput" class="action-input" placeholder="Ej. ALX-998234" required>
+                    </div>
+                    <button type="button" class="action-btn" style="width: 100%; margin-top: 10px;" onclick="window.verificarIdManual()">Verificar ID en Base de Datos</button>
+                </div>
+
+                <div class="scan-progress-screen" id="manualProgressScreen">
+                    <div class="spinner-ring"></div>
+                    <h4 style="color: #fff; margin-bottom: 4px;">Buscando ID...</h4>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Consultando `idtarjetas`...</p>
+                </div>
+
+                <div class="error-card-scan" id="manualErrorCard">
+                    <div class="error-icon-box">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    </div>
+                    <h4 class="error-msg-title">ID No Encontrado</h4>
+                    <p class="error-msg-desc">El identificador ingresado no existe o no está registrado en `idtarjetas`.</p>
+                    <button class="logout-btn" style="margin: 0 auto; display: block;" onclick="window.reiniciarModalManual()">Probar Otro ID</button>
+                </div>
+
+                <div id="manualStepForm" style="display: none;">
+                    <div class="form-group">
+                        <label>ID Verificado</label>
+                        <input type="text" id="manualFormTarjetaId" class="action-input" readonly style="color: var(--green-active); font-weight: 700;">
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre del Cliente</label>
+                        <input type="text" id="manualClienteNombre" class="action-input" placeholder="Ej. María Gómez" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ubicación Exacta</label>
+                        <input type="text" id="manualClienteUbicacion" class="action-input" placeholder="Ej. Belgrano 1200, Rosario" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Servicio Asignado</label>
+                        <input type="text" id="manualServicioAsignado" class="action-input" value="Tarjeta + Sistema de Alertas" readonly>
+                    </div>
+                    <button type="button" class="action-btn" style="width: 100%; margin-top: 10px;" onclick="window.confirmarRegistroManual()">Registrar Venta Oficial</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="logout-btn" onclick="window.cerrarModalManual()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DETALLE DE VENTA (INSPECCIONAR) -->
+    <div class="modal-overlay" id="detalleModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>Detalle de Venta</h3>
+                <button class="modal-close" onclick="window.cerrarModalDetalle()">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="detalleModalBody" style="display: flex; flex-direction: column; gap: 12px;">
+                <!-- Se llena dinámicamente -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="logout-btn" onclick="window.cerrarModalDetalle()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT FIREBASE Y LÓGICA DE AUDITORÍA -->
     <script type="module">
         import { db } from "./app.js";
-        import { collection, addDoc, getDocs, query, where, updateDoc, doc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { collection, addDoc, getDocs, query, where, updateDoc, doc, serverTimestamp, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const vendedorId = sessionStorage.getItem("alertix_vendedor_id");
         const vendedorNombre = sessionStorage.getItem("alertix_vendedor_nombre");
@@ -814,8 +1000,9 @@
         let html5QrCode = null;
         let tarjetaIdDetectada = null;
         let isScanningActive = false;
+        let ventasCache = {};
 
-        // CARGAR MENÚ DESDE FIREBASE
+        // 1. ESCUCHAR MENÚ HAMBURGUESA
         function escucharMenuHamburguesa() {
             onSnapshot(collection(db, "menuvendedores"), (snapshot) => {
                 const container = document.getElementById("drawerMenuContainer");
@@ -859,6 +1046,114 @@
             document.getElementById("drawerOverlay").classList.toggle("open");
         };
 
+        // 2. ESCUCHAR VENTAS EN TIEMPO REAL (usuariosvendedores)
+        function escucharVentasVendedor() {
+            try {
+                // Consultamos la colección 'usuariosvendedores' filtrada por el vendedor actual (o por usuarioVendedor)
+                const q = query(collection(db, "usuariosvendedores"), where("vendedorId", "==", vendedorId));
+                
+                onSnapshot(q, (snapshot) => {
+                    const container = document.getElementById("salesListContainer");
+                    ventasCache = {};
+                    const ventas = [];
+
+                    snapshot.forEach(d => {
+                        const data = d.data();
+                        ventasCache[d.id] = data;
+                        ventas.push({ id: d.id, ...data });
+                    });
+
+                    // Si no hay por vendedorId estricto, intentamos buscar por nombre/usuario o colección general 'ventavendedores' si aplica
+                    if (ventas.length === 0) {
+                        // Respaldo secundario para asegurar auditoría robusta
+                        getDocs(collection(db, "usuariosvendedores")).then(snapAll => {
+                            const backupVentas = [];
+                            snapAll.forEach(d => {
+                                const data = d.data();
+                                if (data.vendedorId === vendedorId || data.usuarioVendedor === vendedorNombre || data.usuarioVendedor === vendedorUsuario) {
+                                    ventasCache[d.id] = data;
+                                    backupVentas.push({ id: d.id, ...data });
+                                }
+                            });
+                            renderizarVentas(backupVentas);
+                        });
+                        return;
+                    }
+
+                    renderizarVentas(ventas);
+                });
+            } catch (e) {
+                console.error("Error escuchando ventas:", e);
+                document.getElementById("salesListContainer").innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px;">No se pudieron cargar los registros de auditoría.</p>`;
+            }
+        }
+
+        function renderizarVentas(ventas) {
+            const container = document.getElementById("salesListContainer");
+            if (ventas.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px;">Aún no se han registrado ventas en este periodo.</p>`;
+                return;
+            }
+
+            let html = "";
+            ventas.forEach(v => {
+                const fechaStr = v.createdAt?.toDate ? v.createdAt.toDate().toLocaleString() : "Fecha reciente";
+                html += `
+                    <div class="sale-item-card">
+                        <div class="sale-item-info">
+                            <span class="sale-client-name">${v.clienteNombre || 'Cliente sin nombre'}</span>
+                            <span class="sale-meta-text">${v.ubicacion || 'Sin ubicación'} • ${fechaStr}</span>
+                        </div>
+                        <div class="sale-item-actions">
+                            <span class="sale-card-badge">${v.tarjetaId || 'QR'}</span>
+                            <button class="btn-inspect" onclick="window.abrirDetalleVenta('${v.id}')" title="Ver detalles exactos">
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        window.abrirDetalleVenta = function(id) {
+            const v = ventasCache[id];
+            if (!v) return;
+
+            const fechaStr = v.createdAt?.toDate ? v.createdAt.toDate().toLocaleString() : "N/D";
+            const body = document.getElementById("detalleModalBody");
+            body.innerHTML = `
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label>ID de Tarjeta</label>
+                    <input type="text" class="action-input" value="${v.tarjetaId || ''}" readonly style="color:var(--green-active); font-weight:700;">
+                </div>
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label>Cliente</label>
+                    <input type="text" class="action-input" value="${v.clienteNombre || ''}" readonly>
+                </div>
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label>Ubicación</label>
+                    <input type="text" class="action-input" value="${v.ubicacion || ''}" readonly>
+                </div>
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label>Servicio</label>
+                    <input type="text" class="action-input" value="${v.servicio || ''}" readonly>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Fecha y Hora de Registro</label>
+                    <input type="text" class="action-input" value="${fechaStr}" readonly>
+                </div>
+            `;
+            document.getElementById("detalleModal.open") || document.getElementById("detalleModal").classList.add("open");
+        };
+
+        window.cerrarModalDetalle = function() {
+            document.getElementById("detalleModal").classList.remove("open");
+        };
+
+        escucharVentasVendedor();
+
+        // 3. ESCANEO QR TURBO
         window.iniciarEscaneoQR = function() {
             document.getElementById("stepScanner").style.display = "block";
             document.getElementById("scanProgressScreen").classList.remove("active");
@@ -873,12 +1168,7 @@
                     html5QrCode = new Html5Qrcode("reader");
                 }
 
-                const configCamera = { 
-                    fps: 60, 
-                    qrbox: { width: 250, height: 250 },
-                    aspectRatio: 1.0
-                };
-                
+                const configCamera = { fps: 60, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 };
                 isScanningActive = true;
                 
                 html5QrCode.start(
@@ -891,7 +1181,7 @@
                         }
                     },
                     () => {}
-                ).catch(err => {
+                ).catch(() => {
                     html5QrCode.start(
                         { facingMode: "user" },
                         configCamera,
@@ -903,7 +1193,7 @@
                         },
                         () => {}
                     ).catch(e => {
-                        console.error("Error al abrir cámara:", e);
+                        console.error("Error cámara:", e);
                         alert("No se pudo acceder a la cámara.");
                     });
                 });
@@ -912,11 +1202,7 @@
 
         function detenerEscaneoYProcesar(qrText) {
             if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().then(() => {
-                    verificarIdInstantaneo(qrText);
-                }).catch(() => {
-                    verificarIdInstantaneo(qrText);
-                });
+                html5QrCode.stop().then(() => verificarIdInstantaneo(qrText)).catch(() => verificarIdInstantaneo(qrText));
             } else {
                 verificarIdInstantaneo(qrText);
             }
@@ -943,7 +1229,7 @@
                     document.getElementById("btnGuardarVenta").style.display = "inline-block";
                 }
             } catch (err) {
-                console.error("Error verificando en idtarjetas:", err);
+                console.error("Error idtarjetas:", err);
                 document.getElementById("scanProgressScreen").classList.remove("active");
                 document.getElementById("errorCardScan").classList.add("active");
             }
@@ -972,9 +1258,106 @@
             btn.innerText = "Registrando...";
 
             try {
-                await addDoc(collection(db, "ventavendedores"), {
+                // Registrar en 'usuariosvendedores'
+                await addDoc(collection(db, "usuariosvendedores"), {
                     vendedorId: vendedorId,
-                    usuarioVendedor: vendedorNombre || vendedorUsuario,
+                    usuarioVendedor: vendedorNombre || vendedorUsuario || userEmail,
+                    tarjetaId: tarjetaIdDetectada,
+                    clienteNombre: clienteNombre,
+                    ubicacion: clienteUbicacion,
+                    servicio: servicio,
+                    createdAt: serverTimestamp()
+                });
+
+                // Actualizar estado en 'idtarjetas'
+                const q = query(collection(db, "idtarjetas"), where("tarjetaId", "==", tarjetaIdDetectada));
+                const snap = await getDocs(q);
+
+                snap.forEach(async (d) => {
+                    await updateDoc(doc(db, "idtarjetas", d.id), {
+                        vendida: true,
+                        vendedorId: vendedorId,
+                        vendedorNombre: vendedorNombre || vendedorUsuario,
+                        clienteNombre: clienteNombre,
+                        ubicacion: clienteUbicacion,
+                        updatedAt: serverTimestamp()
+                    });
+                });
+
+                alert("¡Venta registrada exitosamente y asociada en la red!");
+                window.cerrarModalVenta();
+                location.reload();
+            } catch (err) {
+                console.error("Error al registrar venta:", err);
+                alert("Ocurrió un error al registrar la venta en el servidor.");
+                btn.disabled = false;
+                btn.innerText = "Registrar Venta Oficial";
+            }
+        };
+
+        // 4. REGISTRO MANUAL
+        window.abrirModalManual = function() {
+            document.getElementById("manualStepInput").style.display = "block";
+            document.getElementById("manualProgressScreen").classList.remove("active");
+            document.getElementById("manualErrorCard").classList.remove("active");
+            document.getElementById("manualStepForm").style.display = "none";
+            document.getElementById("manualTarjetaIdInput").value = "";
+            document.getElementById("manualModal").classList.add("open");
+        };
+
+        window.cerrarModalManual = function() {
+            document.getElementById("manualModal").classList.remove("open");
+        };
+
+        window.reiniciarModalManual = function() {
+            document.getElementById("manualErrorCard").classList.remove("active");
+            document.getElementById("manualStepInput").style.display = "block";
+        };
+
+        window.verificarIdManual = async function() {
+            const idInput = document.getElementById("manualTarjetaIdInput").value.trim();
+            if (!idInput) {
+                alert("Por favor ingrese un ID de tarjeta válido.");
+                return;
+            }
+
+            tarjetaIdDetectada = idInput;
+            document.getElementById("manualStepInput").style.display = "none";
+            document.getElementById("manualProgressScreen").classList.add("active");
+
+            try {
+                const q = query(collection(db, "idtarjetas"), where("tarjetaId", "==", tarjetaIdDetectada));
+                const snap = await getDocs(q);
+
+                document.getElementById("manualProgressScreen").classList.remove("active");
+
+                if (snap.empty) {
+                    document.getElementById("manualErrorCard").classList.add("active");
+                } else {
+                    document.getElementById("manualStepForm").style.display = "block";
+                    document.getElementById("manualFormTarjetaId").value = tarjetaIdDetectada;
+                }
+            } catch (err) {
+                console.error("Error verificación manual:", err);
+                document.getElementById("manualProgressScreen").classList.remove("active");
+                document.getElementById("manualErrorCard").classList.add("active");
+            }
+        };
+
+        window.confirmarRegistroManual = async function() {
+            const clienteNombre = document.getElementById("manualClienteNombre").value.trim();
+            const clienteUbicacion = document.getElementById("manualClienteUbicacion").value.trim();
+            const servicio = document.getElementById("manualServicioAsignado").value;
+
+            if (!clienteNombre || !clienteUbicacion) {
+                alert("Por favor complete todos los campos obligatorios.");
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "usuariosvendedores"), {
+                    vendedorId: vendedorId,
+                    usuarioVendedor: vendedorNombre || vendedorUsuario || userEmail,
                     tarjetaId: tarjetaIdDetectada,
                     clienteNombre: clienteNombre,
                     ubicacion: clienteUbicacion,
@@ -996,14 +1379,12 @@
                     });
                 });
 
-                alert("¡Venta registrada exitosamente y tarjeta asociada en el sistema!");
-                window.cerrarModalVenta();
+                alert("¡Venta manual registrada y asociada con éxito!");
+                window.cerrarModalManual();
                 location.reload();
             } catch (err) {
-                console.error("Error registrando la venta:", err);
-                alert("Ocurrió un error al registrar la venta en el servidor.");
-                btn.disabled = false;
-                btn.innerText = "Registrar Venta Oficial";
+                console.error("Error registrando manual:", err);
+                alert("Ocurrió un error al guardar la venta manual.");
             }
         };
     </script>
