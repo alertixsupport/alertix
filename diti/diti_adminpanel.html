@@ -225,8 +225,13 @@
             border-color: rgba(0, 230, 118, 0.2);
         }
 
+        /* FORZAR COLOR VERDE Y TAMAÑO EN LOS ICONOS SVG DEL MENÚ */
         .nav-item svg {
-            color: var(--accent-green);
+            width: 18px !important;
+            height: 18px !important;
+            stroke: var(--accent-green) !important;
+            fill: none;
+            flex-shrink: 0;
         }
 
         /* CONTENIDO PRINCIPAL */
@@ -296,7 +301,7 @@
             <button class="sidebar-close" onclick="toggleSidebar()">×</button>
         </div>
         <div class="sidebar-nav" id="sidebar-nav-links">
-            <!-- Sincronizado en tiempo real y filtrado por permisos de admin -->
+            <!-- Sincronizado en tiempo real con iconos SVG personalizados -->
         </div>
     </nav>
 
@@ -308,12 +313,12 @@
         </div>
     </main>
 
-    <!-- Script con Validación Estricta de Login y Sincronización en Tiempo Real de Permisos -->
+    <!-- Script con Sincronización en Tiempo Real e Inyección de Iconos SVG -->
     <script type="module">
         import { db } from "../app.js";
         import { collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // 1. VALIDACIÓN ESTRICTA DE SESIÓN (Solo usuarios logeados desde login.html)
+        // Validación estricta de sesión
         const sesionRaw = sessionStorage.getItem("diti_admin_sesion");
         if (!sesionRaw) {
             window.location.replace("login.html");
@@ -333,12 +338,13 @@
             window.location.replace("login.html");
         }
 
-        // 2. ESCUCHA EN TIEMPO REAL (ON-SNAPSHOT) PARA MENÚS Y PERMISOS ACTUALIZADOS DESDE REYDITI
+        // Icono SVG por defecto en caso de que no se guarde uno
+        const iconoPorDefecto = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+
         function iniciarSincronizacionEnVivo() {
             const navContainer = document.getElementById("sidebar-nav-links");
-            navContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 10px;">Sincronizando permisos y módulos...</div>';
+            navContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 10px;">Sincronizando módulos e iconos...</div>';
 
-            // Escuchar cambios en los permisos del propio admin en tiempo real (diti_usuariosadmin)
             onSnapshot(doc(db, "diti_usuariosadmin", adminSesion.id), (adminDoc) => {
                 let permisosActualizados = adminSesion.permisosMenu;
                 let tipoAccesoActualizado = adminSesion.tipoAcceso;
@@ -348,13 +354,11 @@
                     permisosActualizados = dataAdmin.permisosMenu || [];
                     tipoAccesoActualizado = dataAdmin.tipoAcceso || "todas";
                     
-                    // Actualizar sesión en memoria
                     adminSesion.permisosMenu = permisosActualizados;
                     adminSesion.tipoAcceso = tipoAccesoActualizado;
                     sessionStorage.setItem("diti_admin_sesion", JSON.stringify(adminSesion));
                 }
 
-                // Escuchar cambios en los módulos generales (diti_reyditimenu)
                 onSnapshot(collection(db, "diti_reyditimenu"), (menuSnapshot) => {
                     navContainer.innerHTML = "";
 
@@ -370,11 +374,11 @@
                         const titulo = menu.titulo;
                         const redireccion = menu.redireccion || "#";
                         const categoria = menu.categoria ? menu.categoria.trim().toUpperCase() : "GENERAL";
+                        const svgIcono = menu.svgIcono ? menu.svgIcono.trim() : iconoPorDefecto;
 
-                        // Validar si el admin tiene acceso manual y si esta página está habilitada para él
                         if (tipoAccesoActualizado === "manual") {
                             if (!permisosActualizados.includes(titulo)) {
-                                return; // Si fue deshabilitado en reyditi.html, no se muestra
+                                return;
                             }
                         }
 
@@ -382,17 +386,16 @@
                             categoriasMap[categoria] = [];
                         }
 
-                        categoriasMap[categoria].push({ titulo, redireccion });
+                        categoriasMap[categoria].push({ titulo, redireccion, svgIcono });
                     });
 
-                    // Renderizar menú agrupado
                     for (let cat in categoriasMap) {
                         navContainer.innerHTML += `<div class="nav-category-title">${cat}</div>`;
                         
                         categoriasMap[cat].forEach(item => {
                             navContainer.innerHTML += `
                                 <a href="${item.redireccion}" class="nav-item">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                    ${item.svgIcono}
                                     ${item.titulo}
                                 </a>
                             `;
