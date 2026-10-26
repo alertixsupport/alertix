@@ -287,12 +287,13 @@
         </div>
     </div>
 
-    <!-- Script de Autenticación y Detección Instantánea -->
+    <!-- Script Optimizado con Caché Local en Memoria -->
     <script type="module">
         import { db } from "../app.js";
-        import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const inputUsuario = document.getElementById("login-usuario");
+        const inputPassword = document.getElementById("login-password");
         const detectedCard = document.getElementById("detected-card");
         const detectedName = document.getElementById("detected-name");
         const loginForm = document.getElementById("login-form");
@@ -302,134 +303,137 @@
         const btnSpinner = document.getElementById("btn-spinner");
         const btnArrow = document.getElementById("btn-arrow");
 
-        // Sonido notable, profesional y elegante (Acorde corporativo ascendente)
+        let adminsCache = {};
+        let sonidoAudioCtx = null;
+
+        // Inicializar contexto de audio al primer clic para evitar bloqueos del navegador
+        document.addEventListener("click", () => {
+            if (!sonidoAudioCtx) {
+                sonidoAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }, { once: true });
+
         function reproducirSonidoNotable() {
             try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (!sonidoAudioCtx) sonidoAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 
-                // Nota 1 (E5)
-                const osc1 = audioCtx.createOscillator();
-                const gain1 = audioCtx.createGain();
+                const osc1 = sonidoAudioCtx.createOscillator();
+                const gain1 = sonidoAudioCtx.createGain();
                 osc1.type = "sine";
-                osc1.frequency.setValueAtTime(659.25, audioCtx.currentTime);
-                gain1.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                osc1.frequency.setValueAtTime(659.25, sonidoAudioCtx.currentTime);
+                gain1.gain.setValueAtTime(0.12, sonidoAudioCtx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.001, sonidoAudioCtx.currentTime + 0.15);
                 osc1.connect(gain1);
-                gain1.connect(audioCtx.destination);
+                gain1.connect(sonidoAudioCtx.destination);
                 osc1.start();
-                osc1.stop(audioCtx.currentTime + 0.15);
+                osc1.stop(sonidoAudioCtx.currentTime + 0.15);
 
-                // Nota 2 (B5 - Más alta y notable)
-                const osc2 = audioCtx.createOscillator();
-                const gain2 = audioCtx.createGain();
+                const osc2 = sonidoAudioCtx.createOscillator();
+                const gain2 = sonidoAudioCtx.createGain();
                 osc2.type = "sine";
-                osc2.frequency.setValueAtTime(987.77, audioCtx.currentTime + 0.08);
-                gain2.gain.setValueAtTime(0.12, audioCtx.currentTime + 0.08);
-                gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+                osc2.frequency.setValueAtTime(987.77, sonidoAudioCtx.currentTime + 0.08);
+                gain2.gain.setValueAtTime(0.15, sonidoAudioCtx.currentTime + 0.08);
+                gain2.gain.exponentialRampToValueAtTime(0.001, sonidoAudioCtx.currentTime + 0.35);
                 osc2.connect(gain2);
-                gain2.connect(audioCtx.destination);
-                osc2.start(audioCtx.currentTime + 0.08);
-                osc2.stop(audioCtx.currentTime + 0.35);
+                gain2.connect(sonidoAudioCtx.destination);
+                osc2.start(sonidoAudioCtx.currentTime + 0.08);
+                osc2.stop(sonidoAudioCtx.currentTime + 0.35);
+            } catch (e) {}
+        }
+
+        // Cargar todos los administradores una sola vez al abrir la página (Caché ultrarrápida instantánea)
+        async function precargarAdmins() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "diti_usuariosadmin"));
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    if (data.usuario) {
+                        adminsCache[data.usuario.trim().toLowerCase()] = {
+                            id: docSnap.id,
+                            ...data
+                        };
+                    }
+                });
             } catch (e) {
-                // Previene bloqueos del navegador antes de la primera interacción
+                console.error("Error precargando caché:", e);
             }
         }
 
-        let timeoutBusqueda = null;
-        let ultimoUsuarioDetectado = "";
+        precargarAdmins();
 
-        // Detección ultrarrápida en tiempo real (reducido a 200ms para máxima fluidez)
+        let ultimoDetectado = "";
+
+        // Detección instantánea en tiempo real sin consultas repetidas a Firebase
         inputUsuario.addEventListener("input", (e) => {
-            const usuarioVal = e.target.value.trim();
-            clearTimeout(timeoutBusqueda);
+            const val = e.target.value.trim().toLowerCase();
 
-            if (usuarioVal.length < 2) {
+            if (val.length < 2) {
                 detectedCard.style.display = "none";
-                ultimoUsuarioDetectado = "";
+                ultimoDetectado = "";
                 return;
             }
 
-            timeoutBusqueda = setTimeout(async () => {
-                if (usuarioVal === ultimoUsuarioDetectado) return;
-
-                try {
-                    const q = query(collection(db, "diti_usuariosadmin"), where("usuario", "==", usuarioVal));
-                    const querySnapshot = await getDocs(q);
-
-                    if (!querySnapshot.empty) {
-                        let nombreAdmin = "";
-                        querySnapshot.forEach((docSnap) => {
-                            nombreAdmin = docSnap.data().nombre;
-                        });
-
-                        detectedName.innerText = nombreAdmin;
-                        detectedCard.style.display = "flex";
-                        ultimoUsuarioDetectado = usuarioVal;
-                        
-                        // Emitir sonido notable y profesional
-                        reproducirSonidoNotable();
-                    } else {
-                        detectedCard.style.display = "none";
-                        ultimoUsuarioDetectado = "";
-                    }
-                } catch (err) {
-                    console.error("Error buscando usuario:", err);
+            if (adminsCache[val]) {
+                if (ultimoDetectado !== val) {
+                    detectedName.innerText = adminsCache[val].nombre;
+                    detectedCard.style.display = "flex";
+                    ultimoDetectado = val;
+                    reproducirSonidoNotable();
                 }
-            }, 200); // Búsqueda optimizada al instante
+            } else {
+                detectedCard.style.display = "none";
+                ultimoDetectado = "";
+            }
         });
 
-        // Inicio de sesión con animación de carga
+        // Inicio de sesión inmediato y redirección garantizada
         loginForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             errorAlert.style.display = "none";
-            
-            const usuarioIngresado = inputUsuario.value.trim();
-            const passwordIngresado = document.getElementById("login-password").value.trim();
 
-            btnText.innerText = "Verificando Credenciales...";
+            const usuarioVal = inputUsuario.value.trim().toLowerCase();
+            const passwordVal = inputPassword.value.trim();
+
+            btnText.innerText = "Verificando...";
             btnSpinner.style.display = "block";
             btnArrow.style.display = "none";
             btnLogin.disabled = true;
 
-            try {
-                const q = query(collection(db, "diti_usuariosadmin"), where("usuario", "==", usuarioIngresado));
-                const querySnapshot = await getDocs(q);
+            // Buscar en caché instantánea
+            let admin = adminsCache[usuarioVal];
 
-                if (querySnapshot.empty) {
-                    mostrarError("El usuario ingresado no existe en el sistema.");
-                    return;
-                }
-
-                let adminEncontrado = null;
-                querySnapshot.forEach((docSnap) => {
-                    adminEncontrado = { id: docSnap.id, ...docSnap.data() };
-                });
-
-                if (adminEncontrado.password !== passwordIngresado) {
-                    mostrarError("Contraseña incorrecta. Verifique sus datos.");
-                    return;
-                }
-
-                sessionStorage.setItem("diti_admin_sesion", JSON.stringify({
-                    id: adminEncontrado.id,
-                    nombre: adminEncontrado.nombre,
-                    usuario: adminEncontrado.usuario,
-                    provincia: adminEncontrado.provincia,
-                    tipoAcceso: adminEncontrado.tipoAcceso,
-                    permisosMenu: adminEncontrado.permisosMenu || []
-                }));
-
-                window.location.href = "diti_adminpanel.html";
-
-            } catch (error) {
-                console.error("Error en el login:", error);
-                mostrarError("Error de conexión con la base de datos.");
-            } finally {
-                btnText.innerText = "Iniciar Sesión";
-                btnSpinner.style.display = "none";
-                btnArrow.style.display = "block";
-                btnLogin.disabled = false;
+            // Si por alguna razón se registró recién y no estaba en caché, reintentar consulta directa
+            if (!admin) {
+                try {
+                    await precargarAdmins();
+                    admin = adminsCache[usuarioVal];
+                } catch (err) {}
             }
+
+            if (!admin) {
+                mostrarError("El usuario ingresado no existe en el sistema.");
+                return;
+            }
+
+            if (admin.password !== passwordVal) {
+                mostrarError("Contraseña incorrecta. Verifique sus datos.");
+                return;
+            }
+
+            // Guardar sesión gerencial
+            sessionStorage.setItem("diti_admin_sesion", JSON.stringify({
+                id: admin.id,
+                nombre: admin.nombre,
+                usuario: admin.usuario,
+                provincia: admin.provincia,
+                tipoAcceso: admin.tipoAcceso,
+                permisosMenu: admin.permisosMenu || []
+            }));
+
+            // Redirección absoluta a diti_adminpanel.html
+            setTimeout(() => {
+                window.location.replace("diti_adminpanel.html");
+            }, 300);
         });
 
         function mostrarError(mensaje) {
