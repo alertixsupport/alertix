@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -41,6 +40,16 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* ANIMACIÓN DE SALIDA SUAVE AL CAMBIAR DE PÁGINA */
+        body.page-leaving {
+            animation: fadeOutPage 0.3s ease forwards;
+        }
+
+        @keyframes fadeOutPage {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(-15px); }
+        }
+
         /* HEADER */
         header {
             position: fixed;
@@ -60,7 +69,40 @@
         .header-left {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
+        }
+
+        /* BOTÓN PANEL PROFESIONAL */
+        .btn-back-panel {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back-panel:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--text-muted);
+            color: #fff;
+            transform: translateX(-3px);
+        }
+
+        .btn-back-panel svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            transition: transform 0.2s;
         }
 
         .brand-area {
@@ -527,6 +569,11 @@
 
     <header>
         <div class="header-left">
+            <!-- BOTÓN PANEL CON FLECHA Y ANIMACIÓN DE SALIDA -->
+            <a href="panelvendedor.html" class="btn-back-panel" onclick="window.volverAlPanel(event)">
+                <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                <span>Panel</span>
+            </a>
             <div class="brand-area">
                 <div class="brand-dot"></div>
                 <div class="brand">
@@ -547,7 +594,7 @@
                 <input type="text" id="searchInput" class="search-input" placeholder="Buscar vendedor, usuario o provincia..." oninput="window.filtrarVendedores()">
             </div>
 
-            <!-- FILTRO DE PROVINCIAS CON TU SVG -->
+            <!-- FILTRO DE PROVINCIAS -->
             <div class="province-filter-container">
                 <button class="btn-province-toggle" onclick="window.toggleProvinceDropdown()" id="btnProvinceLabel">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -556,7 +603,7 @@
                     <span id="provinceButtonText">Todas</span>
                 </button>
                 <div class="province-dropdown-menu" id="provinceDropdownMenu">
-                    <!-- Se llena dinámicamente con provincias y contadores -->
+                    <!-- Se llena dinámicamente -->
                 </div>
             </div>
         </div>
@@ -567,7 +614,7 @@
         </div>
     </main>
 
-    <!-- MODAL PERFIL / INSPECCIONAR VENDEDOR -->
+    <!-- MODAL PERFIL -->
     <div class="modal-overlay" id="perfilModal">
         <div class="modal-container">
             <div class="modal-header">
@@ -576,9 +623,7 @@
                     <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
-            <div class="modal-body" id="perfilModalBody">
-                <!-- Se llena dinámicamente -->
-            </div>
+            <div class="modal-body" id="perfilModalBody"></div>
             <div class="modal-footer">
                 <button type="button" class="btn-danger" id="btnEliminarVendedor" onclick="window.eliminarVendedorSeleccionado()">Eliminar Vendedor</button>
                 <button type="button" class="btn-secondary" onclick="window.cerrarModalPerfil()">Cerrar</button>
@@ -586,7 +631,7 @@
         </div>
     </div>
 
-    <!-- MODAL REGISTRAR NUEVO VENDEDOR -->
+    <!-- MODAL REGISTRO -->
     <div class="modal-overlay" id="registroModal">
         <div class="modal-container">
             <div class="modal-header">
@@ -667,7 +712,15 @@
         let provinciaSeleccionadaFiltro = "Todas";
         let listaVendedoresGlobal = [];
 
-        // Abrir / Cerrar Modales
+        // Animación de salida al volver al panel
+        window.volverAlPanel = function(event) {
+            event.preventDefault();
+            document.body.classList.add("page-leaving");
+            setTimeout(() => {
+                window.location.href = "panelvendedor.html";
+            }, 300);
+        };
+
         window.abrirModalRegistro = function() {
             document.getElementById("vendedorForm").reset();
             document.getElementById("registroModal").classList.add("open");
@@ -681,12 +734,10 @@
             document.getElementById("perfilModal").classList.remove("open");
         };
 
-        // Toggle Menú Desplegable de Provincias
         window.toggleProvinceDropdown = function() {
             document.getElementById("provinceDropdownMenu").classList.toggle("open");
         };
 
-        // Cerrar menú al hacer clic fuera
         window.addEventListener("click", (e) => {
             if (!e.target.closest(".province-filter-container")) {
                 const menu = document.getElementById("provinceDropdownMenu");
@@ -694,7 +745,6 @@
             }
         });
 
-        // Registrar Vendedor
         window.registrarVendedor = async function(event) {
             event.preventDefault();
             const nombre = document.getElementById("nombreVendedor").value.trim();
@@ -732,7 +782,6 @@
             }
         };
 
-        // Escuchar Ventas
         function escucharVentas() {
             onSnapshot(collection(db, "ventasvendedores"), (snapshot) => {
                 ventasPorVendedor = {};
@@ -747,7 +796,6 @@
             });
         }
 
-        // Escuchar Vendedores
         function escucharVendedores() {
             onSnapshot(collection(db, "usuariosvendedores"), (snapshot) => {
                 vendedoresCache = {};
@@ -857,7 +905,6 @@
             renderizarPantalla();
         };
 
-        // Ver Perfil Detallado
         window.abrirPerfilVendedor = function(id) {
             const v = vendedoresCache[id];
             if (!v) return;
@@ -909,7 +956,6 @@
             document.getElementById("perfilModal").classList.add("open");
         };
 
-        // Eliminar Vendedor
         window.eliminarVendedorSeleccionado = async function() {
             if (!vendedorIdParaEliminar) return;
 
