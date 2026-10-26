@@ -31,31 +31,25 @@
             flex-direction: column;
         }
 
-        /* HEADER SUPERIOR */
+        /* HEADER SUPERIOR CORPORATIVO */
         .app-header {
             background: var(--panel-bg);
             border-bottom: 1px solid var(--border-subtle);
             padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
             align-items: center;
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
         .hamburger-btn {
             background: transparent;
             border: 1px solid var(--border-subtle);
             color: #fff;
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -69,8 +63,16 @@
             background: rgba(0, 230, 118, 0.05);
         }
 
+        /* LOGO Y DATOS DE ADMIN CENTRADOS */
+        .header-center-brand {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
         .diti-logo-title {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 800;
             letter-spacing: -0.04em;
             color: #ffffff;
@@ -90,35 +92,36 @@
             margin-left: 2px;
         }
 
-        .admin-profile-badge {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--input-bg);
-            border: 1px solid var(--border-subtle);
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 0.85rem;
+        .admin-meta-subtitle {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            letter-spacing: 0.02em;
         }
 
-        .admin-profile-badge strong {
+        .admin-meta-subtitle strong {
             color: var(--accent-green);
         }
 
-        .btn-logout {
+        /* ICONO DE CERRAR SESIÓN (SOLO ICONO) */
+        .btn-logout-icon {
             background: transparent;
-            border: 1px solid rgba(255, 77, 77, 0.3);
-            color: #ff6666;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.78rem;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .btn-logout:hover {
+        .btn-logout-icon:hover {
             background: rgba(255, 77, 77, 0.1);
-            border-color: #ff4d4d;
+            border-color: rgba(255, 77, 77, 0.4);
+            color: #ff6666;
         }
 
         /* MENÚ HAMBURGUESA LATERAL (SIDEBAR) */
@@ -248,20 +251,28 @@
 
     <!-- Header Superior -->
     <header class="app-header">
-        <div class="header-left">
+        <!-- Izquierda: Menú Hamburguesa -->
+        <div>
             <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Abrir Menú">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
+        </div>
+
+        <!-- Centro: Logotipo diti.app y nombre del admin abajo -->
+        <div class="header-center-brand">
             <a href="diti_adminpanel.html" class="diti-logo-title">
                 diti<span class="green-dot"></span>app
             </a>
+            <div class="admin-meta-subtitle">
+                <span id="admin-display-name">Cargando...</span>
+            </div>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <div class="admin-profile-badge">
-                <span id="admin-display-name">Administrador</span>
-            </div>
-            <button class="btn-logout" onclick="cerrarSesion()">Cerrar Sesión</button>
+        <!-- Derecha: Icono de Cerrar Sesión -->
+        <div style="display: flex; justify-content: flex-end;">
+            <button class="btn-logout-icon" onclick="cerrarSesion()" title="Cerrar Sesión">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            </button>
         </div>
     </header>
 
@@ -300,7 +311,9 @@
         }
 
         const adminSesion = JSON.parse(sesionRaw);
-        document.getElementById("admin-display-name").innerHTML = `<strong>${adminSesion.nombre}</strong> (@${adminSesion.usuario})`;
+        
+        // Mostrar nombre y usuario abajo del logo diti.app
+        document.getElementById("admin-display-name").innerHTML = `${adminSesion.nombre} • <strong>@${adminSesion.usuario}</strong>`;
         document.getElementById("greeting-title").innerText = `Bienvenido, ${adminSesion.nombre}`;
 
         // Control de apertura y cierre del menú hamburguesa
