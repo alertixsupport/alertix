@@ -187,7 +187,7 @@
             padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 12px; /* Reducido para evitar separación excesiva */
+            gap: 12px;
             overflow-y: auto;
             flex-grow: 1;
         }
@@ -195,7 +195,7 @@
         .nav-category-block {
             display: flex;
             flex-direction: column;
-            gap: 4px; /* Elementos de la categoría bien juntos y compactos */
+            gap: 4px;
         }
 
         .nav-category-title {
@@ -213,7 +213,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 9px 12px; /* Espaciado interno más compacto */
+            padding: 9px 12px;
             color: var(--text-muted);
             text-decoration: none;
             border-radius: 6px;
@@ -305,7 +305,7 @@
             <button class="sidebar-close" onclick="toggleSidebar()">×</button>
         </div>
         <div class="sidebar-nav" id="sidebar-nav-links">
-            <!-- Sincronizado en tiempo real y agrupado de forma compacta -->
+            <!-- Cargado instantáneamente desde caché -->
         </div>
     </nav>
 
@@ -317,7 +317,7 @@
         </div>
     </main>
 
-    <!-- Script con Sincronización en Tiempo Real -->
+    <!-- Script con Renderizado Instantáneo y Caché Local -->
     <script type="module">
         import { db } from "../app.js";
         import { collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -338,15 +338,74 @@
 
         window.cerrarSesion = function() {
             sessionStorage.removeItem("diti_admin_sesion");
+            sessionStorage.removeItem("diti_menu_cache");
             window.location.replace("login.html");
         }
 
         const iconoPorDefecto = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
 
-        function iniciarSincronizacionEnVivo() {
+        // Función encargada de dibujar el HTML agrupado en el menú
+        function renderizarMenu(listaMenus, permisos, tipoAcceso) {
             const navContainer = document.getElementById("sidebar-nav-links");
-            navContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 10px;">Sincronizando módulos...</div>';
+            navContainer.innerHTML = "";
 
+            if (listaMenus.length === 0) {
+                navContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay módulos configurados.</div>';
+                return;
+            }
+
+            let categoriasMap = {};
+
+            listaMenus.forEach((menu) => {
+                const titulo = menu.titulo;
+                const redireccion = menu.redireccion || "#";
+                const categoria = menu.categoria ? menu.categoria.trim().toUpperCase() : "GENERAL";
+                const svgIcono = menu.svgIcono ? menu.svgIcono.trim() : iconoPorDefecto;
+
+                if (tipoAcceso === "manual") {
+                    if (!permisos.includes(titulo)) {
+                        return;
+                    }
+                }
+
+                if (!categoriasMap[categoria]) {
+                    categoriasMap[categoria] = [];
+                }
+
+                categoriasMap[categoria].push({ titulo, redireccion, svgIcono });
+            });
+
+            for (let cat in categoriasMap) {
+                let itemsHtml = "";
+                categoriasMap[cat].forEach(item => {
+                    itemsHtml += `
+                        <a href="${item.redireccion}" class="nav-item">
+                            ${item.svgIcono}
+                            ${item.titulo}
+                        </a>
+                    `;
+                });
+
+                navContainer.innerHTML += `
+                    <div class="nav-category-block">
+                        <div class="nav-category-title">${cat}</div>
+                        ${itemsHtml}
+                    </div>
+                `;
+            }
+        }
+
+        // 1. CARGA INSTANTÁNEA DESDE CACHÉ (0 DELAY AL REGRESAR A LA PÁGINA)
+        const menuCacheGuardado = sessionStorage.getItem("diti_menu_cache");
+        if (menuCacheGuardado) {
+            const cachedData = JSON.parse(menuCacheGuardado);
+            renderizarMenu(cachedData, adminSesion.permisosMenu, adminSesion.tipoAcceso);
+        } else {
+            document.getElementById("sidebar-nav-links").innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 10px;">Cargando módulos...</div>';
+        }
+
+        // 2. SINCRONIZACIÓN EN TIEMPO REAL EN SEGUNDO PLANO (ON-SNAPSHOT)
+        function iniciarSincronizacionEnVivo() {
             onSnapshot(doc(db, "diti_usuariosadmin", adminSesion.id), (adminDoc) => {
                 let permisosActualizados = adminSesion.permisosMenu;
                 let tipoAccesoActualizado = adminSesion.tipoAcceso;
@@ -362,53 +421,17 @@
                 }
 
                 onSnapshot(collection(db, "diti_reyditimenu"), (menuSnapshot) => {
-                    navContainer.innerHTML = "";
-
-                    if (menuSnapshot.empty) {
-                        navContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay módulos configurados.</div>';
-                        return;
-                    }
-
-                    let categoriasMap = {};
+                    let listaMenus = [];
 
                     menuSnapshot.forEach((docSnap) => {
-                        const menu = docSnap.data();
-                        const titulo = menu.titulo;
-                        const redireccion = menu.redireccion || "#";
-                        const categoria = menu.categoria ? menu.categoria.trim().toUpperCase() : "GENERAL";
-                        const svgIcono = menu.svgIcono ? menu.svgIcono.trim() : iconoPorDefecto;
-
-                        if (tipoAccesoActualizado === "manual") {
-                            if (!permisosActualizados.includes(titulo)) {
-                                return;
-                            }
-                        }
-
-                        if (!categoriasMap[categoria]) {
-                            categoriasMap[categoria] = [];
-                        }
-
-                        categoriasMap[categoria].push({ titulo, redireccion, svgIcono });
+                        listaMenus.push(docSnap.data());
                     });
 
-                    for (let cat in categoriasMap) {
-                        let itemsHtml = "";
-                        categoriasMap[cat].forEach(item => {
-                            itemsHtml += `
-                                <a href="${item.redireccion}" class="nav-item">
-                                    ${item.svgIcono}
-                                    ${item.titulo}
-                                </a>
-                            `;
-                        });
+                    // Guardar en caché local para próximas visitas instantáneas
+                    sessionStorage.setItem("diti_menu_cache", JSON.stringify(listaMenus));
 
-                        navContainer.innerHTML += `
-                            <div class="nav-category-block">
-                                <div class="nav-category-title">${cat}</div>
-                                ${itemsHtml}
-                            </div>
-                        `;
-                    }
+                    // Actualizar el menú en pantalla al instante
+                    renderizarMenu(listaMenus, permisosActualizados, tipoAccesoActualizado);
                 });
             });
         }
