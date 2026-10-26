@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Diti App — Panel Maestro de Control (ReyDiti)</title>
+    <style>
+        :root {
+            --bg-base: #060707;
+            --panel-bg: #0b0d0c;
+            --border-subtle: #18221b;
+            --border-focus: #00e676;
+            --accent-green: #00e676;
+            --text-main: #ffffff;
+            --text-muted: #859489;
+            --input-bg: #0e1210;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            min-height: 100vh;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 30px 16px;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 950px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* HEADER EMPRESARIAL */
+        .header-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: var(--accent-green);
+            background: rgba(0, 230, 118, 0.08);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-green);
+        }
+
+        .header-title h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+
+        .header-title p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-primary-action {
+            background: var(--accent-green);
+            color: #000;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary-action:hover {
+            background: #00c864;
+            box-shadow: 0 0 12px rgba(0, 230, 118, 0.3);
+        }
+
+        .btn-nav-top {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-nav-top:hover {
+            border-color: var(--accent-green);
+            color: #fff;
+        }
+
+        /* SEPARADOR ESTILIZADO */
+        .enterprise-divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .enterprise-divider::before, .enterprise-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-subtle);
+        }
+
+        .divider-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--accent-green);
+        }
+
+        /* SECCIÓN DE CARDS DE ADMINISTRADORES */
+        .section-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .admins-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .admin-card-item {
+            background: var(--input-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: border-color 0.2s;
+        }
+
+        .admin-card-item:hover {
+            border-color: rgba(0, 230, 118, 0.4);
+        }
+
+        .admin-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .admin-card-header h4 {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .admin-card-header span {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--accent-green);
+        }
+
+        .admin-card-body {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .btn-view-details {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-view-details:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #fff;
+        }
+
+        /* VENTANA EMERGENTE (MODAL WIZARD) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 5, 4, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeInModal 0.25s ease;
+        }
+
+        @keyframes fadeInModal {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-container {
+            width: 100%;
+            max-width: 550px;
+            background: #0d1210;
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.9);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .modal-header h3 {
+            font-size: 1.1rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .btn-close-modal {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .btn-close-modal:hover {
+            color: #fff;
+        }
+
+        .step-counter {
+            font-family: monospace;
+            font-size: 0.78rem;
+            color: var(--accent-green);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .wizard-step {
+            display: none;
+        }
+
+        .wizard-step.active {
+            display: block;
+        }
+
+        .field-group {
+            margin-bottom: 16px;
+        }
+
+        .field-group label {
+            display: block;
+            font-family: monospace;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .field-group input, 
+        .field-group select {
+            width: 100%;
+            height: 42px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            color: #fff;
+            padding: 0 14px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .field-group input:focus, 
+        .field-group select:focus {
+            border-color: var(--border-focus);
+        }
+
+        .permissions-box {
+            background: var(--input-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 10px;
+            max-height: 140px;
+            overflow-y: auto;
+            margin-top: 6px;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.82rem;
+            color: #ccc;
+            margin-bottom: 6px;
+            cursor: pointer;
+        }
+
+        .permission-item input {
+            width: auto;
+            height: auto;
+            accent-color: var(--accent-green);
+        }
+
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .btn-enterprise {
+            height: 40px;
+            padding: 0 18px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+        }
+
+        .btn-ghost:hover {
+            border-color: #444;
+            color: #fff;
+        }
+
+        .btn-solid {
+            background: var(--accent-green);
+            border: none;
+            color: #000;
+            flex-grow: 1;
+        }
+
+        .btn-solid:hover {
+            background: #00c864;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- Encabezado Corporativo -->
+        <div class="header-panel">
+            <div class="header-title">
+                <div class="brand-badge">
+                    <div class="pulse-dot"></div>
+                    DITI ENTERPRISE SYSTEM
+                </div>
+                <h1>ReyDiti — Panel Maestro</h1>
+                <p>Gestión centralizada de credenciales y privilegios de administradores</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn-primary-action" onclick="abrirModalRegistro()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Registrar Administrador
+                </button>
+                <a href="diti_adminpanel.html" class="btn-nav-top">Panel Principal →</a>
+            </div>
+        </div>
+
+        <!-- Separador Estilizado -->
+        <div class="enterprise-divider">
+            <div class="divider-dot"></div>
+        </div>
+
+        <!-- Tarjetas de Administradores Registrados (Tiempo Real) -->
+        <div class="section-card">
+            <div class="section-header">
+                <span class="section-title">Administradores Activos (diti_usuariosadmin)</span>
+                <span style="font-family: monospace; font-size: 0.8rem; color: var(--accent-green);" id="total-admins-count">Sincronizando...</span>
+            </div>
+
+            <div class="admins-grid" id="admins-grid-container">
+                <!-- Se cargan dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- VENTANA EMERGENTE (MODAL WIZARD PASO A PASO) -->
+    <div class="modal-overlay" id="admin-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="form-main-title">Registrar Administrador</h3>
+                <button class="btn-close-modal" onclick="cerrarModal()">×</button>
+            </div>
+
+            <span class="step-counter" id="step-indicator-text">Paso 1 de 3</span>
+
+            <form id="admin-form">
+                <input type="hidden" id="admin-id">
+
+                <!-- PASO 1 -->
+                <div class="wizard-step active" id="step-1">
+                    <div class="field-group">
+                        <label>Nombre y Apellido Completo</label>
+                        <input type="text" id="nombre" placeholder="Ej. Carlos Mendoza">
+                    </div>
+                    <div class="field-group">
+                        <label>Provincia / Región</label>
+                        <input type="text" id="provincia" placeholder="Ej. Buenos Aires">
+                    </div>
+                    <div class="field-group">
+                        <label>Tiempo en la Empresa</label>
+                        <input type="text" id="tiempoEmpresa" placeholder="Ej. 2 años 4 meses">
+                    </div>
+
+                    <div class="wizard-actions">
+                        <div></div>
+                        <button type="button" class="btn-enterprise btn-solid" onclick="cambiarPaso(1)">Siguiente Paso →</button>
+                    </div>
+                </div>
+
+                <!-- PASO 2 -->
+                <div class="wizard-step" id="step-2">
+                    <div class="field-group">
+                        <label>Usuario Asignado (Login)</label>
+                        <input type="text" id="usuario" placeholder="Ej. cmendoza_diti">
+                    </div>
+                    <div class="field-group">
+                        <label>Contraseña de Acceso</label>
+                        <input type="text" id="password" placeholder="••••••••">
+                    </div>
+
+                    <div class="wizard-actions">
+                        <button type="button" class="btn-enterprise btn-ghost" onclick="cambiarPaso(-1)">← Anterior</button>
+                        <button type="button" class="btn-enterprise btn-solid" onclick="cambiarPaso(1)">Siguiente Paso →</button>
+                    </div>
+                </div>
+
+                <!-- PASO 3 -->
+                <div class="wizard-step" id="step-3">
+                    <div class="field-group">
+                        <label>Protocolo de Acceso al Menú</label>
+                        <select id="tipoAcceso" onchange="toggleAccesoMenu()">
+                            <option value="todas">Acceso total a todas las páginas</option>
+                            <option value="manual">Elegir manualmente el acceso</option>
+                        </select>
+                    </div>
+
+                    <div class="field-group" id="menu-permisos-container" style="display: none;">
+                        <label>Páginas Permitidas (diti_reyditimenu)</label>
+                        <div class="permissions-box" id="lista-permisos-menu">
+                            <!-- Opciones desde Firestore -->
+                        </div>
+                    </div>
+
+                    <div class="wizard-actions">
+                        <button type="button" class="btn-enterprise btn-ghost" onclick="cambiarPaso(-1)">← Anterior</button>
+                        <button type="submit" class="btn-enterprise btn-solid" id="btn-guardar">Completar Registro</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script de Firebase y Lógica -->
+    <script type="module">
+        import { db } from "../app.js";
+        import { collection, addDoc, onSnapshot, getDocs, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        window.abrirModalRegistro = function() {
+            resetFormulario();
+            document.getElementById("admin-modal").classList.add("active");
+        }
+
+        window.cerrarModal = function() {
+            document.getElementById("admin-modal").classList.remove("active");
+        }
+
+        window.cambiarPaso = function(direccion) {
+            if (direccion === 1) {
+                if (currentStep === 1) {
+                    if (!document.getElementById("nombre").value.trim() || !document.getElementById("provincia").value.trim()) {
+                        alert("Ingresa el Nombre y la Provincia antes de avanzar.");
+                        return;
+                    }
+                } else if (currentStep === 2) {
+                    if (!document.getElementById("usuario").value.trim() || !document.getElementById("password").value.trim()) {
+                        alert("Ingresa el Usuario y la Contraseña.");
+                        return;
+                    }
+                }
+            }
+
+            currentStep += direccion;
+            if (currentStep < 1) currentStep = 1;
+            if (currentStep > totalSteps) currentStep = totalSteps;
+
+            actualizarPasosUI();
+        }
+
+        function actualizarPasosUI() {
+            for (let i = 1; i <= totalSteps; i++) {
+                document.getElementById(`step-${i}`).classList.remove("active");
+            }
+            document.getElementById(`step-${currentStep}`).classList.add("active");
+            document.getElementById("step-indicator-text").innerText = `Paso ${currentStep} de ${totalSteps}`;
+        }
+
+        const adminForm = document.getElementById("admin-form");
+        const adminsGridContainer = document.getElementById("admins-grid-container");
+        const totalAdminsCount = document.getElementById("total-admins-count");
+        const listaPermisosMenu = document.getElementById("lista-permisos-menu");
+        const tipoAccesoSelect = document.getElementById("tipoAcceso");
+        const menuPermisosContainer = document.getElementById("menu-permisos-container");
+
+        window.toggleAccesoMenu = function() {
+            menuPermisosContainer.style.display = (tipoAccesoSelect.value === "manual") ? "block" : "none";
+        }
+
+        async function cargarOpcionesMenu(permisosActuales = []) {
+            listaPermisosMenu.innerHTML = "";
+            try {
+                const querySnapshot = await getDocs(collection(db, "diti_reyditimenu"));
+                if (querySnapshot.empty) {
+                    listaPermisosMenu.innerHTML = '<div style="font-size:0.75rem; color:#888;">No hay menús en diti_reyditimenu.</div>';
+                    return;
+                }
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const isChecked = permisosActuales.includes(data.titulo) ? "checked" : "";
+                    listaPermisosMenu.innerHTML += `
+                        <label class="permission-item">
+                            <input type="checkbox" value="${data.titulo}" ${isChecked}>
+                            ${data.titulo}
+                        </label>
+                    `;
+                });
+            } catch (e) {
+                listaPermisosMenu.innerHTML = '<div style="font-size:0.75rem; color:#888;">Cargando módulos...</div>';
+            }
+        }
+
+        // TIEMPO REAL CON ONSNAPSHOT EN CARDS
+        function escucharAdministradores() {
+            onSnapshot(collection(db, "diti_usuariosadmin"), (snapshot) => {
+                adminsGridContainer.innerHTML = "";
+                totalAdminsCount.innerText = `${snapshot.size} Activo(s)`;
+
+                if (snapshot.empty) {
+                    adminsGridContainer.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align:center; color: var(--text-muted); padding: 30px;">
+                            No hay administradores registrados en diti_usuariosadmin.
+                        </div>
+                    `;
+                    return;
+                }
+
+                snapshot.forEach((docSnap) => {
+                    const admin = docSnap.data();
+                    const id = docSnap.id;
+
+                    adminsGridContainer.innerHTML += `
+                        <div class="admin-card-item">
+                            <div>
+                                <div class="admin-card-header">
+                                    <h4>${admin.nombre}</h4>
+                                    <span>@${admin.usuario}</span>
+                                </div>
+                                <div class="admin-card-body">
+                                    <div>📍 Provincia: <strong>${admin.provincia}</strong></div>
+                                    <div>⏱️ Antigüedad: <strong>${admin.tiempoEmpresa || 'No especificada'}</strong></div>
+                                    <div>🔒 Acceso: <strong>${admin.tipoAcceso === 'todas' ? 'Todas las páginas' : 'Personalizado'}</strong></div>
+                                </div>
+                            </div>
+                            <button class="btn-view-details" onclick='editarAdmin("${id}", ${JSON.stringify(admin)})'>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                Ver / Editar Permisos
+                            </button>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        adminForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const adminId = document.getElementById("admin-id").value;
+            const nombre = document.getElementById("nombre").value;
+            const provincia = document.getElementById("provincia").value;
+            const usuario = document.getElementById("usuario").value;
+            const password = document.getElementById("password").value;
+            const tiempoEmpresa = document.getElementById("tiempoEmpresa").value;
+            const tipoAcceso = tipoAccesoSelect.value;
+
+            let permisosSeleccionados = [];
+            if (tipoAcceso === "manual") {
+                const checkboxes = listaPermisosMenu.querySelectorAll("input[type='checkbox']:checked");
+                checkboxes.forEach(cb => permisosSeleccionados.push(cb.value));
+            }
+
+            const datosAdmin = {
+                nombre,
+                provincia,
+                usuario,
+                password,
+                tiempoEmpresa,
+                tipoAcceso,
+                permisosMenu: permisosSeleccionados
+            };
+
+            try {
+                if (adminId) {
+                    await updateDoc(doc(db, "diti_usuariosadmin", adminId), datosAdmin);
+                    alert("¡Administrador actualizado correctamente!");
+                } else {
+                    datosAdmin.fechaRegistro = new Date().toLocaleString();
+                    datosAdmin.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "diti_usuariosadmin"), datosAdmin);
+                    alert("¡Administrador registrado con éxito!");
+                }
+                cerrarModal();
+                resetFormulario();
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error al guardar en Firestore.");
+            }
+        });
+
+        window.editarAdmin = function(id, admin) {
+            document.getElementById("admin-id").value = id;
+            document.getElementById("nombre").value = admin.nombre;
+            document.getElementById("provincia").value = admin.provincia;
+            document.getElementById("usuario").value = admin.usuario;
+            document.getElementById("password").value = admin.password;
+            document.getElementById("tiempoEmpresa").value = admin.tiempoEmpresa || "";
+            tipoAccesoSelect.value = admin.tipoAcceso || "todas";
+            toggleAccesoMenu();
+            cargarOpcionesMenu(admin.permisosMenu || []);
+
+            currentStep = 1;
+            actualizarPasosUI();
+            document.getElementById("form-main-title").innerText = "Editar Administrador y Accesos";
+            document.getElementById("btn-guardar").innerText = "Guardar Modificaciones";
+            
+            document.getElementById("admin-modal").classList.add("active");
+        }
+
+        window.resetFormulario = function() {
+            adminForm.reset();
+            document.getElementById("admin-id").value = "";
+            currentStep = 1;
+            actualizarPasosUI();
+            document.getElementById("form-main-title").innerText = "Registrar Administrador";
+            document.getElementById("btn-guardar").innerText = "Completar Registro";
+            tipoAccesoSelect.value = "todas";
+            toggleAccesoMenu();
+            cargarOpcionesMenu();
+        }
+
+        // Inicializar
+        cargarOpcionesMenu();
+        escucharAdministradores();
+    </script>
+</body>
+</html>
