@@ -188,7 +188,7 @@
             box-shadow: 0 0 6px var(--accent-green);
         }
 
-        /* ÁREA DE MENSAJES (CON ESPACIO SUPERIOR PARA EL HEADER FIJO) */
+        /* ÁREA DE MENSAJES */
         .chat-messages-container {
             flex-grow: 1;
             padding: 75px 20px 20px 20px;
@@ -605,7 +605,7 @@
         </div>
     </div>
 
-    <!-- Script con Carga Inicial Directa al Último Mensaje -->
+    <!-- Script Corregido para Mantener el Scroll Abajo Estrictamente -->
     <script type="module">
         import { db } from "../app.js";
         import { collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp, doc, updateDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -627,7 +627,6 @@
         let mediaRecorder = null;
         let audioChunks = [];
         let isRecording = false;
-        let primeraCargaChat = true;
 
         function reproducirSonidoEnvio() {
             try {
@@ -748,7 +747,8 @@
             });
         });
 
-        // Sincronización ultrarrápida con posicionamiento automático al último mensaje
+        // Sincronización en tiempo real con control estricto de posición inferior
+        let primeraEjecucion = true;
         const q = query(collection(db, "chatadmins"), orderBy("timestamp", "asc"), limit(100));
 
         onSnapshot(q, (snapshot) => {
@@ -786,15 +786,11 @@
                 `;
             });
 
-            // En la primera carga o si el usuario está al fondo, posicionar al último mensaje al instante
-            if (primeraCargaChat) {
+            // CORRECCIÓN CLAVE: Si es la primera carga o si el usuario está cerca del fondo (o envió un mensaje), mantener abajo automáticamente
+            const distanciaDesdeAbajo = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight;
+            if (primeraEjecucion || distanciaDesdeAbajo < 300) {
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                primeraCargaChat = false;
-            } else {
-                const distanciaDesdeAbajo = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight;
-                if (distanciaDesdeAbajo < 350) {
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                }
+                primeraEjecucion = false;
             }
         });
 
@@ -815,7 +811,11 @@
             chatInput.value = "";
             cancelarRespuesta();
             reproducirSonidoEnvio();
-            irAlUltimoMensaje();
+            
+            // Forzar scroll al fondo inmediatamente al enviar
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 50);
         });
 
         window.enviarImagen = (input) => {
@@ -850,7 +850,7 @@
                             timestamp: serverTimestamp()
                         });
                         reproducirSonidoEnvio();
-                        irAlUltimoMensaje();
+                        setTimeout(() => { messagesContainer.scrollTop = messagesContainer.scrollHeight; }, 50);
                     } catch (err) {
                         alert("Error al enviar la imagen. Verifique su conexión.");
                     }
@@ -882,7 +882,7 @@
                                 timestamp: serverTimestamp()
                             });
                             reproducirSonidoEnvio();
-                            irAlUltimoMensaje();
+                            setTimeout(() => { messagesContainer.scrollTop = messagesContainer.scrollHeight; }, 50);
                         };
                         reader.readAsDataURL(audioBlob);
                     };
