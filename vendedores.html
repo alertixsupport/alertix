@@ -569,8 +569,8 @@
 
     <header>
         <div class="header-left">
-            <!-- BOTÓN PANEL CON FLECHA Y ANIMACIÓN DE SALIDA -->
-            <a href="panelvendedor.html" class="btn-back-panel" onclick="window.volverAlPanel(event)">
+            <!-- BOTÓN PANEL REDIRIGIENDO A paneladmin.html CON ANIMACIÓN -->
+            <a href="paneladmin.html" class="btn-back-panel" onclick="window.volverAlPanel(event)">
                 <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                 <span>Panel</span>
             </a>
@@ -712,12 +712,12 @@
         let provinciaSeleccionadaFiltro = "Todas";
         let listaVendedoresGlobal = [];
 
-        // Animación de salida al volver al panel
+        // Animación de salida hacia paneladmin.html
         window.volverAlPanel = function(event) {
             event.preventDefault();
             document.body.classList.add("page-leaving");
             setTimeout(() => {
-                window.location.href = "panelvendedor.html";
+                window.location.href = "paneladmin.html";
             }, 300);
         };
 
