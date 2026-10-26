@@ -124,7 +124,7 @@
             color: #ff6666;
         }
 
-        /* MENÚ HAMBURGUESA LATERAL (SIDEBAR) CON CATEGORÍAS */
+        /* MENÚ HAMBURGUESA LATERAL (SIDEBAR) COMPACTO Y ACOMODADO */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -164,7 +164,7 @@
         }
 
         .sidebar-header {
-            padding: 24px;
+            padding: 22px 20px;
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
             justify-content: space-between;
@@ -184,21 +184,27 @@
         }
 
         .sidebar-nav {
-            padding: 20px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px; /* Reducido para evitar separación excesiva */
             overflow-y: auto;
             flex-grow: 1;
         }
 
+        .nav-category-block {
+            display: flex;
+            flex-direction: column;
+            gap: 4px; /* Elementos de la categoría bien juntos y compactos */
+        }
+
         .nav-category-title {
             font-family: monospace;
-            font-size: 11px;
+            font-size: 10.5px;
             letter-spacing: 0.08em;
             color: var(--accent-green);
             text-transform: uppercase;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             padding-left: 6px;
             border-left: 2px solid var(--accent-green);
         }
@@ -206,17 +212,16 @@
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 11px 14px;
+            gap: 10px;
+            padding: 9px 12px; /* Espaciado interno más compacto */
             color: var(--text-muted);
             text-decoration: none;
-            border-radius: 8px;
-            font-size: 0.9rem;
+            border-radius: 6px;
+            font-size: 0.88rem;
             font-weight: 500;
             transition: all 0.2s;
             background: transparent;
             border: 1px solid transparent;
-            margin-bottom: 4px;
         }
 
         .nav-item:hover, .nav-item.active {
@@ -225,10 +230,9 @@
             border-color: rgba(0, 230, 118, 0.2);
         }
 
-        /* FORZAR COLOR VERDE Y TAMAÑO EN LOS ICONOS SVG DEL MENÚ */
         .nav-item svg {
-            width: 18px !important;
-            height: 18px !important;
+            width: 17px !important;
+            height: 17px !important;
             stroke: var(--accent-green) !important;
             fill: none;
             flex-shrink: 0;
@@ -301,7 +305,7 @@
             <button class="sidebar-close" onclick="toggleSidebar()">×</button>
         </div>
         <div class="sidebar-nav" id="sidebar-nav-links">
-            <!-- Sincronizado en tiempo real con iconos SVG personalizados -->
+            <!-- Sincronizado en tiempo real y agrupado de forma compacta -->
         </div>
     </nav>
 
@@ -313,12 +317,11 @@
         </div>
     </main>
 
-    <!-- Script con Sincronización en Tiempo Real e Inyección de Iconos SVG -->
+    <!-- Script con Sincronización en Tiempo Real -->
     <script type="module">
         import { db } from "../app.js";
         import { collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // Validación estricta de sesión
         const sesionRaw = sessionStorage.getItem("diti_admin_sesion");
         if (!sesionRaw) {
             window.location.replace("login.html");
@@ -338,12 +341,11 @@
             window.location.replace("login.html");
         }
 
-        // Icono SVG por defecto en caso de que no se guarde uno
         const iconoPorDefecto = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
 
         function iniciarSincronizacionEnVivo() {
             const navContainer = document.getElementById("sidebar-nav-links");
-            navContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 10px;">Sincronizando módulos e iconos...</div>';
+            navContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 10px;">Sincronizando módulos...</div>';
 
             onSnapshot(doc(db, "diti_usuariosadmin", adminSesion.id), (adminDoc) => {
                 let permisosActualizados = adminSesion.permisosMenu;
@@ -390,16 +392,22 @@
                     });
 
                     for (let cat in categoriasMap) {
-                        navContainer.innerHTML += `<div class="nav-category-title">${cat}</div>`;
-                        
+                        let itemsHtml = "";
                         categoriasMap[cat].forEach(item => {
-                            navContainer.innerHTML += `
+                            itemsHtml += `
                                 <a href="${item.redireccion}" class="nav-item">
                                     ${item.svgIcono}
                                     ${item.titulo}
                                 </a>
                             `;
                         });
+
+                        navContainer.innerHTML += `
+                            <div class="nav-category-block">
+                                <div class="nav-category-title">${cat}</div>
+                                ${itemsHtml}
+                            </div>
+                        `;
                     }
                 });
             });
