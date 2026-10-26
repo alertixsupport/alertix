@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Diti App — Panel Maestro de Control (ReyDiti)</title>
+    <title>Diti App — Panel Maestro de Control</title>
     <style>
         :root {
             --bg-base: #060707;
@@ -42,7 +42,7 @@
             gap: 28px;
         }
 
-        /* HEADER EMPRESARIAL */
+        /* HEADER CORPORATIVO */
         .header-panel {
             background: var(--panel-bg);
             border: 1px solid var(--border-subtle);
@@ -76,6 +76,12 @@
             background-color: var(--accent-green);
             border-radius: 50%;
             box-shadow: 0 0 8px var(--accent-green);
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.9); }
         }
 
         .header-title h1 {
@@ -154,6 +160,7 @@
             background: var(--accent-green);
             border-radius: 50%;
             box-shadow: 0 0 6px var(--accent-green);
+            animation: pulseGlow 2s infinite ease-in-out;
         }
 
         /* SECCIÓN DE CARDS DE ADMINISTRADORES */
@@ -188,22 +195,23 @@
             background: var(--input-bg);
             border: 1px solid var(--border-subtle);
             border-radius: 10px;
-            padding: 16px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: border-color 0.2s;
+            transition: all 0.2s ease;
         }
 
         .admin-card-item:hover {
             border-color: rgba(0, 230, 118, 0.4);
+            transform: translateY(-2px);
         }
 
         .admin-card-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .admin-card-header h4 {
@@ -216,47 +224,56 @@
             font-family: monospace;
             font-size: 0.75rem;
             color: var(--accent-green);
+            background: rgba(0, 230, 118, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
         }
 
         .admin-card-body {
-            font-size: 0.8rem;
+            font-size: 0.81rem;
             color: var(--text-muted);
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
+        }
+
+        .admin-card-body strong {
+            color: #e0e0e0;
         }
 
         .btn-view-details {
             background: transparent;
             border: 1px solid var(--border-subtle);
             color: #fff;
-            padding: 6px 10px;
+            padding: 8px 12px;
             border-radius: 6px;
             font-size: 0.78rem;
+            font-weight: 500;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
             transition: all 0.2s;
             width: 100%;
         }
 
         .btn-view-details:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: #fff;
+            background: rgba(0, 230, 118, 0.1);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
         }
 
-        /* VENTANA EMERGENTE (MODAL WIZARD) */
+        /* VENTANA EMERGENTE (MODAL WIZARD PROFESIONAL) */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(3, 5, 4, 0.8);
-            backdrop-filter: blur(8px);
+            background: rgba(3, 5, 4, 0.85);
+            backdrop-filter: blur(10px);
             display: none;
             justify-content: center;
             align-items: center;
@@ -270,18 +287,18 @@
         }
 
         @keyframes fadeInModal {
-            from { opacity: 0; transform: scale(0.96); }
+            from { opacity: 0; transform: scale(0.97); }
             to { opacity: 1; transform: scale(1); }
         }
 
         .modal-container {
             width: 100%;
-            max-width: 550px;
+            max-width: 580px;
             background: #0d1210;
-            border: 1px solid rgba(0, 230, 118, 0.3);
+            border: 1px solid rgba(0, 230, 118, 0.25);
             border-radius: 14px;
-            padding: 28px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.9);
+            padding: 32px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.9);
             position: relative;
         }
 
@@ -289,13 +306,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 14px;
             border-bottom: 1px solid var(--border-subtle);
         }
 
         .modal-header h3 {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: #fff;
             font-weight: 600;
         }
@@ -304,8 +321,9 @@
             background: transparent;
             border: none;
             color: var(--text-muted);
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             cursor: pointer;
+            transition: color 0.2s;
         }
 
         .btn-close-modal:hover {
@@ -316,8 +334,9 @@
             font-family: monospace;
             font-size: 0.78rem;
             color: var(--accent-green);
-            margin-bottom: 15px;
+            margin-bottom: 18px;
             display: block;
+            letter-spacing: 0.05em;
         }
 
         .wizard-step {
@@ -326,17 +345,23 @@
 
         .wizard-step.active {
             display: block;
+            animation: fadeInStep 0.3s ease;
+        }
+
+        @keyframes fadeInStep {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .field-group {
-            margin-bottom: 16px;
+            margin-bottom: 18px;
         }
 
         .field-group label {
             display: block;
             font-family: monospace;
             font-size: 11px;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
             color: var(--text-muted);
             margin-bottom: 6px;
             text-transform: uppercase;
@@ -345,7 +370,7 @@
         .field-group input, 
         .field-group select {
             width: 100%;
-            height: 42px;
+            height: 44px;
             background: var(--input-bg);
             border: 1px solid var(--border-subtle);
             border-radius: 6px;
@@ -359,25 +384,26 @@
         .field-group input:focus, 
         .field-group select:focus {
             border-color: var(--border-focus);
+            box-shadow: 0 0 8px rgba(0, 230, 118, 0.15);
         }
 
         .permissions-box {
             background: var(--input-bg);
             border: 1px solid var(--border-subtle);
             border-radius: 6px;
-            padding: 10px;
-            max-height: 140px;
+            padding: 12px;
+            max-height: 160px;
             overflow-y: auto;
-            margin-top: 6px;
+            margin-top: 8px;
         }
 
         .permission-item {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 0.82rem;
+            font-size: 0.84rem;
             color: #ccc;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             cursor: pointer;
         }
 
@@ -390,13 +416,13 @@
         .wizard-actions {
             display: flex;
             justify-content: space-between;
-            gap: 10px;
-            margin-top: 24px;
+            gap: 12px;
+            margin-top: 28px;
         }
 
         .btn-enterprise {
-            height: 40px;
-            padding: 0 18px;
+            height: 42px;
+            padding: 0 20px;
             border-radius: 6px;
             font-size: 0.85rem;
             font-weight: 600;
@@ -424,6 +450,7 @@
 
         .btn-solid:hover {
             background: #00c864;
+            box-shadow: 0 0 12px rgba(0, 230, 118, 0.3);
         }
     </style>
 </head>
@@ -435,10 +462,10 @@
             <div class="header-title">
                 <div class="brand-badge">
                     <div class="pulse-dot"></div>
-                    DITI ENTERPRISE SYSTEM
+                    DITI ENTERPRISE SECURITY
                 </div>
-                <h1>ReyDiti — Panel Maestro</h1>
-                <p>Gestión centralizada de credenciales y privilegios de administradores</p>
+                <h1>Panel Maestro de Control</h1>
+                <p>Estructuración ejecutiva de credenciales y privilegios gerenciales</p>
             </div>
             <div class="header-actions">
                 <button class="btn-primary-action" onclick="abrirModalRegistro()">
@@ -457,7 +484,7 @@
         <!-- Tarjetas de Administradores Registrados (Tiempo Real) -->
         <div class="section-card">
             <div class="section-header">
-                <span class="section-title">Administradores Activos (diti_usuariosadmin)</span>
+                <span class="section-title">Administradores Autorizados</span>
                 <span style="font-family: monospace; font-size: 0.8rem; color: var(--accent-green);" id="total-admins-count">Sincronizando...</span>
             </div>
 
@@ -467,7 +494,7 @@
         </div>
     </div>
 
-    <!-- VENTANA EMERGENTE (MODAL WIZARD PASO A PASO) -->
+    <!-- VENTANA EMERGENTE (MODAL WIZARD PROFESIONAL) -->
     <div class="modal-overlay" id="admin-modal">
         <div class="modal-container">
             <div class="modal-header">
@@ -475,7 +502,7 @@
                 <button class="btn-close-modal" onclick="cerrarModal()">×</button>
             </div>
 
-            <span class="step-counter" id="step-indicator-text">Paso 1 de 3</span>
+            <span class="step-counter" id="step-indicator-text">FASE 1 DE 3 — DATOS PERSONALES</span>
 
             <form id="admin-form">
                 <input type="hidden" id="admin-id">
@@ -487,34 +514,34 @@
                         <input type="text" id="nombre" placeholder="Ej. Carlos Mendoza">
                     </div>
                     <div class="field-group">
-                        <label>Provincia / Región</label>
+                        <label>Provincia / Región Operativa</label>
                         <input type="text" id="provincia" placeholder="Ej. Buenos Aires">
                     </div>
                     <div class="field-group">
-                        <label>Tiempo en la Empresa</label>
+                        <label>Tiempo en la Organización</label>
                         <input type="text" id="tiempoEmpresa" placeholder="Ej. 2 años 4 meses">
                     </div>
 
                     <div class="wizard-actions">
                         <div></div>
-                        <button type="button" class="btn-enterprise btn-solid" onclick="cambiarPaso(1)">Siguiente Paso →</button>
+                        <button type="button" class="btn-enterprise btn-solid" onclick="cambiarPaso(1)">Siguiente Fase →</button>
                     </div>
                 </div>
 
                 <!-- PASO 2 -->
                 <div class="wizard-step" id="step-2">
                     <div class="field-group">
-                        <label>Usuario Asignado (Login)</label>
+                        <label>Usuario Asignado (Credencial de Acceso)</label>
                         <input type="text" id="usuario" placeholder="Ej. cmendoza_diti">
                     </div>
                     <div class="field-group">
-                        <label>Contraseña de Acceso</label>
+                        <label>Contraseña de Seguridad</label>
                         <input type="text" id="password" placeholder="••••••••">
                     </div>
 
                     <div class="wizard-actions">
                         <button type="button" class="btn-enterprise btn-ghost" onclick="cambiarPaso(-1)">← Anterior</button>
-                        <button type="button" class="btn-enterprise btn-solid" onclick="cambiarPaso(1)">Siguiente Paso →</button>
+                        <button type="button" class="btn-enterprise btn-solid" onclick="cambiarPaso(1)">Siguiente Fase →</button>
                     </div>
                 </div>
 
@@ -523,15 +550,15 @@
                     <div class="field-group">
                         <label>Protocolo de Acceso al Menú</label>
                         <select id="tipoAcceso" onchange="toggleAccesoMenu()">
-                            <option value="todas">Acceso total a todas las páginas</option>
-                            <option value="manual">Elegir manualmente el acceso</option>
+                            <option value="todas">Acceso total a todos los módulos</option>
+                            <option value="manual">Asignación manual selectiva</option>
                         </select>
                     </div>
 
                     <div class="field-group" id="menu-permisos-container" style="display: none;">
-                        <label>Páginas Permitidas (diti_reyditimenu)</label>
+                        <label>Módulos Autorizados</label>
                         <div class="permissions-box" id="lista-permisos-menu">
-                            <!-- Opciones desde Firestore -->
+                            <!-- Opciones cargadas de Firebase -->
                         </div>
                     </div>
 
@@ -552,6 +579,12 @@
         let currentStep = 1;
         const totalSteps = 3;
 
+        const fasesNombres = [
+            "FASE 1 DE 3 — DATOS PERSONALES",
+            "FASE 2 DE 3 — CREDENCIALES DE ACCESO",
+            "FASE 3 DE 3 — PRIVILEGIOS Y MÓDULOS"
+        ];
+
         window.abrirModalRegistro = function() {
             resetFormulario();
             document.getElementById("admin-modal").classList.add("active");
@@ -565,12 +598,12 @@
             if (direccion === 1) {
                 if (currentStep === 1) {
                     if (!document.getElementById("nombre").value.trim() || !document.getElementById("provincia").value.trim()) {
-                        alert("Ingresa el Nombre y la Provincia antes de avanzar.");
+                        alert("Por favor ingrese el Nombre y la Provincia.");
                         return;
                     }
                 } else if (currentStep === 2) {
                     if (!document.getElementById("usuario").value.trim() || !document.getElementById("password").value.trim()) {
-                        alert("Ingresa el Usuario y la Contraseña.");
+                        alert("Por favor ingrese el Usuario y la Contraseña.");
                         return;
                     }
                 }
@@ -588,7 +621,7 @@
                 document.getElementById(`step-${i}`).classList.remove("active");
             }
             document.getElementById(`step-${currentStep}`).classList.add("active");
-            document.getElementById("step-indicator-text").innerText = `Paso ${currentStep} de ${totalSteps}`;
+            document.getElementById("step-indicator-text").innerText = fasesNombres[currentStep - 1];
         }
 
         const adminForm = document.getElementById("admin-form");
@@ -607,7 +640,7 @@
             try {
                 const querySnapshot = await getDocs(collection(db, "diti_reyditimenu"));
                 if (querySnapshot.empty) {
-                    listaPermisosMenu.innerHTML = '<div style="font-size:0.75rem; color:#888;">No hay menús en diti_reyditimenu.</div>';
+                    listaPermisosMenu.innerHTML = '<div style="font-size:0.75rem; color:#888;">No hay módulos configurados en el sistema.</div>';
                     return;
                 }
                 querySnapshot.forEach((docSnap) => {
@@ -634,7 +667,7 @@
                 if (snapshot.empty) {
                     adminsGridContainer.innerHTML = `
                         <div style="grid-column: 1/-1; text-align:center; color: var(--text-muted); padding: 30px;">
-                            No hay administradores registrados en diti_usuariosadmin.
+                            No hay administradores registrados actualmente.
                         </div>
                     `;
                     return;
@@ -652,14 +685,14 @@
                                     <span>@${admin.usuario}</span>
                                 </div>
                                 <div class="admin-card-body">
-                                    <div>📍 Provincia: <strong>${admin.provincia}</strong></div>
-                                    <div>⏱️ Antigüedad: <strong>${admin.tiempoEmpresa || 'No especificada'}</strong></div>
-                                    <div>🔒 Acceso: <strong>${admin.tipoAcceso === 'todas' ? 'Todas las páginas' : 'Personalizado'}</strong></div>
+                                    <div>Región: <strong>${admin.provincia}</strong></div>
+                                    <div>Antigüedad: <strong>${admin.tiempoEmpresa || 'No especificada'}</strong></div>
+                                    <div>Privilegio: <strong>${admin.tipoAcceso === 'todas' ? 'Acceso Total' : 'Manual Selectivo'}</strong></div>
                                 </div>
                             </div>
                             <button class="btn-view-details" onclick='editarAdmin("${id}", ${JSON.stringify(admin)})'>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                Ver / Editar Permisos
+                                Gestionar Credenciales y Permisos
                             </button>
                         </div>
                     `;
@@ -696,18 +729,18 @@
             try {
                 if (adminId) {
                     await updateDoc(doc(db, "diti_usuariosadmin", adminId), datosAdmin);
-                    alert("¡Administrador actualizado correctamente!");
+                    alert("¡Administrador actualizado con éxito!");
                 } else {
                     datosAdmin.fechaRegistro = new Date().toLocaleString();
                     datosAdmin.createdAt = serverTimestamp();
                     await addDoc(collection(db, "diti_usuariosadmin"), datosAdmin);
-                    alert("¡Administrador registrado con éxito!");
+                    alert("¡Administrador registrado exitosamente!");
                 }
                 cerrarModal();
                 resetFormulario();
             } catch (error) {
                 console.error("Error:", error);
-                alert("Error al guardar en Firestore.");
+                alert("Error al procesar la solicitud en la base de datos.");
             }
         });
 
@@ -725,7 +758,7 @@
             currentStep = 1;
             actualizarPasosUI();
             document.getElementById("form-main-title").innerText = "Editar Administrador y Accesos";
-            document.getElementById("btn-guardar").innerText = "Guardar Modificaciones";
+            document.getElementById("btn-guardar").innerText = "Actualizar Modificaciones";
             
             document.getElementById("admin-modal").classList.add("active");
         }
