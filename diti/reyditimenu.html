@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Diti App — Gestor de Menú y Módulos</title>
+    <style>
+        :root {
+            --bg-base: #060707;
+            --panel-bg: #0b0d0c;
+            --border-subtle: #18221b;
+            --border-focus: #00e676;
+            --accent-green: #00e676;
+            --text-main: #ffffff;
+            --text-muted: #859489;
+            --input-bg: #0e1210;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            min-height: 100vh;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 30px 16px;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 950px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* LOGO Y ENCABEZADO CENTRALIZADO */
+        .brand-header-center {
+            text-align: center;
+            padding: 10px 0 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .diti-logo-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: baseline;
+            gap: 2px;
+        }
+
+        .diti-logo-title .green-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 12px var(--accent-green);
+            margin-left: 2px;
+        }
+
+        .diti-logo-subtitle {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* HEADER PANEL PRINCIPAL */
+        .header-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-title h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .header-title p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary-action {
+            background: var(--accent-green);
+            color: #000;
+            border: none;
+            padding: 11px 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.25s ease;
+        }
+
+        .btn-primary-action:hover {
+            background: #00c864;
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .btn-nav-top {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            padding: 11px 16px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-nav-top:hover {
+            border-color: var(--accent-green);
+            color: #fff;
+        }
+
+        /* SEPARADOR ESTILIZADO */
+        .enterprise-divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 5px 0;
+        }
+
+        .enterprise-divider::before, .enterprise-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-subtle);
+        }
+
+        .divider-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--accent-green);
+            animation: pulseGlow 2.5s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.85); }
+        }
+
+        /* SECCIÓN DE MÓDULOS AGRUPADOS */
+        .section-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* CATEGORÍA AGRUPADA */
+        .category-group-container {
+            margin-bottom: 24px;
+        }
+
+        .category-group-title {
+            font-family: monospace;
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+        }
+
+        .module-card-item {
+            background: var(--input-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.25s ease;
+        }
+
+        .module-card-item:hover {
+            border-color: rgba(0, 230, 118, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.05);
+        }
+
+        .module-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .module-card-header h4 {
+            font-size: 0.92rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .module-card-body {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .module-card-body span {
+            font-family: monospace;
+            color: #bbb;
+        }
+
+        .btn-view-details {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-view-details:hover {
+            background: rgba(0, 230, 118, 0.1);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        /* VENTANA EMERGENTE (MODAL) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 5, 4, 0.85);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeInModal 0.25s ease;
+        }
+
+        @keyframes fadeInModal {
+            from { opacity: 0; transform: scale(0.97); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-container {
+            width: 100%;
+            max-width: 520px;
+            background: #0d1210;
+            border: 1px solid rgba(0, 230, 118, 0.25);
+            border-radius: 14px;
+            padding: 32px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .modal-header h3 {
+            font-size: 1.1rem;
+            color: #fff;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-close-modal {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .btn-close-modal:hover {
+            color: #fff;
+        }
+
+        .field-group {
+            margin-bottom: 16px;
+        }
+
+        .field-group label {
+            display: block;
+            font-family: monospace;
+            font-size: 11px;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .field-group input, 
+        .field-group textarea {
+            width: 100%;
+            height: 42px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            color: #fff;
+            padding: 0 14px;
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .field-group textarea {
+            height: 90px;
+            padding: 10px 14px;
+            resize: vertical;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        .field-group input:focus, 
+        .field-group textarea:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 8px rgba(0, 230, 118, 0.15);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn-enterprise {
+            height: 42px;
+            padding: 0 20px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+        }
+
+        .btn-ghost:hover {
+            border-color: #444;
+            color: #fff;
+        }
+
+        .btn-solid {
+            background: var(--accent-green);
+            border: none;
+            color: #000;
+            flex-grow: 1;
+        }
+
+        .btn-solid:hover {
+            background: #00c864;
+            box-shadow: 0 0 12px rgba(0, 230, 118, 0.35);
+        }
+
+        .btn-danger {
+            background: rgba(255, 77, 77, 0.1);
+            border: 1px solid rgba(255, 77, 77, 0.4);
+            color: #ff6666;
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 77, 77, 0.2);
+            border-color: #ff4d4d;
+            color: #ff4d4d;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- LOGOTIPO PROFESIONAL CENTRALIZADO -->
+        <div class="brand-header-center">
+            <div class="diti-logo-title">
+                diti<span class="green-dot"></span>app
+            </div>
+            <div class="diti-logo-subtitle">Gestión de Navegación y Módulos — ReyDiti</div>
+        </div>
+
+        <!-- Encabezado Operativo -->
+        <div class="header-panel">
+            <div class="header-title">
+                <h2>Catálogo de Páginas del Menú</h2>
+                <p>Estructura y distribución de módulos del sistema corporativo</p>
+            </div>
+            <div class="header-actions">
+                <a href="diti_adminpanel.html" class="btn-nav-top">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    Volver al Inicio
+                </a>
+                <button class="btn-primary-action" onclick="abrirModalRegistro()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Agregar Página
+                </button>
+            </div>
+        </div>
+
+        <!-- Separador Estilizado -->
+        <div class="enterprise-divider">
+            <div class="divider-dot"></div>
+        </div>
+
+        <!-- Tarjetas de Módulos Agrupados por Categoría -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Módulos y Secciones Activas
+                </div>
+            </div>
+
+            <!-- Contenedor dinámico agrupado por categorías -->
+            <div id="modules-grouped-container">
+                <!-- Se cargan en tiempo real -->
+            </div>
+        </div>
+    </div>
+
+    <!-- VENTANA EMERGENTE (MODAL DE REGISTRO / EDICIÓN) -->
+    <div class="modal-overlay" id="menu-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="modal-title-text">Agregar Página al Menú</h3>
+                <button class="btn-close-modal" onclick="cerrarModal()">×</button>
+            </div>
+
+            <form id="menu-form">
+                <input type="hidden" id="menu-id">
+
+                <div class="field-group">
+                    <label>Título de la Página</label>
+                    <input type="text" id="titulo" required placeholder="Ej. Gestión de Usuarios">
+                </div>
+
+                <div class="field-group">
+                    <label>Redirección (Archivo / Ruta)</label>
+                    <input type="text" id="redireccion" required placeholder="Ej. usuarios.html">
+                </div>
+
+                <div class="field-group">
+                    <label>Categoría / Sección</label>
+                    <input type="text" id="categoria" required placeholder="Ej. ADMINISTRACIÓN">
+                </div>
+
+                <div class="field-group">
+                    <label>Posición de Orden</label>
+                    <input type="number" id="orden" placeholder="Ej. 1" value="0">
+                </div>
+
+                <div class="field-group">
+                    <label>Código SVG del Icono</label>
+                    <textarea id="svgIcono" placeholder='<svg width="18" height="18" viewBox="0 0 24 24" ...></svg>'></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-enterprise btn-danger" id="btn-eliminar" style="display: none;" onclick="eliminarMenu()">Eliminar</button>
+                    <div style="flex-grow: 1;" id="spacer-modal"></div>
+                    <button type="submit" class="btn-enterprise btn-solid" id="btn-guardar">Guardar Página</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script con Sincronización en Tiempo Real (onSnapshot) -->
+    <script type="module">
+        import { db } from "../app.js";
+        import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const groupedContainer = document.getElementById("modules-grouped-container");
+        const menuForm = document.getElementById("menu-form");
+
+        window.abrirModalRegistro = function() {
+            menuForm.reset();
+            document.getElementById("menu-id").value = "";
+            document.getElementById("modal-title-text").innerText = "Agregar Página al Menú";
+            document.getElementById("btn-guardar").innerText = "Guardar Página";
+            document.getElementById("btn-eliminar").style.display = "none";
+            document.getElementById("menu-modal").classList.add("active");
+        }
+
+        window.cerrarModal = function() {
+            document.getElementById("menu-modal").classList.remove("active");
+        }
+
+        // TIEMPO REAL CON ONSNAPSHOT EN COLECCIÓN diti_reyditimenu
+        function escucharMenus() {
+            onSnapshot(collection(db, "diti_reyditimenu"), (snapshot) => {
+                groupedContainer.innerHTML = "";
+
+                if (snapshot.empty) {
+                    groupedContainer.innerHTML = `
+                        <div style="text-align:center; color: var(--text-muted); padding: 30px;">
+                            No hay páginas o módulos configurados en el sistema.
+                        </div>
+                    `;
+                    return;
+                }
+
+                let categoriasMap = {};
+
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const id = docSnap.id;
+                    const cat = data.categoria ? data.categoria.trim().toUpperCase() : "GENERAL";
+
+                    if (!categoriasMap[cat]) {
+                        categoriasMap[cat] = [];
+                    }
+
+                    categoriasMap[cat].push({ id, ...data });
+                });
+
+                const categoriasOrdenadas = Object.keys(categoriasMap).sort();
+
+                categoriasOrdenadas.forEach((cat) => {
+                    categoriasMap[cat].sort((a, b) => (parseInt(a.orden) || 0) - (parseInt(b.orden) || 0));
+
+                    let htmlCards = "";
+                    categoriasMap[cat].forEach((item) => {
+                        htmlCards += `
+                            <div class="module-card-item">
+                                <div>
+                                    <div class="module-card-header">
+                                        <h4>${item.titulo}</h4>
+                                        <span style="font-family: monospace; font-size: 0.72rem; color: var(--accent-green);">#${item.orden || 0}</span>
+                                    </div>
+                                    <div class="module-card-body">
+                                        <div>Redirección: <span>${item.redireccion}</span></div>
+                                    </div>
+                                </div>
+                                <button class="btn-view-details" onclick='editarMenu("${item.id}", ${JSON.stringify(item).replace(/"/g, "&quot;")})'>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                    Modificar Módulo
+                                </button>
+                            </div>
+                        `;
+                    });
+
+                    groupedContainer.innerHTML += `
+                        <div class="category-group-container">
+                            <div class="category-group-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                ${cat} (${categoriasMap[cat].length} Módulos)
+                            </div>
+                            <div class="modules-grid">
+                                ${htmlCards}
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        menuForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const menuId = document.getElementById("menu-id").value;
+            const titulo = document.getElementById("titulo").value.trim();
+            const redireccion = document.getElementById("redireccion").value.trim();
+            const categoria = document.getElementById("categoria").value.trim().toUpperCase();
+            const orden = parseInt(document.getElementById("orden").value) || 0;
+            const svgIcono = document.getElementById("svgIcono").value.trim();
+
+            const datosMenu = {
+                titulo,
+                redireccion,
+                categoria,
+                orden,
+                svgIcono
+            };
+
+            try {
+                if (menuId) {
+                    await updateDoc(doc(db, "diti_reyditimenu", menuId), datosMenu);
+                    alert("¡Módulo actualizado con éxito!");
+                } else {
+                    await addDoc(collection(db, "diti_reyditimenu"), datosMenu);
+                    alert("¡Módulo agregado con éxito!");
+                }
+                cerrarModal();
+                menuForm.reset();
+            } catch (error) {
+                console.error("Error al guardar:", error);
+                alert("Error al procesar la solicitud en la base de datos.");
+            }
+        });
+
+        window.editarMenu = function(id, item) {
+            document.getElementById("menu-id").value = id;
+            document.getElementById("titulo").value = item.titulo || "";
+            document.getElementById("redireccion").value = item.redireccion || "";
+            document.getElementById("categoria").value = item.categoria || "";
+            document.getElementById("orden").value = item.orden || 0;
+            document.getElementById("svgIcono").value = item.svgIcono || "";
+
+            document.getElementById("modal-title-text").innerText = "Modificar Módulo del Menú";
+            document.getElementById("btn-guardar").innerText = "Actualizar Módulo";
+            document.getElementById("btn-eliminar").style.display = "block";
+            document.getElementById("menu-modal").classList.add("active");
+        }
+
+        window.eliminarMenu = async function() {
+            const menuId = document.getElementById("menu-id").value;
+            if (!menuId) return;
+
+            if (confirm("¿Está seguro de eliminar este módulo del sistema? Desaparecerá de los menús gerenciales.")) {
+                try {
+                    await deleteDoc(doc(db, "diti_reyditimenu", menuId));
+                    alert("Módulo eliminado correctamente.");
+                    cerrarModal();
+                    menuForm.reset();
+                } catch (error) {
+                    console.error("Error al eliminar:", error);
+                    alert("No se pudo eliminar el módulo.");
+                }
+            }
+        }
+
+        escucharMenus();
+    </script>
+</body>
+</html>
