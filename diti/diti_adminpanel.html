@@ -103,7 +103,7 @@
             color: var(--accent-green);
         }
 
-        /* ICONO DE CERRAR SESIÓN (SOLO ICONO) */
+        /* ICONO DE CERRAR SESIÓN */
         .btn-logout-icon {
             background: transparent;
             border: 1px solid var(--border-subtle);
@@ -124,7 +124,7 @@
             color: #ff6666;
         }
 
-        /* MENÚ HAMBURGUESA LATERAL (SIDEBAR) */
+        /* MENÚ HAMBURGUESA LATERAL (SIDEBAR) CON CATEGORÍAS */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -147,8 +147,8 @@
         .sidebar-menu {
             position: fixed;
             top: 0;
-            left: -300px;
-            width: 300px;
+            left: -320px;
+            width: 320px;
             height: 100%;
             background: #090c0a;
             border-right: 1px solid var(--border-subtle);
@@ -187,16 +187,27 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 16px;
             overflow-y: auto;
             flex-grow: 1;
+        }
+
+        .nav-category-title {
+            font-family: monospace;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            padding-left: 6px;
+            border-left: 2px solid var(--accent-green);
         }
 
         .nav-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 14px;
+            padding: 11px 14px;
             color: var(--text-muted);
             text-decoration: none;
             border-radius: 8px;
@@ -205,6 +216,7 @@
             transition: all 0.2s;
             background: transparent;
             border: 1px solid transparent;
+            margin-bottom: 4px;
         }
 
         .nav-item:hover, .nav-item.active {
@@ -251,14 +263,12 @@
 
     <!-- Header Superior -->
     <header class="app-header">
-        <!-- Izquierda: Menú Hamburguesa -->
         <div>
             <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Abrir Menú">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
         </div>
 
-        <!-- Centro: Logotipo diti.app y nombre del admin abajo -->
         <div class="header-center-brand">
             <a href="diti_adminpanel.html" class="diti-logo-title">
                 diti<span class="green-dot"></span>app
@@ -268,7 +278,6 @@
             </div>
         </div>
 
-        <!-- Derecha: Icono de Cerrar Sesión -->
         <div style="display: flex; justify-content: flex-end;">
             <button class="btn-logout-icon" onclick="cerrarSesion()" title="Cerrar Sesión">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
@@ -287,7 +296,7 @@
             <button class="sidebar-close" onclick="toggleSidebar()">×</button>
         </div>
         <div class="sidebar-nav" id="sidebar-nav-links">
-            <!-- Cargado dinámicamente desde diti_reyditimenu filtrado por permisos -->
+            <!-- Cargado en tiempo real con categorías -->
         </div>
     </nav>
 
@@ -299,24 +308,21 @@
         </div>
     </main>
 
-    <!-- Script de Lógica y Validación de Sesión -->
+    <!-- Script con Sincronización en Tiempo Real (onSnapshot) y Categorías -->
     <script type="module">
         import { db } from "../app.js";
-        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // Validar sesión activa en sessionStorage
+        // Validar sesión activa
         const sesionRaw = sessionStorage.getItem("diti_admin_sesion");
         if (!sesionRaw) {
             window.location.replace("login.html");
         }
 
         const adminSesion = JSON.parse(sesionRaw);
-        
-        // Mostrar nombre y usuario abajo del logo diti.app
         document.getElementById("admin-display-name").innerHTML = `${adminSesion.nombre} • <strong>@${adminSesion.usuario}</strong>`;
         document.getElementById("greeting-title").innerText = `Bienvenido, ${adminSesion.nombre}`;
 
-        // Control de apertura y cierre del menú hamburguesa
         window.toggleSidebar = function() {
             document.getElementById("sidebar-menu").classList.toggle("active");
             document.getElementById("sidebar-overlay").classList.toggle("active");
@@ -327,48 +333,60 @@
             window.location.replace("login.html");
         }
 
-        // Cargar y filtrar el menú lateral desde diti_reyditimenu
-        async function cargarMenuLateral() {
+        // ESCUCHA EN TIEMPO REAL (ON-SNAPSHOT) PARA EL MENÚ Y SUS CATEGORÍAS
+        function escucharMenuLateral() {
             const navContainer = document.getElementById("sidebar-nav-links");
-            navContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 10px;">Cargando módulos...</div>';
+            navContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 10px;">Sincronizando módulos...</div>';
 
-            try {
-                const querySnapshot = await getDocs(collection(db, "diti_reyditimenu"));
+            onSnapshot(collection(db, "diti_reyditimenu"), (snapshot) => {
                 navContainer.innerHTML = "";
 
-                if (querySnapshot.empty) {
+                if (snapshot.empty) {
                     navContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay módulos configurados.</div>';
                     return;
                 }
 
-                querySnapshot.forEach((docSnap) => {
+                // Agrupar menús por categoría
+                let categoriasMap = {};
+
+                snapshot.forEach((docSnap) => {
                     const menu = docSnap.data();
                     const titulo = menu.titulo;
                     const redireccion = menu.redireccion || "#";
+                    const categoria = menu.categoria ? menu.categoria.trim().toUpperCase() : "GENERAL";
 
-                    // Verificar permisos: si es 'manual', validar si el título está incluido en permisosMenu
+                    // Verificar permisos individuales si el admin tiene acceso manual
                     if (adminSesion.tipoAcceso === "manual") {
                         const permitidos = adminSesion.permisosMenu || [];
                         if (!permitidos.includes(titulo)) {
-                            return; // Omitir si no tiene permiso
+                            return; // Omitir si no está autorizado
                         }
                     }
 
-                    navContainer.innerHTML += `
-                        <a href="${redireccion}" class="nav-item">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            ${titulo}
-                        </a>
-                    `;
+                    if (!categoriasMap[categoria]) {
+                        categoriasMap[categoria] = [];
+                    }
+
+                    categoriasMap[categoria].push({ titulo, redireccion });
                 });
 
-            } catch (err) {
-                console.error("Error al cargar el menú:", err);
-                navContainer.innerHTML = '<div style="color: #ff6666; font-size: 0.8rem; padding: 10px;">Error al cargar menús.</div>';
-            }
+                // Renderizar categorías y enlaces agrupados
+                for (let cat in categoriasMap) {
+                    navContainer.innerHTML += `<div class="nav-category-title">${cat}</div>`;
+                    
+                    categoriasMap[cat].forEach(item => {
+                        navContainer.innerHTML += `
+                            <a href="${item.redireccion}" class="nav-item">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                ${item.titulo}
+                            </a>
+                        `;
+                    });
+                }
+            });
         }
 
-        cargarMenuLateral();
+        escucharMenuLateral();
     </script>
 </body>
 </html>
