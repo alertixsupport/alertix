@@ -52,7 +52,7 @@
             gap: 14px;
         }
 
-        .btn-back {
+        .btn-back, .btn-icon-top {
             background: transparent;
             border: 1px solid var(--border-subtle);
             color: var(--text-muted);
@@ -67,7 +67,7 @@
             text-decoration: none;
         }
 
-        .btn-back:hover {
+        .btn-back:hover, .btn-icon-top:hover {
             border-color: var(--accent-green);
             color: #fff;
         }
@@ -109,12 +109,6 @@
             padding: 16px;
             display: none;
             z-index: 100;
-            animation: slideDown 0.2s ease;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-8px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .participants-dropdown.active {
@@ -145,6 +139,27 @@
             border-bottom: none;
         }
 
+        .participant-avatar-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mini-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #18221b;
+            object-fit: cover;
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
         .status-indicator {
             display: flex;
             align-items: center;
@@ -164,10 +179,6 @@
             box-shadow: 0 0 8px var(--accent-green);
         }
 
-        .status-dot.inactive {
-            background-color: #ff4d4d;
-        }
-
         /* ÁREA DE MENSAJES */
         .chat-messages-container {
             flex-grow: 1;
@@ -180,17 +191,13 @@
         }
 
         .message-bubble {
-            max-width: 70%;
+            max-width: 75%;
             padding: 12px 16px;
             border-radius: 12px;
             position: relative;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            animation: fadeInMsg 0.2s ease;
-        }
-
-        @keyframes fadeInMsg {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
+            display: flex;
+            gap: 10px;
         }
 
         .message-bubble.me {
@@ -207,8 +214,30 @@
             border-bottom-left-radius: 2px;
         }
 
-        .msg-author {
+        .msg-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-subtle);
+            flex-shrink: 0;
+            background: #151c18;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .msg-content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .msg-author {
+            font-size: 0.76rem;
             font-weight: 700;
             color: var(--accent-green);
             margin-bottom: 4px;
@@ -231,11 +260,25 @@
             word-break: break-word;
         }
 
+        .msg-media {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 6px;
+            max-height: 220px;
+            object-fit: cover;
+        }
+
+        .msg-audio {
+            width: 100%;
+            margin-top: 6px;
+            height: 36px;
+        }
+
         .msg-footer {
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             margin-top: 6px;
         }
 
@@ -259,7 +302,7 @@
             color: var(--accent-green);
         }
 
-        /* BARRA DE ENTRADA Y FORMULARIO */
+        /* BARRA DE ENTRADA Y ACCESOS MULTIMEDIA */
         .chat-input-area {
             background: var(--panel-bg);
             border-top: 1px solid var(--border-subtle);
@@ -317,12 +360,12 @@
             box-shadow: 0 0 10px rgba(0, 230, 118, 0.15);
         }
 
-        .btn-send {
+        .btn-media, .btn-mic, .btn-send {
             width: 44px;
             height: 44px;
-            background: var(--accent-green);
-            color: #000;
-            border: none;
+            background: var(--input-bg);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -332,9 +375,88 @@
             flex-shrink: 0;
         }
 
+        .btn-media:hover, .btn-mic:hover {
+            border-color: var(--accent-green);
+            color: #fff;
+        }
+
+        .btn-mic.recording {
+            background: rgba(255, 77, 77, 0.2);
+            border-color: #ff4d4d;
+            color: #ff4d4d;
+            animation: pulseRec 1s infinite alternate;
+        }
+
+        @keyframes pulseRec {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        .btn-send {
+            background: var(--accent-green);
+            color: #000;
+            border: none;
+        }
+
         .btn-send:hover {
             background: #00c864;
             box-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+        }
+
+        /* MODAL DE PERFIL (ENGRANAJE) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 5, 4, 0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-container {
+            width: 100%;
+            max-width: 420px;
+            background: #0d1210;
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.9);
+        }
+
+        .field-group {
+            margin-bottom: 16px;
+        }
+
+        .field-group label {
+            display: block;
+            font-family: monospace;
+            font-size: 11px;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .field-group input {
+            width: 100%;
+            height: 42px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            color: #fff;
+            padding: 0 14px;
+            font-size: 0.88rem;
+            outline: none;
         }
     </style>
 </head>
@@ -352,25 +474,27 @@
                     Central Administradores
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
-                <div class="chat-subtitle"><span id="admin-count">0</span> administradores en el sistema</div>
+                <div class="chat-subtitle"><span id="admin-count">0</span> administradores activos</div>
             </div>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+            <button class="btn-icon-top" onclick="abrirModalPerfil()" title="Configurar Perfil">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
         </div>
 
         <!-- Panel Desplegable de Participantes -->
         <div class="participants-dropdown" id="participants-dropdown">
             <h4>Administradores Autorizados</h4>
-            <div id="participants-list">
-                <!-- Se cargan en tiempo real -->
-            </div>
+            <div id="participants-list"></div>
         </div>
     </header>
 
     <!-- Contenedor de Mensajes -->
-    <div class="chat-messages-container" id="chat-messages">
-        <!-- Los mensajes se sincronizan en tiempo real -->
-    </div>
+    <div class="chat-messages-container" id="chat-messages"></div>
 
-    <!-- Área de Entrada de Mensaje -->
+    <!-- Área de Entrada -->
     <div class="chat-input-area">
         <div class="replying-banner" id="replying-banner">
             <div>Respondiendo a <strong id="replying-to-user">-</strong>: <span id="replying-to-text">-</span></div>
@@ -378,25 +502,55 @@
         </div>
 
         <form class="chat-form" id="chat-form">
-            <input type="text" id="chat-input" class="chat-input" required placeholder="Escribe un mensaje profesional..." autocomplete="off">
-            <button type="submit" class="btn-send" title="Enviar Mensaje">
+            <input type="file" id="media-input" accept="image/*" style="display: none;" onchange="enviarImagen(this)">
+            <button type="button" class="btn-media" onclick="document.getElementById('media-input').click()" title="Adjuntar Imagen">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            </button>
+
+            <button type="button" id="btn-mic" class="btn-mic" onclick="toggleGrabarAudio()" title="Nota de Voz">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v1a7 7 0 0 1-14 0v-1"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+            </button>
+
+            <input type="text" id="chat-input" class="chat-input" required placeholder="Escribe un mensaje corporativo..." autocomplete="off">
+            
+            <button type="submit" class="btn-send" title="Enviar">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
         </form>
     </div>
 
-    <!-- Script de Chat en Tiempo Real y Sincronización de Administradores -->
+    <!-- Modal de Configuración de Perfil (Engranaje) -->
+    <div class="modal-overlay" id="profile-modal">
+        <div class="modal-container">
+            <h3 style="color:#fff; margin-bottom: 16px; font-size: 1.1rem;">Configuración de Perfil</h3>
+            <form id="profile-form">
+                <div class="field-group">
+                    <label>URL de Foto de Perfil (Imagen)</label>
+                    <input type="url" id="profile-avatar-input" placeholder="https://ejemplo.com/foto.jpg">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn-back" style="width: auto; padding: 0 16px;" onclick="cerrarModalPerfil()">Cancelar</button>
+                    <button type="submit" class="btn-send" style="width: auto; padding: 0 20px;">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script de Chat, Notificaciones Push y Multimedia -->
     <script type="module">
         import { db } from "../app.js";
-        import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // Validar sesión activa
         const sesionRaw = sessionStorage.getItem("diti_admin_sesion");
-        if (!sesionRaw) {
-            window.location.replace("login.html");
+        if (!sesionRaw) window.location.replace("login.html");
+
+        let adminSesion = JSON.parse(sesionRaw);
+
+        // 1. SOLICITAR PERMISO DE NOTIFICACIONES NATIVAS (Fuera del sitio / Push local)
+        if ("Notification" in window && Notification.permission !== "granted") {
+            Notification.requestPermission();
         }
 
-        const adminSesion = JSON.parse(sesionRaw);
         const messagesContainer = document.getElementById("chat-messages");
         const chatForm = document.getElementById("chat-form");
         const chatInput = document.getElementById("chat-input");
@@ -405,8 +559,10 @@
         const dropdown = document.getElementById("participants-dropdown");
 
         let mensajeRespondido = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let isRecording = false;
 
-        // Reproductor de sonido sintetizado al enviar mensaje
         function reproducirSonidoEnvio() {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -424,119 +580,177 @@
             } catch (e) {}
         }
 
-        window.toggleParticipants = function() {
-            dropdown.classList.toggle("active");
+        window.toggleParticipants = () => dropdown.classList.toggle("active");
+        window.abrirModalPerfil = () => {
+            document.getElementById("profile-avatar-input").value = adminSesion.avatar || "";
+            document.getElementById("profile-modal").classList.add("active");
         }
+        window.cerrarModalPerfil = () => document.getElementById("profile-modal").classList.remove("active");
 
-        // Cerrar panel al hacer clic fuera
-        document.addEventListener("click", (e) => {
-            if (!e.target.closest(".chat-title-wrapper") && !e.target.closest(".participants-dropdown")) {
-                dropdown.classList.remove("active");
+        // Guardar foto de perfil en diti_usuariosadmin
+        document.getElementById("profile-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const avatarUrl = document.getElementById("profile-avatar-input").value.trim();
+            try {
+                await updateDoc(doc(db, "diti_usuariosadmin", adminSesion.id), { avatar: avatarUrl });
+                adminSesion.avatar = avatarUrl;
+                sessionStorage.setItem("diti_admin_sesion", JSON.stringify(adminSesion));
+                cerrarModalPerfil();
+                alert("¡Foto de perfil actualizada con éxito!");
+            } catch (err) {
+                alert("Error al actualizar perfil.");
             }
         });
 
-        // 1. ESCUCHAR ADMINISTRADORES (diti_usuariosadmin) PARA CONTEO Y ESTADO ACTIVO/INACTIVO
-        function escucharAdministradores() {
-            onSnapshot(collection(db, "diti_usuariosadmin"), (snapshot) => {
-                adminCountEl.innerText = snapshot.size;
-                participantsList.innerHTML = "";
-
-                snapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    // Simulamos estado activo si el admin está logueado actualmente o registrado recientemente
-                    // Aquí podemos considerar activo a todos los de la colección con un indicador visual profesional
-                    const isActive = true; // Todos los administradores registrados están autorizados y activos en la red
-
-                    participantsList.innerHTML += `
-                        <div class="participant-item">
-                            <span>${data.nombre} (@${data.usuario})</span>
-                            <div class="status-indicator">
-                                <div class="status-dot ${isActive ? 'active' : 'inactive'}"></div>
-                                ${isActive ? 'Activo' : 'Inactivo'}
-                            </div>
+        // Escuchar administradores (conteo y estado)
+        onSnapshot(collection(db, "diti_usuariosadmin"), (snapshot) => {
+            adminCountEl.innerText = snapshot.size;
+            participantsList.innerHTML = "";
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const iniciales = data.nombre ? data.nombre.substring(0,2).toUpperCase() : "AD";
+                participantsList.innerHTML += `
+                    <div class="participant-item">
+                        <div class="participant-avatar-name">
+                            ${data.avatar ? `<img src="${data.avatar}" class="mini-avatar">` : `<div class="mini-avatar">${iniciales}</div>`}
+                            <span>${data.nombre}</span>
                         </div>
-                    `;
-                });
+                        <div class="status-indicator">
+                            <div class="status-dot active"></div> Activo
+                        </div>
+                    </div>
+                `;
             });
-        }
+        });
 
-        // 2. ESCUCHAR MENSAJES DEL CHAT EN TIEMPO REAL (chatadmins)
-        function escucharMensajes() {
-            const q = query(collection(db, "chatadmins"), orderBy("timestamp", "asc"));
+        // Escuchar mensajes en tiempo real y disparar notificación push nativa si está fuera del sitio/pestaña
+        let primerCarga = true;
+        onSnapshot(query(collection(db, "chatadmins"), orderBy("timestamp", "asc")), (snapshot) => {
+            messagesContainer.innerHTML = "";
+            if (snapshot.empty) {
+                messagesContainer.innerHTML = `<div style="margin: auto; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Central Administradores lista.</div>`;
+                primerCarga = false;
+                return;
+            }
 
-            onSnapshot(q, (snapshot) => {
-                messagesContainer.innerHTML = "";
+            snapshot.forEach((docSnap) => {
+                const msg = docSnap.data();
+                const esMio = msg.usuarioId === adminSesion.id;
+                const hora = msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recién';
+                const iniciales = msg.nombreAutor ? msg.nombreAutor.substring(0,2).toUpperCase() : "AD";
 
-                if (snapshot.empty) {
-                    messagesContainer.innerHTML = `
-                        <div style="margin: auto; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
-                            No hay mensajes en la Central. ¡Inicie la conversación corporativa!
-                        </div>
-                    `;
-                    return;
+                // Si llega un nuevo mensaje de otro usuario, disparar Notificación Push del navegador
+                if (!primerCarga && !esMio && document.hidden && "Notification" in window && Notification.permission === "granted") {
+                    new Notification(`Nuevo mensaje de ${msg.nombreAutor}`, {
+                        body: msg.texto || "[Archivo multimedia]",
+                        icon: msg.avatar || ""
+                    });
                 }
 
-                snapshot.forEach((docSnap) => {
-                    const msg = docSnap.data();
-                    const esMio = msg.usuarioId === adminSesion.id;
-                    const horaFormateada = msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recién';
+                let replyHtml = msg.replyTo ? `<div class="msg-reply-ref"><strong>${msg.replyTo.autor}:</strong> ${msg.replyTo.texto}</div>` : '';
+                let mediaHtml = '';
+                if (msg.imagen) mediaHtml = `<img src="${msg.imagen}" class="msg-media">`;
+                if (msg.audio) mediaHtml = `<audio controls src="${msg.audio}" class="msg-audio"></audio>`;
 
-                    let replyHtml = "";
-                    if (msg.replyTo) {
-                        replyHtml = `
-                            <div class="msg-reply-ref">
-                                <strong>${msg.replyTo.autor}:</strong> ${msg.replyTo.texto}
-                            </div>
-                        `;
-                    }
-
-                    messagesContainer.innerHTML += `
-                        <div class="message-bubble ${esMio ? 'me' : 'other'}">
-                            ${!esMio ? `<div class="msg-author">${msg.nombreAutor} (@${msg.usuarioAutor})</div>` : ''}
+                messagesContainer.innerHTML += `
+                    <div class="message-bubble ${esMio ? 'me' : 'other'}">
+                        ${!esMio ? (msg.avatar ? `<img src="${msg.avatar}" class="msg-avatar">` : `<div class="msg-avatar">${iniciales}</div>`) : ''}
+                        <div class="msg-content-wrapper">
+                            ${!esMio ? `<div class="msg-author">${msg.nombreAutor}</div>` : ''}
                             ${replyHtml}
-                            <div class="msg-text">${msg.texto}</div>
+                            ${msg.texto ? `<div class="msg-text">${msg.texto}</div>` : ''}
+                            ${mediaHtml}
                             <div class="msg-footer">
-                                <button class="btn-reply-msg" onclick='prepararRespuesta("${docSnap.id}", "${msg.nombreAutor}", ${JSON.stringify(msg.texto)})'>Responder</button>
-                                <span class="msg-time">${horaFormateada}</span>
+                                <button class="btn-reply-msg" onclick='prepararRespuesta("${docSnap.id}", "${msg.nombreAutor}", ${JSON.stringify(msg.texto || "Multimedia")})'>Responder</button>
+                                <span class="msg-time">${hora}</span>
                             </div>
                         </div>
-                    `;
-                });
-
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    </div>
+                `;
             });
-        }
 
-        // Enviar Mensaje
+            primerCarga = false;
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+
+        // Enviar Texto
         chatForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             const texto = chatInput.value.trim();
             if (!texto) return;
 
-            const nuevoMensaje = {
+            await addDoc(collection(db, "chatadmins"), {
                 texto,
                 usuarioId: adminSesion.id,
                 nombreAutor: adminSesion.nombre,
-                usuarioAutor: adminSesion.usuario,
+                avatar: adminSesion.avatar || "",
                 timestamp: serverTimestamp(),
-                replyTo: mensajeRespondido ? {
-                    id: mensajeRespondido.id,
-                    autor: mensajeRespondido.autor,
-                    texto: mensajeRespondido.texto
-                } : null
-            };
+                replyTo: mensajeRespondido
+            });
 
-            try {
-                await addDoc(collection(db, "chatadmins"), nuevoMensaje);
-                chatInput.value = "";
-                cancelarRespuesta();
-                reproducirSonidoEnvio();
-            } catch (err) {
-                console.error("Error al enviar mensaje:", err);
-            }
+            chatInput.value = "";
+            cancelarRespuesta();
+            reproducirSonidoEnvio();
         });
 
-        window.prepararRespuesta = function(id, autor, texto) {
+        // Enviar Imagen en Base64
+        window.enviarImagen = (input) => {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                await addDoc(collection(db, "chatadmins"), {
+                    texto: "",
+                    imagen: e.target.result,
+                    usuarioId: adminSesion.id,
+                    nombreAutor: adminSesion.nombre,
+                    avatar: adminSesion.avatar || "",
+                    timestamp: serverTimestamp()
+                });
+                reproducirSonidoEnvio();
+            };
+            reader.readAsDataURL(file);
+        };
+
+        // Notas de Voz (Micrófono)
+        window.toggleGrabarAudio = async () => {
+            const btnMic = document.getElementById("btn-mic");
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+                    mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const reader = new FileReader();
+                        reader.onload = async (e) => {
+                            await addDoc(collection(db, "chatadmins"), {
+                                texto: "[Nota de Voz]",
+                                audio: e.target.result,
+                                usuarioId: adminSesion.id,
+                                nombreAutor: adminSesion.nombre,
+                                avatar: adminSesion.avatar || "",
+                                timestamp: serverTimestamp()
+                            });
+                            reproducirSonidoEnvio();
+                        };
+                        reader.readAsDataURL(audioBlob);
+                    };
+                    mediaRecorder.start();
+                    isRecording = true;
+                    btnMic.classList.add("recording");
+                } catch (err) {
+                    alert("No se pudo acceder al micrófono.");
+                }
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                btnMic.classList.remove("recording");
+            }
+        };
+
+        window.prepararRespuesta = (id, autor, texto) => {
             mensajeRespondido = { id, autor, texto };
             document.getElementById("replying-to-user").innerText = autor;
             document.getElementById("replying-to-text").innerText = texto;
@@ -544,14 +758,10 @@
             chatInput.focus();
         }
 
-        window.cancelarRespuesta = function() {
+        window.cancelarRespuesta = () => {
             mensajeRespondido = null;
             document.getElementById("replying-banner").style.display = "none";
         }
-
-        // Inicializar escuchas
-        escucharAdministradores();
-        escucharMensajes();
     </script>
 </body>
 </html>
