@@ -25,7 +25,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* CONTENEDOR MAESTRO FIJO (IMPIDE QUE EL HEADER SE SUBA CON EL TECLADO) */
+        /* ESTRUCTURA MAESTRA FIJA */
         html, body {
             background-color: var(--bg-base);
             height: 100%;
@@ -40,7 +40,7 @@
             left: 0;
         }
 
-        /* HEADER SUPERIOR ABSOLUTAMENTE FIJO */
+        /* HEADER SUPERIOR FIJO ESTRICTO (INMUNE AL TECLADO) */
         .chat-header {
             background: var(--panel-bg);
             border-bottom: 1px solid var(--border-subtle);
@@ -49,7 +49,7 @@
             align-items: center;
             justify-content: space-between;
             flex-shrink: 0;
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -188,7 +188,7 @@
             box-shadow: 0 0 6px var(--accent-green);
         }
 
-        /* ÁREA DE MENSAJES (CON PADDING SUPERIOR EXACTO PARA DEJAR ESPACIO AL HEADER FIJO) */
+        /* ÁREA DE MENSAJES (CON ESPACIO SUPERIOR PARA EL HEADER FIJO) */
         .chat-messages-container {
             flex-grow: 1;
             padding: 75px 20px 20px 20px;
@@ -201,7 +201,7 @@
             position: relative;
         }
 
-        /* BOTÓN FLOTANTE PARA BAJAR AL ÚLTIMO MENSAJE (SCROLL-TO-BOTTOM) */
+        /* BOTÓN FLOTANTE SCROLL-TO-BOTTOM */
         .scroll-bottom-btn {
             position: fixed;
             bottom: 85px;
@@ -234,7 +234,7 @@
             50% { transform: scale(1.08); box-shadow: 0 0 25px rgba(0,230,118,0.6); }
         }
 
-        /* BURBUJAS DE MENSAJES EMPRESARIALES DE ÉLITE */
+        /* BURBUJAS DE MENSAJES */
         .message-bubble {
             max-width: 78%;
             padding: 12px 16px;
@@ -528,7 +528,7 @@
 </head>
 <body>
 
-    <!-- Header Superior Absolutamente Fijo -->
+    <!-- Header Superior Fijo Absoluto -->
     <header class="chat-header">
         <div class="header-left">
             <a href="diti_adminpanel.html" class="btn-back" title="Volver al Panel">
@@ -605,7 +605,7 @@
         </div>
     </div>
 
-    <!-- Script de Alto Rendimiento -->
+    <!-- Script con Carga Inicial Directa al Último Mensaje -->
     <script type="module">
         import { db } from "../app.js";
         import { collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp, doc, updateDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -627,6 +627,7 @@
         let mediaRecorder = null;
         let audioChunks = [];
         let isRecording = false;
+        let primeraCargaChat = true;
 
         function reproducirSonidoEnvio() {
             try {
@@ -649,7 +650,6 @@
         window.abrirMenuEngranaje = () => document.getElementById("gear-modal").classList.add("active");
         window.cerrarMenuEngranaje = () => document.getElementById("gear-modal").classList.remove("active");
 
-        // Control del botón flotante para bajar al chat al hacer scroll hacia arriba
         window.verificarScrollChat = () => {
             const distanciaDesdeAbajo = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight;
             if (distanciaDesdeAbajo > 250) {
@@ -748,7 +748,7 @@
             });
         });
 
-        // Sincronización ultrarrápida de mensajes
+        // Sincronización ultrarrápida con posicionamiento automático al último mensaje
         const q = query(collection(db, "chatadmins"), orderBy("timestamp", "asc"), limit(100));
 
         onSnapshot(q, (snapshot) => {
@@ -786,10 +786,15 @@
                 `;
             });
 
-            // Si el usuario está leyendo mensajes anteriores, no forzar el scroll; si está abajo, mantener al día
-            const distanciaDesdeAbajo = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight;
-            if (distanciaDesdeAbajo < 350) {
+            // En la primera carga o si el usuario está al fondo, posicionar al último mensaje al instante
+            if (primeraCargaChat) {
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                primeraCargaChat = false;
+            } else {
+                const distanciaDesdeAbajo = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight;
+                if (distanciaDesdeAbajo < 350) {
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }
             }
         });
 
