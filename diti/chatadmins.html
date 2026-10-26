@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Diti App — Central Administradores (Chat)</title>
+    <style>
+        :root {
+            --bg-base: #060707;
+            --panel-bg: #0b0d0c;
+            --border-subtle: #18221b;
+            --border-focus: #00e676;
+            --accent-green: #00e676;
+            --text-main: #ffffff;
+            --text-muted: #859489;
+            --input-bg: #0e1210;
+            --bubble-me: #0f2619;
+            --bubble-other: #111513;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            height: 100vh;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* HEADER DEL CHAT */
+        .chat-header {
+            background: var(--panel-bg);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            border-color: var(--accent-green);
+            color: #fff;
+        }
+
+        .chat-title-wrapper {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .chat-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chat-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        .chat-subtitle strong {
+            color: var(--accent-green);
+        }
+
+        /* PANEL DESPLEGABLE DE PARTICIPANTES */
+        .participants-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 20px;
+            width: 300px;
+            background: #0d1210;
+            border: 1px solid var(--border-subtle);
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+            padding: 16px;
+            display: none;
+            z-index: 100;
+            animation: slideDown 0.2s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .participants-dropdown.active {
+            display: block;
+        }
+
+        .participants-dropdown h4 {
+            font-size: 0.8rem;
+            font-family: monospace;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .participant-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(25,35,28,0.4);
+        }
+
+        .participant-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.active {
+            background-color: var(--accent-green);
+            box-shadow: 0 0 8px var(--accent-green);
+        }
+
+        .status-dot.inactive {
+            background-color: #ff4d4d;
+        }
+
+        /* ÁREA DE MENSAJES */
+        .chat-messages-container {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: radial-gradient(circle at center, #090c0a 0%, #050606 100%);
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: fadeInMsg 0.2s ease;
+        }
+
+        @keyframes fadeInMsg {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-bubble.me {
+            background: var(--bubble-me);
+            border: 1px solid rgba(0, 230, 118, 0.25);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message-bubble.other {
+            background: var(--bubble-other);
+            border: 1px solid var(--border-subtle);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .msg-author {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 4px;
+        }
+
+        .msg-reply-ref {
+            background: rgba(0,0,0,0.3);
+            border-left: 2px solid var(--accent-green);
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            border-radius: 4px;
+        }
+
+        .msg-text {
+            font-size: 0.9rem;
+            color: #fff;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .msg-footer {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .msg-time {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+        }
+
+        .btn-reply-msg {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: color 0.2s;
+        }
+
+        .btn-reply-msg:hover {
+            color: var(--accent-green);
+        }
+
+        /* BARRA DE ENTRADA Y FORMULARIO */
+        .chat-input-area {
+            background: var(--panel-bg);
+            border-top: 1px solid var(--border-subtle);
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .replying-banner {
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+        }
+
+        .replying-banner strong {
+            color: var(--accent-green);
+        }
+
+        .replying-banner button {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .chat-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            height: 44px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: #fff;
+            padding: 0 16px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.15);
+        }
+
+        .btn-send {
+            width: 44px;
+            height: 44px;
+            background: var(--accent-green);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .btn-send:hover {
+            background: #00c864;
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header del Chat -->
+    <header class="chat-header">
+        <div class="header-left">
+            <a href="diti_adminpanel.html" class="btn-back" title="Volver al Panel">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </a>
+            
+            <div class="chat-title-wrapper" onclick="toggleParticipants()">
+                <div class="chat-title">
+                    Central Administradores
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+                <div class="chat-subtitle"><span id="admin-count">0</span> administradores en el sistema</div>
+            </div>
+        </div>
+
+        <!-- Panel Desplegable de Participantes -->
+        <div class="participants-dropdown" id="participants-dropdown">
+            <h4>Administradores Autorizados</h4>
+            <div id="participants-list">
+                <!-- Se cargan en tiempo real -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenedor de Mensajes -->
+    <div class="chat-messages-container" id="chat-messages">
+        <!-- Los mensajes se sincronizan en tiempo real -->
+    </div>
+
+    <!-- Área de Entrada de Mensaje -->
+    <div class="chat-input-area">
+        <div class="replying-banner" id="replying-banner">
+            <div>Respondiendo a <strong id="replying-to-user">-</strong>: <span id="replying-to-text">-</span></div>
+            <button onclick="cancelarRespuesta()">×</button>
+        </div>
+
+        <form class="chat-form" id="chat-form">
+            <input type="text" id="chat-input" class="chat-input" required placeholder="Escribe un mensaje profesional..." autocomplete="off">
+            <button type="submit" class="btn-send" title="Enviar Mensaje">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+        </form>
+    </div>
+
+    <!-- Script de Chat en Tiempo Real y Sincronización de Administradores -->
+    <script type="module">
+        import { db } from "../app.js";
+        import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Validar sesión activa
+        const sesionRaw = sessionStorage.getItem("diti_admin_sesion");
+        if (!sesionRaw) {
+            window.location.replace("login.html");
+        }
+
+        const adminSesion = JSON.parse(sesionRaw);
+        const messagesContainer = document.getElementById("chat-messages");
+        const chatForm = document.getElementById("chat-form");
+        const chatInput = document.getElementById("chat-input");
+        const adminCountEl = document.getElementById("admin-count");
+        const participantsList = document.getElementById("participants-list");
+        const dropdown = document.getElementById("participants-dropdown");
+
+        let mensajeRespondido = null;
+
+        // Reproductor de sonido sintetizado al enviar mensaje
+        function reproducirSonidoEnvio() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } catch (e) {}
+        }
+
+        window.toggleParticipants = function() {
+            dropdown.classList.toggle("active");
+        }
+
+        // Cerrar panel al hacer clic fuera
+        document.addEventListener("click", (e) => {
+            if (!e.target.closest(".chat-title-wrapper") && !e.target.closest(".participants-dropdown")) {
+                dropdown.classList.remove("active");
+            }
+        });
+
+        // 1. ESCUCHAR ADMINISTRADORES (diti_usuariosadmin) PARA CONTEO Y ESTADO ACTIVO/INACTIVO
+        function escucharAdministradores() {
+            onSnapshot(collection(db, "diti_usuariosadmin"), (snapshot) => {
+                adminCountEl.innerText = snapshot.size;
+                participantsList.innerHTML = "";
+
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    // Simulamos estado activo si el admin está logueado actualmente o registrado recientemente
+                    // Aquí podemos considerar activo a todos los de la colección con un indicador visual profesional
+                    const isActive = true; // Todos los administradores registrados están autorizados y activos en la red
+
+                    participantsList.innerHTML += `
+                        <div class="participant-item">
+                            <span>${data.nombre} (@${data.usuario})</span>
+                            <div class="status-indicator">
+                                <div class="status-dot ${isActive ? 'active' : 'inactive'}"></div>
+                                ${isActive ? 'Activo' : 'Inactivo'}
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        // 2. ESCUCHAR MENSAJES DEL CHAT EN TIEMPO REAL (chatadmins)
+        function escucharMensajes() {
+            const q = query(collection(db, "chatadmins"), orderBy("timestamp", "asc"));
+
+            onSnapshot(q, (snapshot) => {
+                messagesContainer.innerHTML = "";
+
+                if (snapshot.empty) {
+                    messagesContainer.innerHTML = `
+                        <div style="margin: auto; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                            No hay mensajes en la Central. ¡Inicie la conversación corporativa!
+                        </div>
+                    `;
+                    return;
+                }
+
+                snapshot.forEach((docSnap) => {
+                    const msg = docSnap.data();
+                    const esMio = msg.usuarioId === adminSesion.id;
+                    const horaFormateada = msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recién';
+
+                    let replyHtml = "";
+                    if (msg.replyTo) {
+                        replyHtml = `
+                            <div class="msg-reply-ref">
+                                <strong>${msg.replyTo.autor}:</strong> ${msg.replyTo.texto}
+                            </div>
+                        `;
+                    }
+
+                    messagesContainer.innerHTML += `
+                        <div class="message-bubble ${esMio ? 'me' : 'other'}">
+                            ${!esMio ? `<div class="msg-author">${msg.nombreAutor} (@${msg.usuarioAutor})</div>` : ''}
+                            ${replyHtml}
+                            <div class="msg-text">${msg.texto}</div>
+                            <div class="msg-footer">
+                                <button class="btn-reply-msg" onclick='prepararRespuesta("${docSnap.id}", "${msg.nombreAutor}", ${JSON.stringify(msg.texto)})'>Responder</button>
+                                <span class="msg-time">${horaFormateada}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            });
+        }
+
+        // Enviar Mensaje
+        chatForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const texto = chatInput.value.trim();
+            if (!texto) return;
+
+            const nuevoMensaje = {
+                texto,
+                usuarioId: adminSesion.id,
+                nombreAutor: adminSesion.nombre,
+                usuarioAutor: adminSesion.usuario,
+                timestamp: serverTimestamp(),
+                replyTo: mensajeRespondido ? {
+                    id: mensajeRespondido.id,
+                    autor: mensajeRespondido.autor,
+                    texto: mensajeRespondido.texto
+                } : null
+            };
+
+            try {
+                await addDoc(collection(db, "chatadmins"), nuevoMensaje);
+                chatInput.value = "";
+                cancelarRespuesta();
+                reproducirSonidoEnvio();
+            } catch (err) {
+                console.error("Error al enviar mensaje:", err);
+            }
+        });
+
+        window.prepararRespuesta = function(id, autor, texto) {
+            mensajeRespondido = { id, autor, texto };
+            document.getElementById("replying-to-user").innerText = autor;
+            document.getElementById("replying-to-text").innerText = texto;
+            document.getElementById("replying-banner").style.display = "flex";
+            chatInput.focus();
+        }
+
+        window.cancelarRespuesta = function() {
+            mensajeRespondido = null;
+            document.getElementById("replying-banner").style.display = "none";
+        }
+
+        // Inicializar escuchas
+        escucharAdministradores();
+        escucharMensajes();
+    </script>
+</body>
+</html>
