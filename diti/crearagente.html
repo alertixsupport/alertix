@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Diti App — Creación de Agentes Autorizados</title>
+    <style>
+        :root {
+            --bg-base: #050706;
+            --panel-bg: #090d0b;
+            --border-subtle: #152219;
+            --border-focus: #00e676;
+            --accent-green: #00e676;
+            --text-main: #ffffff;
+            --text-muted: #859489;
+            --input-bg: #0b110e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        html, body {
+            background-color: var(--bg-base);
+            height: 100%;
+            height: 100dvh;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        /* HEADER SUPERIOR FIJO ESTRICTO */
+        .agent-header {
+            background: var(--panel-bg);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .btn-back:hover {
+            border-color: var(--accent-green);
+            color: #fff;
+        }
+
+        .agent-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+
+        .agent-subtitle {
+            font-size: 0.73rem;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        .agent-subtitle strong {
+            color: var(--accent-green);
+        }
+
+        /* CONTENEDOR PRINCIPAL DEL FORMULARIO */
+        .agent-main-container {
+            flex-grow: 1;
+            padding: 85px 20px 20px 20px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background: radial-gradient(circle at center, #070a08 0%, #030404 100%);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .agent-card {
+            width: 100%;
+            max-width: 480px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .card-header-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #fff;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 0.78rem;
+            font-family: monospace;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .form-input {
+            height: 44px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: #fff;
+            padding: 0 16px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.15);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-submit {
+            height: 46px;
+            background: var(--accent-green);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            background: #00c864;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.35);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Superior Fijo -->
+    <header class="agent-header">
+        <div class="header-left">
+            <a href="diti_adminpanel.html" class="btn-back" title="Volver al Panel">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </a>
+            <div>
+                <div class="agent-title">Registro de Agentes</div>
+                <div class="agent-subtitle">Acceso gerencial autorizado</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <div class="agent-main-container">
+        <form class="agent-card" id="agent-form">
+            <div class="card-header-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                Nuevo Agente Operativo
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Nombre y Apellido</label>
+                <input type="text" id="nombre" class="form-input" required placeholder="Ej. Carlos Mendoza" autocomplete="off">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Edad</label>
+                    <input type="number" id="edad" class="form-input" required placeholder="Ej. 28" min="18" max="99">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">WhatsApp</label>
+                    <input type="tel" id="whatsapp" class="form-input" required placeholder="Ej. +549..." autocomplete="off">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Usuario de Acceso</label>
+                <input type="text" id="usuario" class="form-input" required placeholder="Nombre de usuario único" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Contraseña</label>
+                <input type="password" id="password" class="form-input" required placeholder="••••••••" autocomplete="off">
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Registrar Agente
+            </button>
+        </form>
+    </div>
+
+    <!-- Script de Registro en Firestore -->
+    <script type="module">
+        import { db } from "../app.js";
+        import { collection, addDb, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Validación estricta de sesión de administrador activa
+        const sesionRaw = sessionStorage.getItem("diti_admin_sesion");
+        if (!sesionRaw) window.location.replace("login.html");
+
+        const agentForm = document.getElementById("agent-form");
+
+        agentForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const nombre = document.getElementById("nombre").value.trim();
+            const edad = document.getElementById("edad").value.trim();
+            const whatsapp = document.getElementById("whatsapp").value.trim();
+            const usuario = document.getElementById("usuario").value.trim().toLowerCase();
+            const password = document.getElementById("password").value.trim();
+
+            if (!nombre || !edad || !whatsapp || !usuario || !password) {
+                alert("Por favor completa todos los campos.");
+                return;
+            }
+
+            try {
+                // Verificar si el usuario ya existe en diti_usuarioagentes
+                const q = query(collection(db, "diti_usuarioagentes"), where("usuario", "==", usuario));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    alert("El nombre de usuario ya está registrado. Por favor elija otro.");
+                    return;
+                }
+
+                // Guardar nuevo agente en la colección solicitada
+                await addDoc(collection(db, "diti_usuarioagentes"), {
+                    nombre,
+                    edad: Number(edad),
+                    whatsapp,
+                    usuario,
+                    password, // Nota: en entornos de producción se recomienda hashing, mantenido directo según arquitectura actual
+                    creadoEn: serverTimestamp()
+                });
+
+                alert("¡Agente registrado con éxito!");
+                agentForm.reset();
+            } catch (err) {
+                console.error("Error al registrar agente:", err);
+                alert("Hubo un error al registrar el agente. Verifique su conexión.");
+            }
+        });
+    </script>
+</body>
+</html>
