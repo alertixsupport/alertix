@@ -25,13 +25,14 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    body {
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
       background: radial-gradient(circle at 50% 0%, #160d4a 0%, var(--bg-deep) 100%);
       min-height: 100vh;
       color: var(--text-main);
-      padding: 25px 20px;
       position: relative;
-      overflow-x: hidden;
     }
 
     /* Luces de fondo fijas */
@@ -52,8 +53,10 @@
     .container {
       max-width: 1000px;
       margin: 0 auto;
+      padding: 25px 20px;
       position: relative;
       z-index: 1;
+      width: 100%;
     }
 
     /* Navbar Ejecutivo Compacto y Estable */
@@ -61,7 +64,7 @@
       display: grid;
       grid-template-columns: auto 1fr auto;
       align-items: center;
-      padding: 15px 25px;
+      padding: 16px 25px;
       background: var(--bg-card);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
@@ -69,6 +72,7 @@
       border-radius: 18px;
       margin-bottom: 30px;
       box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+      width: 100%;
     }
 
     .brand {
@@ -92,11 +96,12 @@
 
     .logo-container-center {
       text-align: center;
+      overflow: hidden;
     }
 
-    /* Logo más grande con animación de brillo pasante */
+    /* Logo más grande y con animación de brillo corregida y fluida */
     .logo-text {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 900;
       letter-spacing: 1.5px;
       text-transform: lowercase;
@@ -112,27 +117,28 @@
       -webkit-text-fill-color: var(--accent-fire);
     }
 
-    /* Efecto de Brillo Metálico deslizándose */
+    /* Efecto de Brillo Metálico deslizándose correctamente */
     .logo-text::after {
       content: '';
       position: absolute;
       top: 0;
-      left: -150%;
-      width: 150%;
+      left: -100%;
+      width: 50%;
       height: 100%;
       background: linear-gradient(
         90deg,
         transparent,
-        rgba(255, 255, 255, 0.4),
+        rgba(255, 255, 255, 0.6),
         transparent
       );
-      animation: shineEffect 3.5s infinite;
+      transform: skewX(-20deg);
+      animation: shineEffect 3s infinite ease-in-out;
     }
 
     @keyframes shineEffect {
-      0% { left: -150%; }
-      20% { left: 150%; }
-      100% { left: 150%; }
+      0% { left: -100%; }
+      50% { left: 200%; }
+      100% { left: 200%; }
     }
 
     /* Menú Desplegable Hamburguesa */
@@ -169,7 +175,7 @@
       display: none;
       position: absolute;
       right: 0;
-      top: 50px;
+      top: 52px;
       background: #0d092b;
       border: 1px solid var(--border-glass);
       border-radius: 14px;
@@ -207,6 +213,7 @@
       width: 18px;
       height: 18px;
       stroke: var(--accent-fire);
+      fill: none;
       flex-shrink: 0;
     }
 
@@ -350,6 +357,7 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      width: 100%;
     }
 
     .tool-row-card {
@@ -365,6 +373,7 @@
       transition: all 0.3s ease;
       text-decoration: none;
       color: inherit;
+      width: 100%;
     }
 
     .tool-row-card:hover {
@@ -451,7 +460,6 @@
       box-shadow: 0 0 10px var(--accent-fire-glow);
     }
 
-    /* Botón Eliminar Compacto en Modo Gestión */
     .btn-delete-compact {
       padding: 7px 14px;
       background: rgba(239, 68, 68, 0.15);
@@ -495,18 +503,15 @@
         <!-- Menú desplegable con Iconos SVG 3D -->
         <div class="dropdown-menu" id="dropdownMenu">
           <div class="dropdown-item" id="openModalBtn">
-            <!-- Icono Plus 3D SVG -->
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
             Agregar Herramienta
           </div>
           <div class="dropdown-item" id="openManageBtn">
-            <!-- Icono Settings 3D SVG -->
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             Gestionar Herramienta
           </div>
           <div class="dropdown-item danger" id="logoutBtn">
-            <!-- Icono Logout 3D SVG -->
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Cerrar Sesión
           </div>
         </div>
