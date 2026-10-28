@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Diti App — Creación de Agentes Autorizados</title>
+    <title>Diti App — Creación y Gestión de Agentes</title>
     <style>
         :root {
             --bg-base: #050706;
@@ -97,21 +97,22 @@
             color: var(--accent-green);
         }
 
-        /* CONTENEDOR PRINCIPAL DEL FORMULARIO */
+        /* CONTENEDOR PRINCIPAL */
         .agent-main-container {
             flex-grow: 1;
             padding: 85px 20px 20px 20px;
             overflow-y: auto;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
             background: radial-gradient(circle at center, #070a08 0%, #030404 100%);
             -webkit-overflow-scrolling: touch;
         }
 
         .agent-card {
             width: 100%;
-            max-width: 480px;
+            max-width: 500px;
             background: var(--panel-bg);
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
@@ -120,11 +121,10 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
-            margin-bottom: 20px;
         }
 
         .card-header-title {
-            font-size: 1.05rem;
+            font-size: 1.02rem;
             font-weight: 600;
             color: #fff;
             padding-bottom: 8px;
@@ -149,13 +149,13 @@
         }
 
         .form-input {
-            height: 44px;
+            height: 42px;
             background: var(--input-bg);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
             color: #fff;
             padding: 0 16px;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             outline: none;
             transition: all 0.2s;
         }
@@ -172,7 +172,7 @@
         }
 
         .btn-submit {
-            height: 46px;
+            height: 44px;
             background: var(--accent-green);
             color: #000;
             border: none;
@@ -181,7 +181,7 @@
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.2s;
-            margin-top: 6px;
+            margin-top: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -191,6 +191,59 @@
         .btn-submit:hover {
             background: #00c864;
             box-shadow: 0 0 20px rgba(0, 230, 118, 0.35);
+        }
+
+        /* SECCIÓN DE LISTA DE AGENTES CREADOS ABAJO */
+        .agents-list-section {
+            width: 100%;
+            max-width: 500px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .agent-item {
+            background: var(--input-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .agent-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .agent-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .agent-details {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        .agent-user-badge {
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            color: var(--accent-green);
+            font-size: 0.72rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: monospace;
         }
     </style>
 </head>
@@ -204,13 +257,15 @@
             </a>
             <div>
                 <div class="agent-title">Registro de Agentes</div>
-                <div class="agent-subtitle">Acceso gerencial autorizado</div>
+                <div class="agent-subtitle">Admin: <strong id="admin-user-tag">...</strong></div>
             </div>
         </div>
     </header>
 
-    <!-- Contenido Principal -->
+    <!-- Contenido Principal con Formulario y Lista -->
     <div class="agent-main-container">
+        
+        <!-- Formulario de Creación -->
         <form class="agent-card" id="agent-form">
             <div class="card-header-title">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
@@ -248,19 +303,36 @@
                 Registrar Agente
             </button>
         </form>
+
+        <!-- Sección inferior con la lista filtrada de agentes creados por este admin -->
+        <div class="agents-list-section">
+            <div class="card-header-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Agentes Creados por Usted
+            </div>
+            <div id="agents-list-container" style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">Cargando agentes...</div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Script de Registro en Firestore -->
+    <!-- Script de Registro y Filtrado con Firebase -->
     <script type="module">
         import { db } from "../app.js";
-        import { collection, addDb, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { collection, addDoc, serverTimestamp, query, where, getDocs, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // Validación estricta de sesión de administrador activa
         const sesionRaw = sessionStorage.getItem("diti_admin_sesion");
         if (!sesionRaw) window.location.replace("login.html");
 
-        const agentForm = document.getElementById("agent-form");
+        const adminSesion = JSON.parse(sesionRaw);
+        document.getElementById("admin-user-tag").innerText = `@${adminSesion.usuario}`;
 
+        const agentForm = document.getElementById("agent-form");
+        const agentsListContainer = document.getElementById("agents-list-container");
+
+        // Registrar nuevo agente guardando el creador en Firestore
         agentForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 
@@ -277,21 +349,22 @@
 
             try {
                 // Verificar si el usuario ya existe en diti_usuarioagentes
-                const q = query(collection(db, "diti_usuarioagentes"), where("usuario", "==", usuario));
-                const querySnapshot = await getDocs(q);
+                const qCheck = query(collection(db, "diti_usuarioagentes"), where("usuario", "==", usuario));
+                const querySnapshot = await getDocs(qCheck);
 
                 if (!querySnapshot.empty) {
                     alert("El nombre de usuario ya está registrado. Por favor elija otro.");
                     return;
                 }
 
-                // Guardar nuevo agente en la colección solicitada
+                // Guardar nuevo agente incluyendo el usuario admin creador
                 await addDoc(collection(db, "diti_usuarioagentes"), {
                     nombre,
                     edad: Number(edad),
                     whatsapp,
                     usuario,
-                    password, // Nota: en entornos de producción se recomienda hashing, mantenido directo según arquitectura actual
+                    password,
+                    creadoPor: adminSesion.usuario, // Guarda el usuario admin logueado
                     creadoEn: serverTimestamp()
                 });
 
@@ -301,6 +374,34 @@
                 console.error("Error al registrar agente:", err);
                 alert("Hubo un error al registrar el agente. Verifique su conexión.");
             }
+        });
+
+        // Sincronización en tiempo real filtrando únicamente los agentes creados por este admin
+        const qList = query(
+            collection(db, "diti_usuarioagentes"), 
+            where("creadoPor", "==", adminSesion.usuario)
+        );
+
+        onSnapshot(qList, (snapshot) => {
+            agentsListContainer.innerHTML = "";
+            
+            if (snapshot.empty) {
+                agentsListContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">No ha creado agentes todavía.</div>`;
+                return;
+            }
+
+            snapshot.forEach((docSnap) => {
+                const ag = docSnap.data();
+                agentsListContainer.innerHTML += `
+                    <div class="agent-item">
+                        <div class="agent-info">
+                            <span class="agent-name">${ag.nombre}</span>
+                            <span class="agent-details">Edad: ${ag.edad} | WA: ${ag.whatsapp}</span>
+                        </div>
+                        <div class="agent-user-badge">@${ag.usuario}</div>
+                    </div>
+                `;
+            });
         });
     </script>
 </body>
