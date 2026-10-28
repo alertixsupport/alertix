@@ -14,6 +14,7 @@
       --accent-fire-glow: rgba(255, 85, 0, 0.4);
       --text-main: #ffffff;
       --text-muted: #94a3b8;
+      --danger-color: #ef4444;
     }
 
     * {
@@ -55,9 +56,9 @@
 
     /* Navbar Ejecutivo */
     header {
-      display: flex;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
       align-items: center;
-      justify-content: space-between;
       padding: 20px 30px;
       background: var(--bg-card);
       backdrop-filter: blur(20px);
@@ -65,6 +66,7 @@
       border-radius: 20px;
       margin-bottom: 35px;
       box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+      position: relative;
     }
 
     .brand {
@@ -74,7 +76,7 @@
     }
 
     .fire-icon {
-      font-size: 28px;
+      font-size: 26px;
       animation: flameAnim 1.8s ease-in-out infinite alternate;
       display: inline-block;
       filter: drop-shadow(0 0 10px rgba(255, 85, 0, 0.8));
@@ -86,8 +88,12 @@
       100% { transform: translateY(-1px) scale(1.05) rotate(-1deg); }
     }
 
+    .logo-container-center {
+      text-align: center;
+    }
+
     .logo-text {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
       letter-spacing: 1px;
       background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
@@ -101,30 +107,84 @@
       -webkit-text-fill-color: var(--accent-fire);
     }
 
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 22px;
-      border: none;
+    /* Menú Desplegable (Hamburguesa) */
+    .menu-wrapper {
+      position: relative;
+      justify-self: end;
+    }
+
+    .menu-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-glass);
       border-radius: 12px;
-      background: linear-gradient(135deg, #ff5500 0%, #d33f00 100%);
-      color: white;
-      font-weight: 700;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(255, 85, 0, 0.4);
       transition: all 0.3s ease;
+      color: var(--text-main);
     }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(255, 85, 0, 0.6);
+    .menu-btn:hover {
+      background: rgba(255, 85, 0, 0.15);
+      border-color: var(--accent-fire);
     }
 
-    /* Modal Formulario Agregar Herramienta */
+    .menu-btn svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 55px;
+      background: #0d092b;
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      width: 210px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+      z-index: 50;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+    }
+
+    .dropdown-menu.active {
+      display: block;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dropdown-item {
+      padding: 14px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(255, 85, 0, 0.2);
+      color: var(--accent-fire);
+    }
+
+    /* Modales Globales */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -200,6 +260,26 @@
       justify-content: flex-end;
       gap: 12px;
       margin-top: 25px;
+    }
+
+    .btn-primary {
+      padding: 12px 22px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ff5500 0%, #d33f00 100%);
+      color: white;
+      font-weight: 700;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(255, 85, 0, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(255, 85, 0, 0.6);
     }
 
     .btn-cancel {
@@ -278,7 +358,6 @@
       fill: var(--accent-fire);
     }
 
-    /* Flechita para ingresar */
     .arrow-btn {
       width: 38px;
       height: 38px;
@@ -313,23 +392,59 @@
       color: var(--text-muted);
       line-height: 1.5;
     }
+
+    /* Botón Eliminar en Modo Gestión */
+    .btn-delete {
+      width: 100%;
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: 10px;
+      color: #fca5a5;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-delete:hover {
+      background: var(--danger-color);
+      color: white;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <!-- Navbar / Header -->
+    <!-- Navbar Ejecutivo -->
     <header>
       <div class="brand">
         <span class="fire-icon">🔥</span>
-        <h1 class="logo-text">cout<span>.app</span></h1>
       </div>
-      <button class="btn-primary" id="openModalBtn">
-        <span>+</span> Agregar Herramienta
-      </button>
+
+      <div class="logo-container-center">
+        <h1 class="logo-text">cout<span>.app</span> (panel)</h1>
+      </div>
+
+      <div class="menu-wrapper">
+        <button class="menu-btn" id="menuToggleBtn" title="Menú Ejecutivo">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
+          </svg>
+        </button>
+
+        <!-- Menú desplegable pequeño -->
+        <div class="dropdown-menu" id="dropdownMenu">
+          <div class="dropdown-item" id="openModalBtn">➕ Agregar Herramienta</div>
+          <div class="dropdown-item" id="openManageBtn">⚙️ Gestionar Herramienta</div>
+        </div>
+      </div>
     </header>
 
-    <h2 class="section-title">Herramientas & Módulos Administrativos</h2>
+    <h2 class="section-title" id="sectionTitle">Herramientas & Módulos Administrativos</h2>
 
     <!-- Grid de Cards Dynamic -->
     <div class="cards-grid" id="toolsGrid">
@@ -369,23 +484,62 @@
 
   <script type="module">
     import { db } from '../app.js';
-    import { collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    const menuToggleBtn = document.getElementById('menuToggleBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
     const openModalBtn = document.getElementById('openModalBtn');
+    const openManageBtn = document.getElementById('openManageBtn');
     const closeModalBtn = document.getElementById('closeModalBtn');
     const modalOverlay = document.getElementById('modalOverlay');
     const addToolForm = document.getElementById('addToolForm');
     const toolsGrid = document.getElementById('toolsGrid');
+    const sectionTitle = document.getElementById('sectionTitle');
 
-    // Icono SVG por defecto si no ingresan uno
     const defaultSvg = `<svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>`;
+    
+    let isManageMode = false;
 
-    // Modal Control
-    openModalBtn.addEventListener('click', () => modalOverlay.classList.add('active'));
-    closeModalBtn.addEventListener('click', () => modalOverlay.classList.remove('active'));
+    // Toggle Menú Desplegable
+    menuToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdownMenu.classList.toggle('active');
+    });
+
+    // Cerrar menú al hacer clic fuera
+    window.addEventListener('click', () => {
+      dropdownMenu.classList.remove('active');
+    });
+
+    // Abrir Modal Agregar Herramienta
+    openModalBtn.addEventListener('click', () => {
+      dropdownMenu.classList.remove('active');
+      isManageMode = false;
+      sectionTitle.textContent = "Herramientas & Módulos Administrativos";
+      modalOverlay.classList.add('active');
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      modalOverlay.classList.remove('active');
+    });
+
+    // Activar Modo Gestión (Eliminar Herramientas)
+    openManageBtn.addEventListener('click', () => {
+      dropdownMenu.classList.remove('active');
+      isManageMode = !isManageMode;
+      if (isManageMode) {
+        sectionTitle.textContent = "⚙️ Modo Gestión: Seleccione una Herramienta para Eliminar";
+        sectionTitle.style.color = "#fca5a5";
+      } else {
+        sectionTitle.textContent = "Herramientas & Módulos Administrativos";
+        sectionTitle.style.color = "var(--text-muted)";
+      }
+      renderTools();
+    });
 
     // Apuntando exactamente dentro de carpetacout -> configuracion_general -> herramientas
     const toolsRef = collection(db, "carpetacout", "configuracion_general", "herramientas");
+    let cachedTools = [];
 
     // Guardar Herramienta en Firebase
     addToolForm.addEventListener('submit', async (e) => {
@@ -415,39 +569,80 @@
       }
     });
 
-    // Leer Herramientas en tiempo real desde Firestore (Sincronizado PC y Celular)
-    onSnapshot(toolsRef, (snapshot) => {
+    // Función para renderizar según el modo actual (Normal o Gestión)
+    function renderTools() {
       toolsGrid.innerHTML = '';
 
-      if (snapshot.empty) {
+      if (cachedTools.length === 0) {
         toolsGrid.innerHTML = `
           <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">
-            No hay herramientas agregadas aún. Haz clic en <strong>"+ Agregar Herramienta"</strong> para crear la primera.
+            No hay herramientas agregadas aún. Haz clic en el menú superior para crear la primera.
           </div>`;
         return;
       }
 
-      snapshot.forEach((docSnap) => {
-        const tool = docSnap.data();
-        const card = document.createElement('a');
-        card.className = 'tool-card';
-        card.href = tool.redireccion || '#';
-
-        card.innerHTML = `
-          <div>
-            <div class="tool-header">
-              <div class="tool-icon-box">
-                ${tool.icono || defaultSvg}
+      cachedTools.forEach(({ id, data }) => {
+        if (isManageMode) {
+          // En modo gestión, usamos un div contenedor con botón de eliminar
+          const cardDiv = document.createElement('div');
+          cardDiv.className = 'tool-card';
+          cardDiv.style.borderColor = "rgba(239, 68, 68, 0.4)";
+          cardDiv.innerHTML = `
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon-box">
+                  ${data.icono || defaultSvg}
+                </div>
               </div>
-              <div class="arrow-btn">&rarr;</div>
+              <div class="tool-title">${data.titulo}</div>
+              <div class="tool-desc">${data.descripcion}</div>
             </div>
-            <div class="tool-title">${tool.titulo}</div>
-            <div class="tool-desc">${tool.descripcion}</div>
-          </div>
-        `;
+            <button class="btn-delete" data-id="${id}">🗑️ Eliminar Herramienta</button>
+          `;
 
-        toolsGrid.appendChild(card);
+          cardDiv.querySelector('.btn-delete').addEventListener('click', async () => {
+            if (confirm(`¿Estás seguro de eliminar la herramienta "${data.titulo}"?`)) {
+              try {
+                await deleteDoc(doc(db, "carpetacout", "configuracion_general", "herramientas", id));
+              } catch (err) {
+                console.error("Error al eliminar:", err);
+                alert("No se pudo eliminar: " + err.message);
+              }
+            }
+          });
+
+          toolsGrid.appendChild(cardDiv);
+        } else {
+          // Modo normal: enlace funcional con flechita
+          const card = document.createElement('a');
+          card.className = 'tool-card';
+          card.href = data.redireccion || '#';
+
+          card.innerHTML = `
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon-box">
+                  ${data.icono || defaultSvg}
+                </div>
+                <div class="arrow-btn">&rarr;</div>
+              </div>
+              <div class="tool-title">${data.titulo}</div>
+              <div class="tool-desc">${data.descripcion}</div>
+            </div>
+          `;
+
+          toolsGrid.appendChild(card);
+        }
       });
+    }
+
+    // Leer Herramientas en tiempo real desde Firestore
+    onSnapshot(toolsRef, (snapshot) => {
+      cachedTools = [];
+      snapshot.forEach((docSnap) => {
+        cachedTools.push({ id: docSnap.id, data: docSnap.data() });
+      });
+      renderTools();
     }, (error) => {
       console.error("Error al escuchar en tiempo real:", error);
     });
