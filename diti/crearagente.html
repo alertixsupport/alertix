@@ -148,7 +148,7 @@
             text-transform: uppercase;
         }
 
-        .form-input {
+        .form-input, .form-select {
             height: 42px;
             background: var(--input-bg);
             border: 1px solid var(--border-subtle);
@@ -160,9 +160,14 @@
             transition: all 0.2s;
         }
 
-        .form-input:focus {
+        .form-input:focus, .form-select:focus {
             border-color: var(--border-focus);
             box-shadow: 0 0 10px rgba(0, 230, 118, 0.15);
+        }
+
+        .form-select option {
+            background: var(--panel-bg);
+            color: #fff;
         }
 
         .form-row {
@@ -193,7 +198,7 @@
             box-shadow: 0 0 20px rgba(0, 230, 118, 0.35);
         }
 
-        /* SECCIÓN DE LISTA Y STATS DE AGENTES */
+        /* SECCIÓN DE LISTA Y STATS */
         .agents-list-section {
             width: 100%;
             max-width: 500px;
@@ -207,7 +212,20 @@
             gap: 12px;
         }
 
-        /* CARDS PROFESIONALES DE AGENTES */
+        .agent-counter-badge {
+            background: rgba(0,230,118,0.12);
+            color: var(--accent-green);
+            border: 1px solid rgba(0,230,118,0.3);
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* CARDS PROFESIONALES */
         .agent-card-item {
             background: var(--input-bg);
             border: 1px solid var(--border-subtle);
@@ -233,7 +251,7 @@
         .agent-name-role {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 3px;
         }
 
         .agent-name {
@@ -246,6 +264,9 @@
             font-size: 0.74rem;
             color: var(--text-muted);
             font-family: monospace;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .agent-badge-status {
@@ -269,7 +290,6 @@
             border: 1px solid rgba(255, 77, 77, 0.3);
         }
 
-        /* BARRA DE ACCIONES (OJO, EDITAR, SUSPENDER, ELIMINAR) */
         .agent-actions-bar {
             display: flex;
             align-items: center;
@@ -305,7 +325,7 @@
             background: rgba(255, 77, 77, 0.1);
         }
 
-        /* MODALES PROFESIONALES */
+        /* MODALES */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -393,11 +413,22 @@
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">País</label>
-                    <input type="text" id="pais" class="form-input" required placeholder="Ej. Argentina" autocomplete="off">
+                    <select id="pais" class="form-select" required onchange="actualizarProvincias()">
+                        <option value="" disabled selected>Seleccione País</option>
+                        <option value="Argentina">Argentina</option>
+                        <option value="México">México</option>
+                        <option value="Colombia">Colombia</option>
+                        <option value="Chile">Chile</option>
+                        <option value="España">España</option>
+                        <option value="Perú">Perú</option>
+                        <option value="Uruguay">Uruguay</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Provincia / Estado</label>
-                    <input type="text" id="provincia" class="form-input" required placeholder="Ej. Buenos Aires" autocomplete="off">
+                    <select id="provincia" class="form-select" required>
+                        <option value="" disabled selected>Seleccione Provincia</option>
+                    </select>
                 </div>
             </div>
 
@@ -423,11 +454,14 @@
             </button>
         </form>
 
-        <!-- Sección de Lista y Contador de Agentes -->
+        <!-- Sección de Lista y Contador -->
         <div class="agents-list-section">
             <div class="card-header-title">
                 <span>Agentes Creados</span>
-                <span id="agent-counter-badge" style="background: rgba(0,230,118,0.15); color: var(--accent-green); border: 1px solid rgba(0,230,118,0.3); font-size: 0.75rem; padding: 2px 8px; border-radius: 6px; font-family: monospace;">0 total</span>
+                <div class="agent-counter-badge" id="agent-counter-badge">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <span id="counter-num">0</span>
+                </div>
             </div>
             <div id="agents-list-container" style="display: flex; flex-direction: column; gap: 10px;">
                 <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">Cargando agentes...</div>
@@ -464,11 +498,19 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">País</label>
-                        <input type="text" id="edit-pais" class="form-input" required>
+                        <select id="edit-pais" class="form-select" required onchange="actualizarProvinciasEdicion()">
+                            <option value="Argentina">Argentina</option>
+                            <option value="México">México</option>
+                            <option value="Colombia">Colombia</option>
+                            <option value="Chile">Chile</option>
+                            <option value="España">España</option>
+                            <option value="Perú">Perú</option>
+                            <option value="Uruguay">Uruguay</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Provincia</label>
-                        <input type="text" id="edit-provincia" class="form-input" required>
+                        <select id="edit-provincia" class="form-select" required></select>
                     </div>
                 </div>
                 <div class="form-group">
@@ -480,7 +522,7 @@
         </div>
     </div>
 
-    <!-- Script de Gestión Completa con Firebase -->
+    <!-- Script de Gestión Completa -->
     <script type="module">
         import { db } from "../app.js";
         import { collection, addDoc, serverTimestamp, query, where, getDocs, onSnapshot, orderBy, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -493,14 +535,46 @@
 
         const agentForm = document.getElementById("agent-form");
         const agentsListContainer = document.getElementById("agents-list-container");
-        const agentCounterBadge = document.getElementById("agent-counter-badge");
+        const counterNum = document.getElementById("counter-num");
 
-        // Función para calcular tiempo en la empresa (Antigüedad)
+        // Diccionario de Provincias / Estados por País
+        const provinciasPorPais = {
+            "Argentina": ["Buenos Aires", "Capital Federal", "Córdoba", "Santa Fe", "Mendoza", "Tucumán", "Entre Ríos", "Salta", "Misiones", "Corrientes", "Chaco", "Santiago del Estero", "San Juan", "Jujuy", "Río Negro", "Neuquén", "Formosa", "Chubut", "San Luis", "Catamarca", "La Rioja", "La Pampa", "Santa Cruz", "Tierra del Fuego"],
+            "México": ["Ciudad de México", "Estado de México", "Jalisco", "Nuevo León", "Puebla", "Guanajuato", "Veracruz", "Baja California", "Chihuahua", "Yucatán", "Quintana Roo"],
+            "Colombia": ["Bogotá D.C.", "Antioquia", "Valle del Cauca", "Cundinamarca", "Atlántico", "Bolívar", "Santander", "Boyacá"],
+            "Chile": ["Región Metropolitana", "Valparaíso", "Biobío", "Antofagasta", "Maule", "La Araucanía"],
+            "España": ["Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", "Málaga", "Murcia", "Islas Baleares", "Bizkaia"],
+            "Perú": ["Lima", "Arequipa", "La Libertad", "Piura", "Cusco", "Junín", "Lambayeque"],
+            "Uruguay": ["Montevideo", "Canelones", "Maldonado", "Salto", "Colonia", "Paysandú"]
+        };
+
+        window.actualizarProvincias = () => {
+            const paisSelect = document.getElementById("pais").value;
+            const provSelect = document.getElementById("provincia");
+            provSelect.innerHTML = '<option value="" disabled selected>Seleccione Provincia</option>';
+            if (provinciasPorPais[paisSelect]) {
+                provinciasPorPais[paisSelect].forEach(prov => {
+                    provSelect.innerHTML += `<option value="${prov}">${prov}</option>`;
+                });
+            }
+        };
+
+        window.actualizarProvinciasEdicion = (paisActual, provActual) => {
+            const paisSelect = document.getElementById("edit-pais").value;
+            const provSelect = document.getElementById("edit-provincia");
+            provSelect.innerHTML = '';
+            if (provinciasPorPais[paisSelect]) {
+                provinciasPorPais[paisSelect].forEach(prov => {
+                    const selected = (prov === provActual) ? 'selected' : '';
+                    provSelect.innerHTML += `<option value="${prov}" ${selected}>${prov}</option>`;
+                });
+            }
+        };
+
         function calcularAntigüedad(fechaCreacion) {
             if (!fechaCreacion) return "Recién ingresado";
             const diffTime = Math.abs(new Date() - fechaCreacion.toDate());
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            
             if (diffDays === 0) return "Ingresado hoy";
             if (diffDays === 1) return "Hace 1 día";
             if (diffDays < 30) return `Hace ${diffDays} días`;
@@ -510,10 +584,8 @@
             return `Hace ${diffYears} año(s)`;
         }
 
-        // Registrar nuevo agente
         agentForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-
             const nombre = document.getElementById("nombre").value.trim();
             const pais = document.getElementById("pais").value.trim();
             const provincia = document.getElementById("provincia").value.trim();
@@ -536,37 +608,26 @@
                 }
 
                 await addDoc(collection(db, "diti_usuarioagentes"), {
-                    nombre,
-                    pais,
-                    provincia,
-                    whatsapp,
-                    usuario,
-                    password,
-                    estado: "activo", // activo o suspendido
+                    nombre, pais, provincia, whatsapp, usuario, password,
+                    estado: "activo",
                     creadoPor: adminSesion.usuario,
                     creadoEn: serverTimestamp()
                 });
 
                 alert("¡Agente registrado con éxito!");
                 agentForm.reset();
+                document.getElementById("provincia").innerHTML = '<option value="" disabled selected>Seleccione Provincia</option>';
             } catch (err) {
-                console.error("Error al registrar agente:", err);
                 alert("Hubo un error al registrar el agente.");
             }
         });
 
-        // Sincronización en tiempo real con contador y filtrado por admin
-        const qList = query(
-            collection(db, "diti_usuarioagentes"), 
-            where("creadoPor", "==", adminSesion.usuario)
-        );
-
-        // Almacén temporal de agentes para edición
+        const qList = query(collection(db, "diti_usuarioagentes"), where("creadoPor", "==", adminSesion.usuario));
         let agentesCache = {};
 
         onSnapshot(qList, (snapshot) => {
             agentsListContainer.innerHTML = "";
-            agentCounterBadge.innerText = `${snapshot.size} total`;
+            counterNum.innerText = snapshot.size;
             agentesCache = {};
 
             if (snapshot.empty) {
@@ -588,14 +649,17 @@
                         <div class="agent-card-top">
                             <div class="agent-name-role">
                                 <span class="agent-name">${ag.nombre} (@${ag.usuario})</span>
-                                <span class="agent-location">📍 ${ag.provincia}, ${ag.pais} | WA: ${ag.whatsapp}</span>
+                                <span class="agent-location">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                    ${ag.provincia}, ${ag.pais} | WA: ${ag.whatsapp}
+                                </span>
                             </div>
                             <div class="agent-badge-status ${isSuspended ? 'suspended' : 'active'}">
                                 ${isSuspended ? 'Suspendido' : 'Activo'}
                             </div>
                         </div>
                         <div style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">
-                            📅 Alta: ${fechaFormateada} (${antiguedad})
+                            Alta: ${fechaFormateada} (${antiguedad})
                         </div>
                         <div class="agent-actions-bar">
                             <button class="btn-action" onclick="verDetalles('${id}')" title="Ver Detalles">
@@ -616,14 +680,12 @@
             });
         });
 
-        // Funciones Globales de Acciones Gerenciales
         window.cerrarModal = (modalId) => document.getElementById(modalId).classList.remove("active");
 
         window.verDetalles = (id) => {
             const ag = agentesCache[id];
             if (!ag) return;
             const fechaFormateada = ag.creadoEn ? ag.creadoEn.toDate().toLocaleString() : "N/D";
-            
             document.getElementById("modal-detail-content").innerHTML = `
                 <div class="modal-detail-row"><span class="modal-detail-label">Nombre Completo</span><span class="modal-detail-val">${ag.nombre}</span></div>
                 <div class="modal-detail-row"><span class="modal-detail-label">Usuario</span><span class="modal-detail-val">@${ag.usuario}</span></div>
@@ -641,7 +703,7 @@
             document.getElementById("edit-id").value = id;
             document.getElementById("edit-nombre").value = ag.nombre;
             document.getElementById("edit-pais").value = ag.pais;
-            document.getElementById("edit-provincia").value = ag.provincia;
+            actualizarProvinciasEdicion(ag.pais, ag.provincia);
             document.getElementById("edit-whatsapp").value = ag.whatsapp;
             document.getElementById("edit-modal").classList.add("active");
         };
