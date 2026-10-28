@@ -929,3 +929,24 @@
         });
 
         window.toggleSuspender = async (id, estadoActual) => {
+            const nuevoEstado = estadoActual === "suspendido" ? "activo" : "suspendido";
+            try {
+                await updateDoc(doc(db, "diti_usuarioagentes", id), { estado: nuevoEstado });
+            } catch (err) {
+                alert("Error al cambiar estado del agente.");
+            }
+        };
+
+        window.eliminarAgente = async (id) => {
+            if (confirm("¿Está seguro de eliminar este agente permanentemente?")) {
+                try {
+                    await deleteDoc(doc(db, "diti_usuarioagentes", id));
+                    alert("Agente eliminado con éxito.");
+                } catch (err) {
+                    alert("Error al eliminar el agente.");
+                }
+            }
+        };
+    </script>
+</body>
+</html>
