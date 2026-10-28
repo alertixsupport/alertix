@@ -23,7 +23,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* ESTRUCTURA MAESTRA FIJA E INMUNE A ZOOMS INESPERADOS */
+        /* ESTRUCTURA MAESTRA FIJA E INMUNE A ZOOMS */
         html, body {
             background-color: var(--bg-base);
             height: 100%;
@@ -98,7 +98,7 @@
             color: var(--accent-green);
         }
 
-        /* CONTENEDOR PRINCIPAL RESPONSIVO (GRID DINÁMICO PC / FLEX MÓVIL) */
+        /* CONTENEDOR PRINCIPAL RESPONSIVO */
         .agent-main-container {
             flex-grow: 1;
             padding: 85px 16px 20px 16px;
@@ -118,14 +118,14 @@
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 align-items: start;
-                max-width: 1200px;
+                max-width: 1300px;
                 margin: 0 auto;
                 padding: 95px 24px 24px 24px;
                 gap: 24px;
             }
         }
 
-        /* TARJETAS CONTENEDORAS */
+        /* TARJETAS CONTENEDORAS PRINCIPALES */
         .agent-card-form, .agents-list-section {
             width: 100%;
             max-width: 100%;
@@ -173,7 +173,6 @@
             text-transform: uppercase;
         }
 
-        /* TAMAÑO DE FUENTE 16PX MÍNIMO EN MÓVIL PARA EVITAR EL ZOOM AUTOMÁTICO DE iOS/ANDROID */
         .form-input, .form-select {
             height: 44px;
             background: var(--input-bg);
@@ -251,63 +250,132 @@
             gap: 6px;
         }
 
-        /* CARDS DE AGENTES DINÁMICAS */
+        /* BUSCADOR DE AGENTES */
+        .search-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 2px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 40px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: #fff;
+            padding: 0 16px 0 38px;
+            font-size: 0.88rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.15);
+        }
+
+        /* ÁREA DE SCROLL DE CARDS */
         .agents-scroll-area {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             overflow-y: auto;
             flex-grow: 1;
         }
 
+        /* CARDS PROFESIONALES EMPRESARIALES DE ELITE */
         .agent-card-item {
-            background: var(--input-bg);
+            background: linear-gradient(135deg, #0b120e 0%, #070a08 100%);
             border: 1px solid var(--border-subtle);
             border-radius: 10px;
-            padding: 14px 16px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            transition: border-color 0.2s;
+            gap: 12px;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-card-item:hover {
+            border-color: rgba(0, 230, 118, 0.35);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
         }
 
         .agent-card-item.suspended {
-            border-color: rgba(255, 77, 77, 0.4);
-            background: rgba(255, 77, 77, 0.03);
+            border-color: rgba(255, 77, 77, 0.35);
+            background: linear-gradient(135deg, #120b0b 0%, #070404 100%);
         }
 
-        .agent-card-top {
+        .agent-card-header {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
-            gap: 8px;
+            gap: 10px;
         }
 
-        .agent-name-role {
+        .agent-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .agent-avatar-box {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #111a14;
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            flex-shrink: 0;
+        }
+
+        .agent-card-item.suspended .agent-avatar-box {
+            color: #ff6666;
+            border-color: rgba(255, 77, 77, 0.3);
+            background: #1a1111;
+        }
+
+        .agent-text-meta {
             display: flex;
             flex-direction: column;
-            gap: 3px;
-            word-break: break-word;
+            gap: 2px;
         }
 
         .agent-name {
-            font-size: 0.92rem;
+            font-size: 0.94rem;
             font-weight: 700;
             color: #fff;
+            letter-spacing: -0.01em;
         }
 
-        .agent-location {
+        .agent-username-tag {
             font-size: 0.74rem;
-            color: var(--text-muted);
+            color: var(--accent-green);
             font-family: monospace;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-wrap: wrap;
+        }
+
+        .agent-card-item.suspended .agent-username-tag {
+            color: #ff6666;
         }
 
         .agent-badge-status {
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             padding: 3px 8px;
             border-radius: 6px;
             font-family: monospace;
@@ -317,15 +385,41 @@
         }
 
         .agent-badge-status.active {
-            background: rgba(0, 230, 118, 0.12);
+            background: rgba(0, 230, 118, 0.1);
             color: var(--accent-green);
-            border: 1px solid rgba(0, 230, 118, 0.3);
+            border: 1px solid rgba(0, 230, 118, 0.25);
         }
 
         .agent-badge-status.suspended {
-            background: rgba(255, 77, 77, 0.12);
+            background: rgba(255, 77, 77, 0.1);
             color: #ff6666;
-            border: 1px solid rgba(255, 77, 77, 0.3);
+            border: 1px solid rgba(255, 77, 77, 0.25);
+        }
+
+        .agent-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(21,34,25,0.4);
+            font-size: 0.76rem;
+            font-family: monospace;
+            color: var(--text-muted);
+        }
+
+        .agent-details-grid span strong {
+            color: #fff;
+        }
+
+        .agent-footer-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-family: monospace;
         }
 
         .agent-actions-bar {
@@ -334,7 +428,7 @@
             justify-content: flex-end;
             gap: 6px;
             padding-top: 8px;
-            border-top: 1px solid rgba(21,34,25,0.5);
+            border-top: 1px solid rgba(21,34,25,0.6);
         }
 
         .btn-action {
@@ -355,13 +449,13 @@
         .btn-action:hover {
             border-color: var(--accent-green);
             color: #fff;
-            background: rgba(0, 230, 118, 0.05);
+            background: rgba(0, 230, 118, 0.08);
         }
 
         .btn-action.danger:hover {
             border-color: #ff4d4d;
             color: #ff6666;
-            background: rgba(255, 77, 77, 0.1);
+            background: rgba(255, 77, 77, 0.12);
         }
 
         /* MODALES */
@@ -437,10 +531,10 @@
         </div>
     </header>
 
-    <!-- Contenedor Principal (Grid en PC, Flex en Celular) -->
+    <!-- Contenedor Principal (Grid PC / Flex Móvil) -->
     <div class="agent-main-container">
         
-        <!-- Columna Izquierda: Formulario de Creación -->
+        <!-- Columna Izquierda: Formulario de Registro -->
         <form class="agent-card-form" id="agent-form">
             <div class="card-header-title">
                 <span>Nuevo Agente Operativo</span>
@@ -496,7 +590,7 @@
             </button>
         </form>
 
-        <!-- Columna Derecha: Lista y Contador -->
+        <!-- Columna Derecha: Lista, Buscador y Contador -->
         <div class="agents-list-section">
             <div class="card-header-title">
                 <span>Agentes Creados</span>
@@ -505,6 +599,13 @@
                     <span id="counter-num">0</span>
                 </div>
             </div>
+
+            <!-- Buscador en tiempo real -->
+            <div class="search-container">
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="search-agent-input" class="search-input" placeholder="Buscar por nombre, usuario, país..." oninput="filtrarAgentes()" autocomplete="off">
+            </div>
+
             <div class="agents-scroll-area" id="agents-list-container">
                 <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 20px;">Cargando agentes...</div>
             </div>
@@ -564,10 +665,10 @@
         </div>
     </div>
 
-    <!-- Script de Gestión -->
+    <!-- Script de Gestión Avanzada -->
     <script type="module">
         import { db } from "../app.js";
-        import { collection, addDoc, serverTimestamp, query, where, getDocs, onSnapshot, orderBy, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { collection, addDoc, serverTimestamp, query, where, getDocs, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const sesionRaw = sessionStorage.getItem("diti_admin_sesion");
         if (!sesionRaw) window.location.replace("login.html");
@@ -578,6 +679,7 @@
         const agentForm = document.getElementById("agent-form");
         const agentsListContainer = document.getElementById("agents-list-container");
         const counterNum = document.getElementById("counter-num");
+        const searchInput = document.getElementById("search-agent-input");
 
         const provinciasPorPais = {
             "Argentina": ["Buenos Aires", "Capital Federal", "Córdoba", "Santa Fe", "Mendoza", "Tucumán", "Entre Ríos", "Salta", "Misiones", "Corrientes", "Chaco", "Santiago del Estero", "San Juan", "Jujuy", "Río Negro", "Neuquén", "Formosa", "Chubut", "San Luis", "Catamarca", "La Rioja", "La Pampa", "Santa Cruz", "Tierra del Fuego"],
@@ -665,43 +767,75 @@
 
         const qList = query(collection(db, "diti_usuarioagentes"), where("creadoPor", "==", adminSesion.usuario));
         let agentesCache = {};
+        let listaAgentesSnapshot = [];
 
         onSnapshot(qList, (snapshot) => {
-            agentsListContainer.innerHTML = "";
-            counterNum.innerText = snapshot.size;
+            listaAgentesSnapshot = [];
             agentesCache = {};
-
-            if (snapshot.empty) {
-                agentsListContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 20px;">No ha creado agentes todavía.</div>`;
-                return;
-            }
+            counterNum.innerText = snapshot.size;
 
             snapshot.forEach((docSnap) => {
                 const ag = docSnap.data();
                 const id = docSnap.id;
                 agentesCache[id] = ag;
+                listaAgentesSnapshot.push({ id, ...ag });
+            });
 
+            renderizarAgentes(listaAgentesSnapshot);
+        });
+
+        window.filtrarAgentes = () => {
+            const filtro = searchInput.value.toLowerCase().trim();
+            const filtrados = listaAgentesSnapshot.filter(ag => 
+                ag.nombre.toLowerCase().includes(filtro) ||
+                ag.usuario.toLowerCase().includes(filtro) ||
+                ag.pais.toLowerCase().includes(filtro) ||
+                ag.provincia.toLowerCase().includes(filtro) ||
+                ag.whatsapp.toLowerCase().includes(filtro)
+            );
+            renderizarAgentes(filtrados);
+        };
+
+        function renderizarAgentes(agentes) {
+            agentsListContainer.innerHTML = "";
+
+            if (agentes.length === 0) {
+                agentsListContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 20px;">No se encontraron agentes.</div>`;
+                return;
+            }
+
+            agentes.forEach(ag => {
+                const id = ag.id;
                 const isSuspended = ag.estado === "suspendido";
                 const antiguedad = calcularAntigüedad(ag.creadoEn);
-                const fechaFormateada = ag.creadoEn ? ag.creadoEn.toDate().toLocaleDateString() : "Fecha reciente";
+                const fechaFormateada = ag.creadoEn ? ag.creadoEn.toDate().toLocaleDateString() : "Recién";
+                const iniciales = ag.nombre ? ag.nombre.substring(0, 2).toUpperCase() : "AG";
 
                 agentsListContainer.innerHTML += `
                     <div class="agent-card-item ${isSuspended ? 'suspended' : ''}">
-                        <div class="agent-card-top">
-                            <div class="agent-name-role">
-                                <span class="agent-name">${ag.nombre} (@${ag.usuario})</span>
-                                <span class="agent-location">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                    ${ag.provincia}, ${ag.pais} | WA: ${ag.whatsapp}
-                                </span>
+                        <div class="agent-card-header">
+                            <div class="agent-user-info">
+                                <div class="agent-avatar-box">${iniciales}</div>
+                                <div class="agent-text-meta">
+                                    <span class="agent-name">${ag.nombre}</span>
+                                    <span class="agent-username-tag">@${ag.usuario}</span>
+                                </div>
                             </div>
                             <div class="agent-badge-status ${isSuspended ? 'suspended' : 'active'}">
                                 ${isSuspended ? 'Suspendido' : 'Activo'}
                             </div>
                         </div>
-                        <div style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">
-                            Alta: ${fechaFormateada} (${antiguedad})
+
+                        <div class="agent-details-grid">
+                            <span>📍 <strong>${ag.provincia}, ${ag.pais}</strong></span>
+                            <span>📞 <strong>${ag.whatsapp}</strong></span>
                         </div>
+
+                        <div class="agent-footer-info">
+                            <span>📅 Alta: ${fechaFormateada}</span>
+                            <span style="color: var(--accent-green);">${antiguedad}</span>
+                        </div>
+
                         <div class="agent-actions-bar">
                             <button class="btn-action" onclick="verDetalles('${id}')" title="Ver Detalles">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
@@ -719,7 +853,7 @@
                     </div>
                 `;
             });
-        });
+        }
 
         window.cerrarModal = (modalId) => document.getElementById(modalId).classList.remove("active");
 
