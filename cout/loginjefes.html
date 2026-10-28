@@ -1,1 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COUT.APP | Acceso Ejecutivo</title>
+  <style>
+    :root {
+      --bg-deep: #030112;
+      --bg-card: rgba(13, 9, 43, 0.75);
+      --border-glass: rgba(255, 255, 255, 0.12);
+      --border-focus: #ff5500;
+      --accent-fire: #ff5500;
+      --accent-fire-glow: rgba(255, 85, 0, 0.4);
+      --text-main: #ffffff;
+      --text-muted: #94a3b8;
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 20%, #160d4a 0%, var(--bg-deep) 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-main);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Efectos de iluminación de fondo corporativa */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: rgba(27, 17, 139, 0.25);
+      filter: blur(120px);
+      border-radius: 50%;
+      top: -100px;
+      left: -100px;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: rgba(255, 85, 0, 0.1);
+      filter: blur(100px);
+      border-radius: 50%;
+      bottom: -100px;
+      right: -100px;
+      z-index: 0;
+    }
+
+    .login-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+    }
+
+    .card-3d {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glass);
+      border-radius: 24px;
+      padding: 45px 35px;
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+      transform: translateY(0);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .card-3d:hover {
+      box-shadow: 
+        0 30px 60px -12px rgba(0, 0, 0, 0.9),
+        0 0 25px rgba(27, 17, 139, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    }
+
+    /* Cabecera y Logo Animado */
+    .brand-header {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .logo-wrapper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    /* Fueguito animado permanente */
+    .fire-icon {
+      font-size: 32px;
+      animation: flameAnim 1.8s ease-in-out infinite alternate;
+      display: inline-block;
+      filter: drop-shadow(0 0 10px rgba(255, 85, 0, 0.8));
+    }
+
+    @keyframes flameAnim {
+      0% { transform: translateY(0) scale(1) rotate(-3deg); filter: drop-shadow(0 0 8px rgba(255, 85, 0, 0.6)); }
+      50% { transform: translateY(-4px) scale(1.1) rotate(2deg); filter: drop-shadow(0 0 16px rgba(255, 119, 0, 0.9)); }
+      100% { transform: translateY(-2px) scale(1.05) rotate(-1deg); filter: drop-shadow(0 0 12px rgba(255, 68, 0, 0.8)); }
+    }
+
+    .logo-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: lowercase;
+    }
+
+    .logo-title span {
+      color: var(--accent-fire);
+      -webkit-text-fill-color: var(--accent-fire);
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-top: 5px;
+      font-weight: 600;
+    }
+
+    /* Campos de formulario con Iconos */
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .input-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-box svg {
+      position: absolute;
+      left: 15px;
+      width: 18px;
+      height: 18px;
+      fill: var(--text-muted);
+      transition: fill 0.3s ease;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px 14px 45px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    input:focus {
+      border-color: var(--border-focus);
+      background: rgba(0, 0, 0, 0.6);
+      box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.8),
+        0 0 15px var(--accent-fire-glow);
+    }
+
+    input:focus + svg,
+    .input-box:focus-within svg {
+      fill: var(--accent-fire);
+    }
+
+    /* Botón ejecutivo 3D */
+    .btn-exec {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ff5500 0%, #d33f00 100%);
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 10px 25px -5px rgba(255, 85, 0, 0.5);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-exec::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: 0.5s;
+    }
+
+    .btn-exec:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px -5px rgba(255, 85, 0, 0.7);
+    }
+
+    .btn-exec:hover::after {
+      left: 100%;
+    }
+
+    .btn-exec:active {
+      transform: translateY(1px);
+    }
+
+    /* Mensajes de estado */
+    .msg {
+      margin-top: 20px;
+      font-size: 13px;
+      text-align: center;
+      font-weight: 500;
+      min-height: 20px;
+      transition: opacity 0.3s;
+    }
+
+    .msg.error { color: #f87171; text-shadow: 0 0 10px rgba(248, 113, 113, 0.3); }
+    .msg.success { color: #34d399; text-shadow: 0 0 10px rgba(52, 211, 153, 0.3); }
+
+    /* Pie corporativo discreto */
+    .footer-brand {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.3);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="card-3d">
+      <div class="brand-header">
+        <div class="logo-wrapper">
+          <span class="fire-icon">🔥</span>
+        </div>
+        <h1 class="logo-title">cout<span>.app</span></h1>
+        <p class="subtitle">Panel Ejecutivo de Jefes</p>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="usuario">Usuario Autorizado</label>
+          <div class="input-box">
+            <!-- Icono de Usuario SVG -->
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            <input type="text" id="usuario" required placeholder="Ingrese su usuario">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="clave">Contraseña de Seguridad</label>
+          <div class="input-box">
+            <!-- Icono de Candado SVG -->
+            <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+            <input type="password" id="clave" required placeholder="••••••••">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-exec">Acceder al Sistema</button>
+      </form>
+
+      <div id="message" class="msg"></div>
+    </div>
+
+    <div class="footer-brand">
+      &copy; 2026 COUT.APP &bull; Sistema Exclusivo para Prestamistas
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const messageDiv = document.getElementById('message');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      messageDiv.textContent = 'Verificando credenciales ejecutivas...';
+      messageDiv.className = 'msg';
+
+      const userIngresado = document.getElementById('usuario').value.trim();
+      const claveIngresada = document.getElementById('clave').value;
+
+      try {
+        const response = await fetch('userjefe.json');
+        if (!response.ok) throw new Error('Error al conectar con la base de seguridad.');
+        
+        const data = await response.json();
+
+        if (userIngresado === data.usuario && claveIngresada === data.clave) {
+          messageDiv.textContent = 'Acceso autorizado. Redirigiendo al panel...';
+          messageDiv.className = 'msg success';
+          
+          sessionStorage.setItem('cout_auth', 'true');
+          sessionStorage.setItem('cout_user', data.usuario);
+
+          setTimeout(() => {
+            window.location.href = 'paneljefe.html';
+          }, 1100);
+        } else {
+          messageDiv.textContent = 'Credenciales inválidas. Acceso denegado.';
+          messageDiv.className = 'msg error';
+        }
+      } catch (error) {
+        console.error(error);
+        messageDiv.textContent = 'Fallo de autenticación en el sistema.';
+        messageDiv.className = 'msg error';
+      }
+    });
+  </script>
+</body>
+</html>
