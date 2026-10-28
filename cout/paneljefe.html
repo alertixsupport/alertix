@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -370,7 +369,7 @@
 
   <script type="module">
     import { db } from '../app.js';
-    import { collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const openModalBtn = document.getElementById('openModalBtn');
     const closeModalBtn = document.getElementById('closeModalBtn');
@@ -385,7 +384,10 @@
     openModalBtn.addEventListener('click', () => modalOverlay.classList.add('active'));
     closeModalBtn.addEventListener('click', () => modalOverlay.classList.remove('active'));
 
-    // Guardar Herramienta en Firebase (Colección carpetacout -> subcolección o módulo de herramientas)
+    // Apuntando exactamente dentro de carpetacout -> configuracion_general -> herramientas
+    const toolsRef = collection(db, "carpetacout", "configuracion_general", "herramientas");
+
+    // Guardar Herramienta en Firebase
     addToolForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -397,7 +399,7 @@
       if (!iconSvg) iconSvg = defaultSvg;
 
       try {
-        await addDoc(collection(db, "carpetacout", "configuracion", "herramientas"), {
+        await addDoc(toolsRef, {
           titulo: title,
           descripcion: description,
           redireccion: redirectUrl,
@@ -413,8 +415,7 @@
       }
     });
 
-    // Leer Herramientas en tiempo real desde Firestore
-    const toolsRef = collection(db, "carpetacout", "configuracion", "herramientas");
+    // Leer Herramientas en tiempo real desde Firestore (Sincronizado PC y Celular)
     onSnapshot(toolsRef, (snapshot) => {
       toolsGrid.innerHTML = '';
 
@@ -447,6 +448,8 @@
 
         toolsGrid.appendChild(card);
       });
+    }, (error) => {
+      console.error("Error al escuchar en tiempo real:", error);
     });
   </script>
 </body>
