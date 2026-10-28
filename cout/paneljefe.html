@@ -588,9 +588,8 @@
   </div>
 
   <script type="module">
-    // CAPA DE SEGURIDAD ESTRICTA: Validación de Sesión Activa
-    // Si no existe indicador en sessionStorage, redirige inmediatamente al login
-    if (!sessionStorage.getItem('jefeLogeado') && !sessionStorage.getItem('auth')) {
+    // CAPA DE SEGURIDAD ESTRICTA: Sincronizada con el login de userjefe.json
+    if (sessionStorage.getItem('cout_auth') !== 'true') {
       window.location.replace('loginjefes.html');
     }
 
