@@ -441,24 +441,28 @@
             box-shadow: 0 6px 15px rgba(255,77,77,0.2), inset 0 1px 0 rgba(255,77,77,0.2);
         }
 
-        /* MODALES (REGISTRO Y EDICIÓN Y DETALLES) */
+        /* MODALES CON ANIMACIONES PROFESIONALES DE ENTRADA Y SALIDA */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(3, 5, 4, 0.88);
+            background: rgba(3, 5, 4, 0.85);
             backdrop-filter: blur(8px);
-            display: none;
+            display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             padding: 16px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s;
         }
 
         .modal-overlay.active {
-            display: flex;
+            opacity: 1;
+            visibility: visible;
         }
 
         .modal-container {
@@ -466,14 +470,22 @@
             max-width: 460px;
             background: var(--panel-bg);
             border: 1px solid rgba(0, 230, 118, 0.3);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 24px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.9);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.95);
             display: flex;
             flex-direction: column;
             gap: 16px;
             max-height: 90vh;
             overflow-y: auto;
+            transform: translateY(20px) scale(0.96);
+            opacity: 0;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: translateY(0) scale(1);
+            opacity: 1;
         }
 
         .form-group {
@@ -568,7 +580,7 @@
 </head>
 <body>
 
-    <!-- Header Superior Fijo con Botón de Registrar Agente (Usuario+) -->
+    <!-- Header Superior Fijo -->
     <header class="agent-header">
         <div class="header-left">
             <a href="diti_adminpanel.html" class="btn-back" title="Volver al Panel">
@@ -586,7 +598,7 @@
         </button>
     </header>
 
-    <!-- Contenedor Principal con Lista, Buscador y Contador en Tiempo Real -->
+    <!-- Contenedor Principal -->
     <div class="agent-main-container">
         
         <div class="agents-list-section">
@@ -598,7 +610,6 @@
                 </div>
             </div>
 
-            <!-- Buscador en tiempo real con botón integrado de Registro (Usuario+) -->
             <div class="search-container">
                 <div class="search-input-wrapper">
                     <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -617,7 +628,7 @@
 
     </div>
 
-    <!-- Modal de Registro de Agente -->
+    <!-- Modal de Registro -->
     <div class="modal-overlay" id="register-modal">
         <div class="modal-container">
             <div class="card-header-title">
@@ -728,7 +739,7 @@
         </div>
     </div>
 
-    <!-- Script de Gestión y Sincronización en Tiempo Real -->
+    <!-- Script de Gestión -->
     <script type="module">
         import { db } from "../app.js";
         import { collection, addDoc, serverTimestamp, query, where, getDocs, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -832,7 +843,6 @@
             }
         });
 
-        // Sincronización en tiempo real con Firestore
         const qList = query(collection(db, "diti_usuarioagentes"), where("creadoPor", "==", adminSesion.usuario));
         let agentesCache = {};
         let listaAgentesSnapshot = [];
