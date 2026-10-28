@@ -97,6 +97,29 @@
             color: var(--accent-green);
         }
 
+        /* BOTÓN SUPERIOR DE ACCIÓN RÁPIDA (REGISTRAR AGENTE) */
+        .btn-top-registrar {
+            background: linear-gradient(135deg, #0f2416 0%, #08140c 100%);
+            border: 1px solid rgba(0, 230, 118, 0.35);
+            color: var(--accent-green);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .btn-top-registrar:hover {
+            border-color: var(--accent-green);
+            background: linear-gradient(135deg, #14331e 0%, #0b1a11 100%);
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.25);
+        }
+
         /* CONTENEDOR PRINCIPAL RESPONSIVO */
         .agent-main-container {
             flex-grow: 1;
@@ -114,18 +137,14 @@
 
         @media (min-width: 992px) {
             .agent-main-container {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                align-items: start;
-                max-width: 1300px;
+                max-width: 900px;
                 margin: 0 auto;
                 padding: 95px 24px 24px 24px;
-                gap: 24px;
             }
         }
 
-        /* TARJETAS PRINCIPALES */
-        .agent-card-form, .agents-list-section {
+        /* SECCIÓN DE LISTA Y BUSCADOR */
+        .agents-list-section {
             width: 100%;
             max-width: 100%;
             background: var(--panel-bg);
@@ -136,14 +155,7 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
-        }
-
-        @media (min-width: 992px) {
-            .agent-card-form, .agents-list-section {
-                max-width: none;
-                height: calc(100dvh - 120px);
-                overflow-y: auto;
-            }
+            flex-grow: 1;
         }
 
         .card-header-title {
@@ -156,84 +168,6 @@
             align-items: center;
             justify-content: space-between;
             flex-shrink: 0;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .form-label {
-            font-size: 0.78rem;
-            font-family: monospace;
-            letter-spacing: 0.04em;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .form-input, .form-select {
-            height: 44px;
-            background: var(--input-bg);
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            color: #fff;
-            padding: 0 16px;
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.2s;
-            width: 100%;
-        }
-
-        @media (min-width: 992px) {
-            .form-input, .form-select {
-                font-size: 0.9rem;
-            }
-        }
-
-        .form-input:focus, .form-select:focus {
-            border-color: var(--border-focus);
-            box-shadow: 0 0 10px rgba(0, 230, 118, 0.15);
-        }
-
-        .form-select option {
-            background: var(--panel-bg);
-            color: #fff;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-        }
-
-        @media (min-width: 576px) {
-            .form-row {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .btn-submit {
-            height: 46px;
-            background: var(--accent-green);
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-        }
-
-        .btn-submit:hover {
-            background: #00c864;
-            box-shadow: 0 0 20px rgba(0, 230, 118, 0.35);
         }
 
         .agent-counter-badge {
@@ -249,11 +183,18 @@
             gap: 6px;
         }
 
-        /* BUSCADOR DE AGENTES */
+        /* BUSCADOR CON ICONO 3D DE USUARIO+ */
         .search-container {
             position: relative;
             width: 100%;
-            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            flex-grow: 1;
         }
 
         .search-icon {
@@ -267,13 +208,13 @@
 
         .search-input {
             width: 100%;
-            height: 40px;
+            height: 42px;
             background: var(--input-bg);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
             color: #fff;
             padding: 0 16px 0 38px;
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             outline: none;
             transition: all 0.2s;
         }
@@ -281,6 +222,29 @@
         .search-input:focus {
             border-color: var(--border-focus);
             box-shadow: 0 0 10px rgba(0, 230, 118, 0.15);
+        }
+
+        .btn-inline-add {
+            height: 42px;
+            background: var(--accent-green);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 0 14px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,230,118,0.2);
+        }
+
+        .btn-inline-add:hover {
+            background: #00c864;
+            box-shadow: 0 0 18px rgba(0, 230, 118, 0.35);
         }
 
         /* ÁREA DE SCROLL DE CARDS */
@@ -331,7 +295,6 @@
             gap: 12px;
         }
 
-        /* AVATAR 3D CON RELIEVE METÁLICO */
         .agent-avatar-box {
             width: 42px;
             height: 42px;
@@ -401,7 +364,6 @@
             border: 1px solid rgba(255, 77, 77, 0.3);
         }
 
-        /* PANEL DE DATOS ESTILO 3D */
         .agent-details-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -439,7 +401,6 @@
             padding-top: 2px;
         }
 
-        /* BARRA DE ACCIONES CON RELIEVE 3D */
         .agent-actions-bar {
             display: flex;
             align-items: center;
@@ -480,7 +441,7 @@
             box-shadow: 0 6px 15px rgba(255,77,77,0.2), inset 0 1px 0 rgba(255,77,77,0.2);
         }
 
-        /* MODALES */
+        /* MODALES (REGISTRO Y EDICIÓN Y DETALLES) */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -502,7 +463,7 @@
 
         .modal-container {
             width: 100%;
-            max-width: 420px;
+            max-width: 460px;
             background: var(--panel-bg);
             border: 1px solid rgba(0, 230, 118, 0.3);
             border-radius: 12px;
@@ -510,9 +471,76 @@
             box-shadow: 0 25px 50px rgba(0,0,0,0.9);
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
             max-height: 90vh;
             overflow-y: auto;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 0.78rem;
+            font-family: monospace;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .form-input, .form-select {
+            height: 44px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: #fff;
+            padding: 0 16px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.15);
+        }
+
+        .form-select option {
+            background: var(--panel-bg);
+            color: #fff;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-submit {
+            height: 46px;
+            background: var(--accent-green);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0,230,118,0.25);
+        }
+
+        .btn-submit:hover {
+            background: #00c864;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.4);
         }
 
         .modal-detail-row {
@@ -540,7 +568,7 @@
 </head>
 <body>
 
-    <!-- Header Superior Fijo -->
+    <!-- Header Superior Fijo con Botón de Registrar Agente (Usuario+) -->
     <header class="agent-header">
         <div class="header-left">
             <a href="diti_adminpanel.html" class="btn-back" title="Volver al Panel">
@@ -551,68 +579,16 @@
                 <div class="agent-subtitle">Admin: <strong id="admin-user-tag">...</strong></div>
             </div>
         </div>
+
+        <button class="btn-top-registrar" onclick="abrirModalRegistro()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+            <span>Registrar Agente</span>
+        </button>
     </header>
 
-    <!-- Contenedor Principal -->
+    <!-- Contenedor Principal con Lista, Buscador y Contador en Tiempo Real -->
     <div class="agent-main-container">
         
-        <!-- Columna Izquierda: Formulario de Registro -->
-        <form class="agent-card-form" id="agent-form">
-            <div class="card-header-title">
-                <span>Nuevo Agente Operativo</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Nombre y Apellido</label>
-                <input type="text" id="nombre" class="form-input" required placeholder="Ej. Carlos Mendoza" autocomplete="off">
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">País</label>
-                    <select id="pais" class="form-select" required onchange="actualizarProvincias()">
-                        <option value="" disabled selected>Seleccione País</option>
-                        <option value="Argentina">Argentina</option>
-                        <option value="México">México</option>
-                        <option value="Colombia">Colombia</option>
-                        <option value="Chile">Chile</option>
-                        <option value="España">España</option>
-                        <option value="Perú">Perú</option>
-                        <option value="Uruguay">Uruguay</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Provincia / Estado</label>
-                    <select id="provincia" class="form-select" required>
-                        <option value="" disabled selected>Seleccione Provincia</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">WhatsApp</label>
-                <input type="tel" id="whatsapp" class="form-input" required placeholder="Ej. +549..." autocomplete="off">
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Usuario de Acceso</label>
-                    <input type="text" id="usuario" class="form-input" required placeholder="usuario_agente" autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Contraseña</label>
-                    <input type="password" id="password" class="form-input" required placeholder="••••••••" autocomplete="off">
-                </div>
-            </div>
-
-            <button type="submit" class="btn-submit">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Registrar Agente
-            </button>
-        </form>
-
-        <!-- Columna Derecha: Lista, Buscador y Contador con Icono 3D de Usuario -->
         <div class="agents-list-section">
             <div class="card-header-title">
                 <span>Agentes Creados</span>
@@ -622,17 +598,82 @@
                 </div>
             </div>
 
-            <!-- Buscador en tiempo real -->
+            <!-- Buscador en tiempo real con botón integrado de Registro (Usuario+) -->
             <div class="search-container">
-                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" id="search-agent-input" class="search-input" placeholder="Buscar por nombre, usuario, país..." oninput="filtrarAgentes()" autocomplete="off">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="search-agent-input" class="search-input" placeholder="Buscar por nombre, usuario, país..." oninput="filtrarAgentes()" autocomplete="off">
+                </div>
+                <button class="btn-inline-add" onclick="abrirModalRegistro()" title="Registrar Agente">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>Nuevo</span>
+                </button>
             </div>
 
             <div class="agents-scroll-area" id="agents-list-container">
-                <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 20px;">Cargando agentes...</div>
+                <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 30px;">Cargando agentes en tiempo real...</div>
             </div>
         </div>
 
+    </div>
+
+    <!-- Modal de Registro de Agente -->
+    <div class="modal-overlay" id="register-modal">
+        <div class="modal-container">
+            <div class="card-header-title">
+                <span>Nuevo Agente Operativo</span>
+                <button class="btn-action" onclick="cerrarModal('register-modal')">✕</button>
+            </div>
+            <form id="agent-form" style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="form-group">
+                    <label class="form-label">Nombre y Apellido</label>
+                    <input type="text" id="nombre" class="form-input" required placeholder="Ej. Carlos Mendoza" autocomplete="off">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">País</label>
+                        <select id="pais" class="form-select" required onchange="actualizarProvincias()">
+                            <option value="" disabled selected>Seleccione País</option>
+                            <option value="Argentina">Argentina</option>
+                            <option value="México">México</option>
+                            <option value="Colombia">Colombia</option>
+                            <option value="Chile">Chile</option>
+                            <option value="España">España</option>
+                            <option value="Perú">Perú</option>
+                            <option value="Uruguay">Uruguay</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Provincia / Estado</label>
+                        <select id="provincia" class="form-select" required>
+                            <option value="" disabled selected>Seleccione Provincia</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">WhatsApp</label>
+                    <input type="tel" id="whatsapp" class="form-input" required placeholder="Ej. +549..." autocomplete="off">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Usuario de Acceso</label>
+                        <input type="text" id="usuario" class="form-input" required placeholder="usuario_agente" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" id="password" class="form-input" required placeholder="••••••••" autocomplete="off">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Registrar y Guardar Agente
+                </button>
+            </form>
+        </div>
     </div>
 
     <!-- Modal de Detalles -->
@@ -687,7 +728,7 @@
         </div>
     </div>
 
-    <!-- Script de Gestión -->
+    <!-- Script de Gestión y Sincronización en Tiempo Real -->
     <script type="module">
         import { db } from "../app.js";
         import { collection, addDoc, serverTimestamp, query, where, getDocs, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -712,6 +753,9 @@
             "Perú": ["Lima", "Arequipa", "La Libertad", "Piura", "Cusco", "Junín", "Lambayeque"],
             "Uruguay": ["Montevideo", "Canelones", "Maldonado", "Salto", "Colonia", "Paysandú"]
         };
+
+        window.abrirModalRegistro = () => document.getElementById("register-modal").classList.add("active");
+        window.cerrarModal = (modalId) => document.getElementById(modalId).classList.remove("active");
 
         window.actualizarProvincias = () => {
             const paisSelect = document.getElementById("pais").value;
@@ -782,11 +826,13 @@
                 alert("¡Agente registrado con éxito!");
                 agentForm.reset();
                 document.getElementById("provincia").innerHTML = '<option value="" disabled selected>Seleccione Provincia</option>';
+                cerrarModal("register-modal");
             } catch (err) {
                 alert("Hubo un error al registrar el agente.");
             }
         });
 
+        // Sincronización en tiempo real con Firestore
         const qList = query(collection(db, "diti_usuarioagentes"), where("creadoPor", "==", adminSesion.usuario));
         let agentesCache = {};
         let listaAgentesSnapshot = [];
@@ -801,6 +847,12 @@
                 const id = docSnap.id;
                 agentesCache[id] = ag;
                 listaAgentesSnapshot.push({ id, ...ag });
+            });
+
+            listaAgentesSnapshot.sort((a, b) => {
+                const timeA = a.creadoEn ? a.creadoEn.toMillis() : 0;
+                const timeB = b.creadoEn ? b.creadoEn.toMillis() : 0;
+                return timeB - timeA;
             });
 
             renderizarAgentes(listaAgentesSnapshot);
@@ -822,7 +874,7 @@
             agentsListContainer.innerHTML = "";
 
             if (agentes.length === 0) {
-                agentsListContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 20px;">No se encontraron agentes.</div>`;
+                agentsListContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 30px;">No se encontraron agentes registrados.</div>`;
                 return;
             }
 
@@ -882,8 +934,6 @@
                 `;
             });
         }
-
-        window.cerrarModal = (modalId) => document.getElementById(modalId).classList.remove("active");
 
         window.verDetalles = (id) => {
             const ag = agentesCache[id];
