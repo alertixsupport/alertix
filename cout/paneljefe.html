@@ -15,6 +15,7 @@
       --text-main: #ffffff;
       --text-muted: #94a3b8;
       --danger-color: #ef4444;
+      --edit-color: #3b82f6;
     }
 
     * {
@@ -463,7 +464,7 @@
     .tool-action-right {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex-shrink: 0;
       margin-left: 15px;
     }
@@ -490,8 +491,27 @@
       box-shadow: 0 0 10px var(--accent-fire-glow);
     }
 
+    .btn-edit-compact {
+      padding: 7px 12px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      border-radius: 8px;
+      color: #93c5fd;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-edit-compact:hover {
+      background: var(--edit-color);
+      color: white;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+    }
+
     .btn-delete-compact {
-      padding: 7px 14px;
+      padding: 7px 12px;
       background: rgba(239, 68, 68, 0.15);
       border: 1px solid rgba(239, 68, 68, 0.4);
       border-radius: 8px;
@@ -557,11 +577,12 @@
     </div>
   </div>
 
-  <!-- Modal para Agregar Herramienta -->
+  <!-- Modal para Agregar / Editar Herramienta -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="form-card">
-      <h2>Agregar Nueva Herramienta</h2>
+      <h2 id="modalTitle">Agregar Nueva Herramienta</h2>
       <form id="addToolForm">
+        <input type="hidden" id="toolId">
         <div class="form-group">
           <label for="title">Título de la Herramienta</label>
           <input type="text" id="title" required placeholder="Ej: Control de Préstamos">
@@ -581,7 +602,7 @@
 
         <div class="form-actions">
           <button type="button" class="btn-cancel" id="closeModalBtn">Cancelar</button>
-          <button type="submit" class="btn-primary">Guardar</button>
+          <button type="submit" class="btn-primary" id="saveBtn">Guardar</button>
         </div>
       </form>
     </div>
@@ -594,7 +615,7 @@
     }
 
     import { db } from '../app.js';
-    import { collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const menuToggleBtn = document.getElementById('menuToggleBtn');
     const dropdownMenu = document.getElementById('dropdownMenu');
@@ -606,6 +627,8 @@
     const addToolForm = document.getElementById('addToolForm');
     const toolsGrid = document.getElementById('toolsGrid');
     const sectionTitle = document.getElementById('sectionTitle');
+    const modalTitle = document.getElementById('modalTitle');
+    const toolIdInput = document.getElementById('toolId');
 
     const defaultSvg = `<svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>`;
     let isManageMode = false;
@@ -620,11 +643,14 @@
       dropdownMenu.classList.remove('active');
     });
 
-    // Abrir Modal Agregar Herramienta
+    // Abrir Modal para Agregar Herramienta Nueva
     openModalBtn.addEventListener('click', () => {
       dropdownMenu.classList.remove('active');
       isManageMode = false;
       sectionTitle.textContent = "Módulos Administrativos";
+      modalTitle.textContent = "Agregar Nueva Herramienta";
+      toolIdInput.value = '';
+      addToolForm.reset();
       modalOverlay.classList.add('active');
     });
 
@@ -632,13 +658,13 @@
       modalOverlay.classList.remove('active');
     });
 
-    // Activar Modo Gestión
+    // Activar Modo Gestión (Editar / Eliminar)
     openManageBtn.addEventListener('click', () => {
       dropdownMenu.classList.remove('active');
       isManageMode = !isManageMode;
       if (isManageMode) {
-        sectionTitle.textContent = "⚙️ Modo Gestión: Seleccione una Herramienta a Eliminar";
-        sectionTitle.style.color = "#fca5a5";
+        sectionTitle.textContent = "⚙️ Modo Gestión: Seleccione Editar o Eliminar";
+        sectionTitle.style.color = "#93c5fd";
       } else {
         sectionTitle.textContent = "Módulos Administrativos";
         sectionTitle.style.color = "var(--text-muted)";
@@ -656,10 +682,11 @@
     const toolsRef = collection(db, "carpetacout", "configuracion_general", "herramientas");
     let cachedTools = [];
 
-    // Guardar Herramienta
+    // Guardar o Actualizar Herramienta en Firestore
     addToolForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      const id = toolIdInput.value;
       const title = document.getElementById('title').value.trim();
       const description = document.getElementById('description').value.trim();
       const redirectUrl = document.getElementById('redirectUrl').value.trim();
@@ -668,15 +695,27 @@
       if (!iconSvg) iconSvg = defaultSvg;
 
       try {
-        await addDoc(toolsRef, {
-          titulo: title,
-          descripcion: description,
-          redireccion: redirectUrl,
-          icono: iconSvg,
-          fechaCreacion: new Date().toISOString()
-        });
+        if (id) {
+          // Actualizar herramienta existente
+          await updateDoc(doc(db, "carpetacout", "configuracion_general", "herramientas", id), {
+            titulo: title,
+            descripcion: description,
+            redireccion: redirectUrl,
+            icono: iconSvg
+          });
+        } else {
+          // Crear nueva herramienta
+          await addDoc(toolsRef, {
+            titulo: title,
+            descripcion: description,
+            redireccion: redirectUrl,
+            icono: iconSvg,
+            fechaCreacion: new Date().toISOString()
+          });
+        }
 
         addToolForm.reset();
+        toolIdInput.value = '';
         modalOverlay.classList.remove('active');
       } catch (error) {
         console.error("Error guardando herramienta:", error);
@@ -702,7 +741,7 @@
         if (!isManageMode) {
           card.href = data.redireccion || '#';
         } else {
-          card.style.borderColor = "rgba(239, 68, 68, 0.4)";
+          card.style.borderColor = "rgba(59, 130, 246, 0.4)";
         }
 
         card.innerHTML = `
@@ -717,13 +756,27 @@
           </div>
           <div class="tool-action-right">
             ${isManageMode 
-              ? `<button class="btn-delete-compact" data-id="${id}">Eliminar</button>` 
+              ? `<button class="btn-edit-compact" data-id="${id}">Editar</button>
+                 <button class="btn-delete-compact" data-id="${id}">Eliminar</button>` 
               : `<div class="arrow-btn">&rarr;</div>`
             }
           </div>
         `;
 
         if (isManageMode) {
+          // Evento Editar
+          card.querySelector('.btn-edit-compact').addEventListener('click', (e) => {
+            e.stopPropagation();
+            modalTitle.textContent = "Editar Herramienta";
+            toolIdInput.value = id;
+            document.getElementById('title').value = data.titulo || '';
+            document.getElementById('description').value = data.descripcion || '';
+            document.getElementById('redirectUrl').value = data.redireccion || '';
+            document.getElementById('iconSvg').value = data.icono || '';
+            modalOverlay.classList.add('active');
+          });
+
+          // Evento Eliminar
           card.querySelector('.btn-delete-compact').addEventListener('click', async (e) => {
             e.stopPropagation();
             if (confirm(`¿Estás seguro de eliminar la herramienta "${data.titulo}"?`)) {
