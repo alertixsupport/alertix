@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>COUT.APP | Gestión de Prestamistas</title>
+  <style>
+    :root {
+      --bg-deep: #030112;
+      --bg-card: rgba(13, 9, 43, 0.85);
+      --border-glass: rgba(255, 255, 255, 0.12);
+      --border-focus: #ff5500;
+      --accent-fire: #ff5500;
+      --accent-fire-glow: rgba(255, 85, 0, 0.4);
+      --text-main: #ffffff;
+      --text-muted: #94a3b8;
+      --danger-color: #ef4444;
+      --success-color: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      background: radial-gradient(circle at 50% 0%, #160d4a 0%, var(--bg-deep) 100%);
+      min-height: 100vh;
+      color: var(--text-main);
+      position: relative;
+    }
+
+    /* Luces de fondo fijas */
+    body::before {
+      content: '';
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      background: rgba(27, 17, 139, 0.15);
+      filter: blur(140px);
+      border-radius: 50%;
+      top: 0;
+      left: 10%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 25px 20px;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+    }
+
+    /* Navbar Ejecutivo Pro */
+    header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      padding: 16px 25px;
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glass);
+      border-radius: 18px;
+      margin-bottom: 30px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+      width: 100%;
+      position: relative;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .fire-icon {
+      font-size: 28px;
+      animation: flameAnim 1.8s ease-in-out infinite alternate;
+      display: inline-block;
+      filter: drop-shadow(0 0 10px rgba(255, 85, 0, 0.8));
+    }
+
+    @keyframes flameAnim {
+      0% { transform: translateY(0) scale(1) rotate(-3deg); }
+      50% { transform: translateY(-3px) scale(1.1) rotate(2deg); }
+      100% { transform: translateY(-1px) scale(1.05) rotate(-1deg); }
+    }
+
+    .logo-container-center {
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-text {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: lowercase;
+      position: relative;
+      display: inline-block;
+      background: linear-gradient(135deg, #ffffff 20%, #c7d2fe 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 10px rgba(27, 17, 139, 0.4));
+    }
+
+    .logo-text span {
+      color: var(--accent-fire);
+      -webkit-text-fill-color: var(--accent-fire);
+    }
+
+    .logo-text::after {
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: -140%;
+      width: 80%;
+      height: 140%;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.25) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      transform: skewX(-25deg) translate3d(0, 0, 0);
+      will-change: left, opacity;
+      animation: epicFadeShine 4.5s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+    }
+
+    @keyframes epicFadeShine {
+      0% { left: -140%; opacity: 0; }
+      15% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { left: 160%; opacity: 0; }
+    }
+
+    /* Botón de Menú 3D de Alta Gama */
+    .menu-wrapper {
+      position: relative;
+      justify-self: end;
+    }
+
+    .menu-btn {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 14px;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      color: var(--text-main);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      text-decoration: none;
+    }
+
+    .menu-btn:hover {
+      background: linear-gradient(135deg, rgba(255, 85, 0, 0.25) 0%, rgba(27, 17, 139, 0.4) 100%);
+      border-color: var(--accent-fire);
+      box-shadow: 0 0 15px var(--accent-fire-glow);
+      transform: translateY(-1px);
+    }
+
+    .menu-btn svg {
+      width: 22px;
+      height: 22px;
+      stroke: #ffffff;
+      transition: stroke 0.3s;
+    }
+
+    .menu-btn:hover svg {
+      stroke: var(--accent-fire);
+    }
+
+    /* Tarjeta de Formulario Superior */
+    .create-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--border-glass);
+      border-radius: 18px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    }
+
+    .create-card h2 {
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 15px;
+      align-items: flex-end;
+    }
+
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input {
+      padding: 12px 14px;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border-glass);
+      border-radius: 10px;
+      color: white;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: var(--accent-fire);
+    }
+
+    .btn-primary {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #ff5500 0%, #d33f00 100%);
+      color: white;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(255, 85, 0, 0.4);
+      transition: all 0.3s ease;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(255, 85, 0, 0.6);
+    }
+
+    /* Sección y Lista de Prestamistas */
+    .section-title {
+      font-size: 15px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .prestamista-row-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+    }
+
+    .prestamista-row-card:hover {
+      border-color: rgba(255, 85, 0, 0.4);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.5);
+    }
+
+    .prestamista-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-avatar-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #93c5fd;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .prestamista-texts .p-nombre {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .prestamista-texts .p-user {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .btn-delete-compact {
+      padding: 7px 14px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: 8px;
+      color: #fca5a5;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-delete-compact:hover {
+      background: var(--danger-color);
+      color: white;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Navbar Ejecutivo Pro -->
+    <header>
+      <div class="brand">
+        <span class="fire-icon">🔥</span>
+      </div>
+
+      <div class="logo-container-center">
+        <h1 class="logo-text">cout<span>.app</span></h1>
+      </div>
+
+      <div class="menu-wrapper">
+        <a href="paneljefe.html" class="menu-btn" title="Volver al Panel Principal">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- Tarjeta de Creación de Prestamista -->
+    <div class="create-card">
+      <h2>👤 Registrar Nuevo Prestamista</h2>
+      <form id="createPrestamistaForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="nombre">Nombre Completo</label>
+            <input type="text" id="nombre" required placeholder="Ej: Carlos Pérez">
+          </div>
+          <div class="form-group">
+            <label for="usuario">Usuario de Acceso</label>
+            <input type="text" id="usuario" required placeholder="Ej: cperez">
+          </div>
+          <div class="form-group">
+            <label for="clave">Contraseña</label>
+            <input type="password" id="clave" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn-primary">Crear Cuenta</button>
+        </div>
+      </form>
+    </div>
+
+    <h2 class="section-title">Prestamistas Registrados en el Sistema</h2>
+
+    <!-- Lista en tiempo real de Prestamistas -->
+    <div class="cards-list" id="prestamistasGrid">
+      <!-- Carga en tiempo real desde Firestore -->
+    </div>
+  </div>
+
+  <script type="module">
+    // CAPA DE SEGURIDAD ESTRICTA: Sincronizada con el login de userjefe.json
+    if (sessionStorage.getItem('cout_auth') !== 'true') {
+      window.location.replace('loginjefes.html');
+    }
+
+    import { db } from '../app.js';
+    import { collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const createPrestamistaForm = document.getElementById('createPrestamistaForm');
+    const prestamistasGrid = document.getElementById('prestamistasGrid');
+
+    // Referencia exacta a la colección solicitada
+    const prestamistasRef = collection(db, "carpetacout", "configuracion_general", "usuariosprestamistas");
+    let cachedPrestamistas = [];
+
+    // Registrar nuevo prestamista
+    createPrestamistaForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nombre = document.getElementById('nombre').value.trim();
+      const usuario = document.getElementById('usuario').value.trim();
+      const clave = document.getElementById('clave').value.trim();
+
+      try {
+        await addDoc(prestamistasRef, {
+          nombre: nombre,
+          usuario: usuario,
+          clave: clave,
+          fechaCreacion: new Date().toISOString()
+        });
+
+        createPrestamistaForm.reset();
+        alert('¡Prestamista registrado con éxito!');
+      } catch (error) {
+        console.error("Error al registrar prestamista:", error);
+        alert("Error al guardar en Firebase: " + error.message);
+      }
+    });
+
+    // Renderizar la lista de prestamistas
+    function renderPrestamistas() {
+      prestamistasGrid.innerHTML = '';
+
+      if (cachedPrestamistas.length === 0) {
+        prestamistasGrid.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); padding: 40px; font-size: 13px;">
+            No hay prestamistas registrados aún. Utiliza el formulario superior para crear el primero.
+          </div>`;
+        return;
+      }
+
+      cachedPrestamistas.forEach(({ id, data }) => {
+        const inicial = data.nombre ? data.nombre.charAt(0).toUpperCase() : 'P';
+        
+        const card = document.createElement('div');
+        card.className = 'prestamista-row-card';
+
+        card.innerHTML = `
+          <div class="prestamista-info">
+            <div class="user-avatar-box">${inicial}</div>
+            <div class="prestamista-texts">
+              <div class="p-nombre">${data.nombre}</div>
+              <div class="p-user">Usuario: <strong>${data.usuario}</strong> &bull; Clave: <code>${data.clave}</code></div>
+            </div>
+          </div>
+          <div class="prestamista-action">
+            <button class="btn-delete-compact" data-id="${id}">Eliminar</button>
+          </div>
+        `;
+
+        // Evento Eliminar Prestamista
+        card.querySelector('.btn-delete-compact').addEventListener('click', async () => {
+          if (confirm(`¿Estás seguro de eliminar al prestamista "${data.nombre}"?`)) {
+            try {
+              await deleteDoc(doc(db, "carpetacout", "configuracion_general", "usuariosprestamistas", id));
+            } catch (err) {
+              console.error("Error al eliminar:", err);
+              alert("No se pudo eliminar: " + err.message);
+            }
+          }
+        });
+
+        prestamistasGrid.appendChild(card);
+      });
+    }
+
+    // Carga en tiempo real de Firestore
+    onSnapshot(prestamistasRef, (snapshot) => {
+      cachedPrestamistas = [];
+      snapshot.forEach((docSnap) => {
+        cachedPrestamistas.push({ id: docSnap.id, data: docSnap.data() });
+      });
+      renderPrestamistas();
+    }, (error) => {
+      console.error("Error en tiempo real con prestamistas:", error);
+    });
+  </script>
+</body>
+</html>
