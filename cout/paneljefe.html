@@ -141,20 +141,10 @@
     }
 
     @keyframes epicFadeShine {
-      0% {
-        left: -140%;
-        opacity: 0;
-      }
-      15% {
-        opacity: 1;
-      }
-      85% {
-        opacity: 1;
-      }
-      100% {
-        left: 160%;
-        opacity: 0;
-      }
+      0% { left: -140%; opacity: 0; }
+      15% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { left: 160%; opacity: 0; }
     }
 
     /* Botón de Menú 3D de Alta Gama */
@@ -234,6 +224,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      text-decoration: none;
     }
 
     .dropdown-item svg {
@@ -553,6 +544,10 @@
         </button>
 
         <div class="dropdown-menu" id="dropdownMenu">
+          <a href="usuariosprestamistas.html" class="dropdown-item">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Gestionar Prestamistas
+          </a>
           <div class="dropdown-item" id="openModalBtn">
             <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
             Agregar Herramienta
@@ -573,7 +568,7 @@
 
     <!-- Lista Compacta de Herramientas -->
     <div class="cards-list" id="toolsGrid">
-      <!-- Carga en tiempo real desde Firestore -->
+      <!-- Carga instantánea desde localStorage si existe -->
     </div>
   </div>
 
@@ -609,7 +604,7 @@
   </div>
 
   <script type="module">
-    // CAPA DE SEGURIDAD ESTRICTA: Sincronizada con el login de userjefe.json
+    // CAPA DE SEGURIDAD ESTRICTA
     if (sessionStorage.getItem('cout_auth') !== 'true') {
       window.location.replace('loginjefes.html');
     }
@@ -632,6 +627,18 @@
 
     const defaultSvg = `<svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>`;
     let isManageMode = false;
+    let cachedTools = [];
+
+    // --- CARGA INSTANTÁNEA DESDE LOCALSTORAGE (0ms de espera al regresar) ---
+    const localData = localStorage.getItem('cout_cached_tools');
+    if (localData) {
+      try {
+        cachedTools = JSON.parse(localData);
+        renderTools();
+      } catch (e) {
+        console.error("Error al leer caché local", e);
+      }
+    }
 
     // Toggle Menú Desplegable
     menuToggleBtn.addEventListener('click', (e) => {
@@ -675,12 +682,12 @@
     // Cerrar Sesión Segura
     logoutBtn.addEventListener('click', () => {
       sessionStorage.clear();
+      localStorage.removeItem('cout_cached_tools');
       window.location.replace('loginjefes.html');
     });
 
     // Referencia en Firestore dentro de carpetacout
     const toolsRef = collection(db, "carpetacout", "configuracion_general", "herramientas");
-    let cachedTools = [];
 
     // Guardar o Actualizar Herramienta en Firestore
     addToolForm.addEventListener('submit', async (e) => {
@@ -696,7 +703,6 @@
 
       try {
         if (id) {
-          // Actualizar herramienta existente
           await updateDoc(doc(db, "carpetacout", "configuracion_general", "herramientas", id), {
             titulo: title,
             descripcion: description,
@@ -704,7 +710,6 @@
             icono: iconSvg
           });
         } else {
-          // Crear nueva herramienta
           await addDoc(toolsRef, {
             titulo: title,
             descripcion: description,
@@ -764,7 +769,6 @@
         `;
 
         if (isManageMode) {
-          // Evento Editar
           card.querySelector('.btn-edit-compact').addEventListener('click', (e) => {
             e.stopPropagation();
             modalTitle.textContent = "Editar Herramienta";
@@ -776,7 +780,6 @@
             modalOverlay.classList.add('active');
           });
 
-          // Evento Eliminar
           card.querySelector('.btn-delete-compact').addEventListener('click', async (e) => {
             e.stopPropagation();
             if (confirm(`¿Estás seguro de eliminar la herramienta "${data.titulo}"?`)) {
@@ -794,12 +797,14 @@
       });
     }
 
-    // Tiempo Real Firestore
+    // Tiempo Real Sincronizado en Background (Actualiza caché local automáticamente)
     onSnapshot(toolsRef, (snapshot) => {
       cachedTools = [];
       snapshot.forEach((docSnap) => {
         cachedTools.push({ id: docSnap.id, data: docSnap.data() });
       });
+      // Guardar en caché local para que la próxima visita cargue al instante
+      localStorage.setItem('cout_cached_tools', JSON.stringify(cachedTools));
       renderTools();
     }, (error) => {
       console.error("Error en tiempo real:", error);
