@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- Evita que el navegador guarde en caché esta página -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <title>COUT.APP | Panel de Prestamistas</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -827,7 +832,7 @@
         block.className = 'menu-category-block';
 
         const title = document.createElement('div');
-        title.className = 'category-title';
+        title.className, title.className = 'category-title';
         title.textContent = categoria;
         block.appendChild(title);
 
