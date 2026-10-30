@@ -560,7 +560,7 @@
       </div>
       <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 8px;">Acceso Restringido</h3>
       <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 24px;">
-        No podés navegar en panelprestamistas.html. Renová tu suscripción de cout.app.
+        No podés navegar en panelprestamistas.html . renova tu suscripcion de cout.app
       </p>
       <a href="pagosonline.html" class="btn-abonar">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
@@ -774,12 +774,13 @@
       const diffMs = fVence - ahora;
 
       if (diffMs <= 0) {
+        // CUANDO ESTÁ VENCIDO: Muestra el modal bloqueante de renovación
         headerTimerTxt.textContent = "Suscripción Vencida";
         modalCounterTxt.textContent = "Vencido";
         openTimerModalBtn.classList.add('suspended');
-        // Bloquear navegación y mostrar modal estricto de renovación
         blockedModalBackdrop.style.display = 'flex';
       } else {
+        // CUANDO ESTÁ ACTIVO: Oculta el bloqueo y permite navegar con normalidad
         openTimerModalBtn.classList.remove('suspended');
         blockedModalBackdrop.style.display = 'none';
 
