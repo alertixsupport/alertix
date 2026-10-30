@@ -17,6 +17,8 @@
       --danger-color: #ef4444;
       --success-color: #10b981;
       --renew-color: #3b82f6;
+      --money-color: #10b981;
+      --edit-color: #8b5cf6;
     }
 
     * {
@@ -37,7 +39,6 @@
       position: relative;
     }
 
-    /* Luces de fondo fijas */
     body::before {
       content: '';
       position: fixed;
@@ -72,7 +73,7 @@
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--border-glass);
       border-radius: 18px;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
       box-shadow: 0 15px 35px rgba(0,0,0,0.5);
       width: 100%;
       position: relative;
@@ -150,13 +151,15 @@
     .menu-wrapper {
       position: relative;
       justify-self: end;
+      display: flex;
+      gap: 10px;
+      align-items: center;
     }
 
-    .menu-btn {
+    .menu-btn, .btn-action-header {
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
       border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 14px;
-      width: 45px;
       height: 45px;
       display: flex;
       align-items: center;
@@ -166,67 +169,231 @@
       color: var(--text-main);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       text-decoration: none;
+      padding: 0 15px;
+      font-size: 13px;
+      font-weight: 600;
+      gap: 8px;
     }
 
-    .menu-btn:hover {
+    .menu-btn { width: 45px; padding: 0; }
+
+    .menu-btn:hover, .btn-action-header:hover {
       background: linear-gradient(135deg, rgba(255, 85, 0, 0.25) 0%, rgba(27, 17, 139, 0.4) 100%);
       border-color: var(--accent-fire);
       box-shadow: 0 0 15px var(--accent-fire-glow);
       transform: translateY(-1px);
     }
 
-    .menu-btn svg {
-      width: 22px;
-      height: 22px;
+    .menu-btn svg, .btn-action-header svg {
+      width: 20px;
+      height: 20px;
       stroke: #ffffff;
+      fill: none;
       transition: stroke 0.3s;
     }
 
-    .menu-btn:hover svg {
+    .menu-btn:hover svg, .btn-action-header:hover svg {
       stroke: var(--accent-fire);
     }
 
-    /* Tarjeta de Formulario Superior */
-    .create-card {
+    /* Separador Ejecutivo */
+    .executive-separator {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      margin: 25px 0;
+    }
+
+    /* Tarjetas de Prestamistas */
+    .cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .prestamista-row-card {
       background: var(--bg-card);
       backdrop-filter: blur(15px);
       border: 1px solid var(--border-glass);
-      border-radius: 18px;
-      padding: 25px;
-      margin-bottom: 30px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-    }
-
-    .create-card h2 {
-      font-size: 16px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 20px;
-      color: var(--text-main);
+      border-radius: 14px;
+      padding: 16px 20px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+    }
+
+    .prestamista-row-card.suspended {
+      border-color: rgba(239, 68, 68, 0.4);
+      background: rgba(30, 10, 15, 0.85);
+    }
+
+    .prestamista-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Avatar 3D Profesional para el usuario */
+    .user-avatar-3d {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.15);
+      flex-shrink: 0;
+    }
+
+    .user-avatar-3d svg {
+      width: 24px;
+      height: 24px;
+      fill: #818cf8;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+
+    .prestamista-texts .p-nombre {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .prestamista-texts .p-details {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
       gap: 10px;
+      margin-bottom: 3px;
     }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr 130px auto;
-      gap: 15px;
-      align-items: flex-end;
+    .timer-display {
+      font-size: 12px;
+      font-weight: 600;
+      font-family: monospace;
+      letter-spacing: 0.5px;
     }
 
-    @media (max-width: 900px) {
-      .form-grid {
-        grid-template-columns: 1fr 1fr;
-      }
+    .timer-display.active { color: #34d399; }
+    .timer-display.suspended { color: #fca5a5; }
+
+    /* Acciones en la tarjeta (Iconos 3D Profesionales) */
+    .actions-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    @media (max-width: 600px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
+
+    .btn-icon-3d {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      border: 1px solid transparent;
+    }
+
+    .btn-icon-3d svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    /* Botón Pago / Dinero ($) */
+    .btn-money {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.4) 100%);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+    .btn-money svg { stroke: #34d399; }
+    .btn-money:hover {
+      background: var(--success-color);
+      color: white;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+      transform: translateY(-2px);
+    }
+    .btn-money:hover svg { stroke: white; }
+
+    /* Botón Editar */
+    .btn-edit {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(109, 40, 217, 0.4) 100%);
+      border-color: rgba(139, 92, 246, 0.4);
+      color: #c4b5fd;
+    }
+    .btn-edit svg { stroke: #c4b5fd; }
+    .btn-edit:hover {
+      background: var(--edit-color);
+      color: white;
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+      transform: translateY(-2px);
+    }
+    .btn-edit:hover svg { stroke: white; }
+
+    /* Botón Eliminar */
+    .btn-delete {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(185, 28, 28, 0.4) 100%);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+    .btn-delete svg { stroke: #fca5a5; }
+    .btn-delete:hover {
+      background: var(--danger-color);
+      color: white;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+      transform: translateY(-2px);
+    }
+    .btn-delete:hover svg { stroke: white; }
+
+    /* Modales Globales */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(3, 1, 18, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      padding: 30px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+    }
+
+    .modal-card h3 {
+      font-size: 17px;
+      margin-bottom: 20px;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .form-group {
+      margin-bottom: 15px;
       display: flex;
       flex-direction: column;
     }
@@ -255,6 +422,13 @@
       border-color: var(--accent-fire);
     }
 
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
     .btn-primary {
       padding: 12px 20px;
       border: none;
@@ -268,11 +442,6 @@
       cursor: pointer;
       box-shadow: 0 6px 15px rgba(255, 85, 0, 0.4);
       transition: all 0.3s ease;
-      height: 45px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      white-space: nowrap;
     }
 
     .btn-primary:hover {
@@ -280,180 +449,8 @@
       box-shadow: 0 10px 20px rgba(255, 85, 0, 0.6);
     }
 
-    .section-title {
-      font-size: 15px;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-      font-weight: 700;
-    }
-
-    .cards-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .prestamista-row-card {
-      background: var(--bg-card);
-      backdrop-filter: blur(15px);
-      border: 1px solid var(--border-glass);
-      border-radius: 14px;
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      transition: all 0.3s ease;
-    }
-
-    .prestamista-row-card.suspended {
-      border-color: rgba(239, 68, 68, 0.4);
-      background: rgba(30, 10, 15, 0.85);
-    }
-
-    .prestamista-info {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .user-avatar-box {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: rgba(59, 130, 246, 0.1);
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #93c5fd;
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    .prestamista-texts .p-nombre {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 2px;
-    }
-
-    .prestamista-texts .p-user {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .timer-display {
-      font-size: 12px;
-      font-weight: 600;
-      margin-top: 4px;
-      font-family: monospace;
-      letter-spacing: 0.5px;
-    }
-
-    .timer-display.active { color: #34d399; }
-    .timer-display.suspended { color: #fca5a5; }
-
-    .actions-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .btn-icon-renew {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: rgba(59, 130, 246, 0.15);
-      border: 1px solid rgba(59, 130, 246, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s;
-      color: #93c5fd;
-    }
-
-    .btn-icon-renew:hover {
-      background: var(--renew-color);
-      color: white;
-      box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
-      transform: scale(1.05);
-    }
-
-    .btn-icon-renew svg {
-      width: 18px;
-      height: 18px;
-      stroke: currentColor;
-      fill: none;
-    }
-
-    .btn-delete-compact {
-      padding: 8px 12px;
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      border-radius: 8px;
-      color: #fca5a5;
-      font-weight: 700;
-      font-size: 11px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .btn-delete-compact:hover {
-      background: var(--danger-color);
-      color: white;
-      box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
-    }
-
-    /* Estilos del Modal Emergente de Renovación */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(3, 1, 18, 0.85);
-      backdrop-filter: blur(10px);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    .modal-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-glass);
-      border-radius: 20px;
-      padding: 30px;
-      width: 100%;
-      max-width: 420px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.8);
-    }
-
-    .modal-card h3 {
-      font-size: 16px;
-      margin-bottom: 20px;
-      color: var(--text-main);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
     .btn-cancel {
-      padding: 10px 16px;
+      padding: 12px 16px;
       background: rgba(255,255,255,0.08);
       border: 1px solid var(--border-glass);
       border-radius: 10px;
@@ -478,33 +475,56 @@
       </div>
 
       <div class="menu-wrapper">
+        <button class="btn-action-header" id="openRegisterModal">
+          <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+          Registrar Prestamista
+        </button>
         <a href="paneljefe.html" class="menu-btn" title="Volver al Panel Principal">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </a>
       </div>
     </header>
 
-    <!-- Tarjeta de Creación de Prestamista -->
-    <div class="create-card">
-      <h2>👤 Registrar Nuevo Prestamista &bull; Habilitación</h2>
+    <div class="executive-separator"></div>
+
+    <!-- Lista en tiempo real de Prestamistas -->
+    <div class="cards-list" id="prestamistasGrid">
+      <!-- Carga instantánea desde caché local -->
+    </div>
+  </div>
+
+  <!-- Modal para Registrar Prestamista -->
+  <div class="modal-overlay" id="registerModalOverlay">
+    <div class="modal-card">
+      <h3>👤 Registrar Nuevo Prestamista</h3>
       <form id="createPrestamistaForm">
-        <div class="form-grid">
+        <div class="form-group">
+          <label for="nombre">Nombre Completo</label>
+          <input type="text" id="nombre" required placeholder="Ej: Carlos Pérez">
+        </div>
+        <div class="form-group">
+          <label for="dni">DNI</label>
+          <input type="text" id="dni" required placeholder="Ej: 35123456">
+        </div>
+        <div class="form-group">
+          <label for="whatsapp">WhatsApp</label>
+          <input type="text" id="whatsapp" required placeholder="Ej: +5491123456789">
+        </div>
+        <div class="form-group">
+          <label for="edad">Edad</label>
+          <input type="number" id="edad" min="18" max="100" required placeholder="Ej: 35">
+        </div>
+        <div class="form-group">
+          <label for="usuario">Usuario de Acceso</label>
+          <input type="text" id="usuario" required placeholder="Ej: cperez">
+        </div>
+        <div class="form-group">
+          <label for="clave">Contraseña</label>
+          <input type="password" id="clave" required placeholder="••••••••">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div class="form-group">
-            <label for="nombre">Nombre Completo</label>
-            <input type="text" id="nombre" required placeholder="Ej: Carlos Pérez">
-          </div>
-          <div class="form-group">
-            <label for="usuario">Usuario</label>
-            <input type="text" id="usuario" required placeholder="Ej: cperez">
-          </div>
-          <div class="form-group">
-            <label for="clave">Contraseña</label>
-            <input type="password" id="clave" required placeholder="••••••••">
-          </div>
-          <div class="form-group">
-            <label for="tiempoCantidad">Cantidad</label>
+            <label for="tiempoCantidad">Abono Inicial</label>
             <input type="number" id="tiempoCantidad" value="30" min="1" required>
           </div>
           <div class="form-group">
@@ -514,46 +534,83 @@
               <option value="horas">Horas</option>
             </select>
           </div>
-          <button type="submit" class="btn-primary" style="grid-column: span 5;">Registrar Cuenta</button>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" id="closeRegisterModal">Cancelar</button>
+          <button type="submit" class="btn-primary">Registrar Cuenta</button>
         </div>
       </form>
     </div>
-
-    <h2 class="section-title">Prestamistas Registrados (Control en Tiempo Real con Segundos)</h2>
-
-    <!-- Lista en tiempo real de Prestamistas -->
-    <div class="cards-list" id="prestamistasGrid">
-      <!-- Carga instantánea desde caché local -->
-    </div>
   </div>
 
-  <!-- Modal Emergente de Renovación -->
-  <div class="modal-overlay" id="renewModalOverlay">
+  <!-- Modal para Registrar Pago y Extensión ($) -->
+  <div class="modal-overlay" id="moneyModalOverlay">
     <div class="modal-card">
-      <h3>🔄 Extender Suscripción</h3>
-      <form id="renewForm">
-        <input type="hidden" id="renewPrestamistaId">
-        <div class="form-group" style="margin-bottom: 15px;">
-          <label for="renewCantidad">¿A cuánto extendés el usuario?</label>
-          <input type="number" id="renewCantidad" value="30" min="1" required>
+      <h3>💰 Registrar Pago y Renovación</h3>
+      <form id="moneyForm">
+        <input type="hidden" id="moneyPrestamistaId">
+        <div class="form-group">
+          <label for="montoPago">Monto Abonado en Pesos ($)</label>
+          <input type="number" id="montoPago" step="0.01" min="0" required placeholder="Ej: 15000">
         </div>
-        <div class="form-group" style="margin-bottom: 15px;">
-          <label for="renewUnidad">Unidad de Tiempo</label>
-          <select id="renewUnidad">
+        <div class="form-group">
+          <label for="extCantidad">Extensión de Tiempo</label>
+          <input type="number" id="extCantidad" value="30" min="1" required>
+        </div>
+        <div class="form-group">
+          <label for="extUnidad">Unidad de Tiempo</label>
+          <select id="extUnidad">
             <option value="dias" selected>Días</option>
             <option value="horas">Horas</option>
           </select>
         </div>
         <div class="modal-actions">
-          <button type="button" class="btn-cancel" id="closeRenewModal">Cancelar</button>
-          <button type="submit" class="btn-primary">Guardar Extensión</button>
+          <button type="button" class="btn-cancel" id="closeMoneyModal">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar Pago y Extensión</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para Editar Prestamista -->
+  <div class="modal-overlay" id="editModalOverlay">
+    <div class="modal-card">
+      <h3>✏️ Editar Datos del Prestamista</h3>
+      <form id="editForm">
+        <input type="hidden" id="editPrestamistaId">
+        <div class="form-group">
+          <label for="editNombre">Nombre Completo</label>
+          <input type="text" id="editNombre" required>
+        </div>
+        <div class="form-group">
+          <label for="editDni">DNI</label>
+          <input type="text" id="editDni" required>
+        </div>
+        <div class="form-group">
+          <label for="editWhatsapp">WhatsApp</label>
+          <input type="text" id="editWhatsapp" required>
+        </div>
+        <div class="form-group">
+          <label for="editEdad">Edad</label>
+          <input type="number" id="editEdad" required>
+        </div>
+        <div class="form-group">
+          <label for="editUsuario">Usuario</label>
+          <input type="text" id="editUsuario" required>
+        </div>
+        <div class="form-group">
+          <label for="editClave">Contraseña</label>
+          <input type="text" id="editClave" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" id="closeEditModal">Cancelar</button>
+          <button type="submit" class="btn-primary">Actualizar Datos</button>
         </div>
       </form>
     </div>
   </div>
 
   <script type="module">
-    // CAPA DE SEGURIDAD ESTRICTA
     if (sessionStorage.getItem('cout_auth') !== 'true') {
       window.location.replace('loginjefes.html');
     }
@@ -561,72 +618,79 @@
     import { db } from '../app.js';
     import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    const openRegisterModal = document.getElementById('openRegisterModal');
+    const registerModalOverlay = document.getElementById('registerModalOverlay');
+    const closeRegisterModal = document.getElementById('closeRegisterModal');
     const createPrestamistaForm = document.getElementById('createPrestamistaForm');
+    
+    const moneyModalOverlay = document.getElementById('moneyModalOverlay');
+    const closeMoneyModal = document.getElementById('closeMoneyModal');
+    const moneyForm = document.getElementById('moneyForm');
+    const moneyPrestamistaId = document.getElementById('moneyPrestamistaId');
+
+    const editModalOverlay = document.getElementById('editModalOverlay');
+    const closeEditModal = document.getElementById('closeEditModal');
+    const editForm = document.getElementById('editForm');
+    const editPrestamistaId = document.getElementById('editPrestamistaId');
+
     const prestamistasGrid = document.getElementById('prestamistasGrid');
-    const renewModalOverlay = document.getElementById('renewModalOverlay');
-    const closeRenewModal = document.getElementById('closeRenewModal');
-    const renewForm = document.getElementById('renewForm');
-    const renewPrestamistaId = document.getElementById('renewPrestamistaId');
 
     const prestamistasRef = collection(db, "carpetacout", "configuracion_general", "usuariosprestamistas");
     let cachedPrestamistas = [];
 
-    // --- CARGA INSTANTÁNEA DESDE LOCALSTORAGE (0ms de espera) ---
+    // Caché local instantánea (0ms)
     const localData = localStorage.getItem('cout_cached_prestamistas');
     if (localData) {
       try {
         cachedPrestamistas = JSON.parse(localData);
         renderPrestamistas();
       } catch (e) {
-        console.error("Error al leer caché de prestamistas", e);
+        console.error("Error caché", e);
       }
     }
 
-    // Registrar nuevo prestamista
+    // Modales Eventos
+    openRegisterModal.addEventListener('click', () => registerModalOverlay.classList.add('active'));
+    closeRegisterModal.addEventListener('click', () => registerModalOverlay.classList.remove('active'));
+    closeMoneyModal.addEventListener('click', () => moneyModalOverlay.classList.remove('active'));
+    closeEditModal.addEventListener('click', () => editModalOverlay.classList.remove('active'));
+
+    // Registrar Prestamista
     createPrestamistaForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const nombre = document.getElementById('nombre').value.trim();
+      const dni = document.getElementById('dni').value.trim();
+      const whatsapp = document.getElementById('whatsapp').value.trim();
+      const edad = document.getElementById('edad').value.trim();
       const usuario = document.getElementById('usuario').value.trim();
       const clave = document.getElementById('clave').value.trim();
       const cantidad = parseInt(document.getElementById('tiempoCantidad').value) || 30;
       const unidad = document.getElementById('tiempoUnidad').value;
 
       const fechaVencimiento = new Date();
-      if (unidad === 'horas') {
-        fechaVencimiento.setHours(fechaVencimiento.getHours() + cantidad);
-      } else {
-        fechaVencimiento.setDate(fechaVencimiento.getDate() + cantidad);
-      }
+      if (unidad === 'horas') fechaVencimiento.setHours(fechaVencimiento.getHours() + cantidad);
+      else fechaVencimiento.setDate(fechaVencimiento.getDate() + cantidad);
 
       try {
         await addDoc(prestamistasRef, {
-          nombre: nombre,
-          usuario: usuario,
-          clave: clave,
+          nombre, dni, whatsapp, edad, usuario, clave,
           venceEn: fechaVencimiento.toISOString(),
           fechaCreacion: new Date().toISOString()
         });
-
         createPrestamistaForm.reset();
-        document.getElementById('tiempoCantidad').value = 30;
+        registerModalOverlay.classList.remove('active');
       } catch (error) {
-        console.error("Error al registrar prestamista:", error);
-        alert("Error al guardar en Firebase: " + error.message);
+        alert("Error al guardar: " + error.message);
       }
     });
 
-    // Cerrar modal de renovación
-    closeRenewModal.addEventListener('click', () => {
-      renewModalOverlay.classList.remove('active');
-    });
-
-    // Guardar extensión desde el modal
-    renewForm.addEventListener('submit', async (e) => {
+    // Guardar Pago ($) y Extensión
+    moneyForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const id = renewPrestamistaId.value;
-      const cantidad = parseInt(document.getElementById('renewCantidad').value) || 30;
-      const unidad = document.getElementById('renewUnidad').value;
+      const id = moneyPrestamistaId.value;
+      const monto = parseFloat(document.getElementById('montoPago').value) || 0;
+      const cantidad = parseInt(document.getElementById('extCantidad').value) || 30;
+      const unidad = document.getElementById('extUnidad').value;
 
       const prestamistaObj = cachedPrestamistas.find(p => p.id === id);
       if (!prestamistaObj) return;
@@ -636,89 +700,130 @@
         ? new Date(prestamistaObj.data.venceEn) 
         : ahora;
 
-      if (unidad === 'horas') {
-        baseFecha.setHours(baseFecha.getHours() + cantidad);
-      } else {
-        baseFecha.setDate(baseFecha.getDate() + cantidad);
-      }
+      if (unidad === 'horas') baseFecha.setHours(baseFecha.getHours() + cantidad);
+      else baseFecha.setDate(baseFecha.getDate() + cantidad);
 
       try {
+        // Guardar el pago en la subcolección de pagos del prestamista
+        const pagosRef = collection(db, "carpetacout", "configuracion_general", "usuariosprestamistas", id, "pagos");
+        await addDoc(pagosRef, {
+          monto: monto,
+          fechaPago: new Date().toISOString(),
+          extensionOtorgada: `${cantidad} ${unidad}`
+        });
+
+        // Actualizar la fecha de vencimiento principal
         await updateDoc(doc(db, "carpetacout", "configuracion_general", "usuariosprestamistas", id), {
           venceEn: baseFecha.toISOString()
         });
-        renewModalOverlay.classList.remove('active');
+
+        moneyModalOverlay.classList.remove('active');
+        alert("¡Pago registrado y suscripción extendida con éxito!");
       } catch (err) {
-        console.error("Error al extender:", err);
-        alert("No se pudo extender: " + err.message);
+        alert("Error al registrar el pago: " + err.message);
       }
     });
 
-    // Renderizar la lista con temporizador segundo a segundo
+    // Guardar Edición
+    editForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = editPrestamistaId.value;
+      try {
+        await updateDoc(doc(db, "carpetacout", "configuracion_general", "usuariosprestamistas", id), {
+          nombre: document.getElementById('editNombre').value.trim(),
+          dni: document.getElementById('editDni').value.trim(),
+          whatsapp: document.getElementById('editWhatsapp').value.trim(),
+          edad: document.getElementById('editEdad').value.trim(),
+          usuario: document.getElementById('editUsuario').value.trim(),
+          clave: document.getElementById('editClave').value.trim()
+        });
+        editModalOverlay.classList.remove('active');
+      } catch (err) {
+        alert("Error al actualizar: " + err.message);
+      }
+    });
+
+    // Renderizar Tarjetas
     function renderPrestamistas() {
       prestamistasGrid.innerHTML = '';
-
       if (cachedPrestamistas.length === 0) {
-        prestamistasGrid.innerHTML = `
-          <div style="text-align: center; color: var(--text-muted); padding: 40px; font-size: 13px;">
-            No hay prestamistas registrados aún. Utiliza el formulario superior para crear el primero.
-          </div>`;
+        prestamistasGrid.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px; font-size: 13px;">No hay prestamistas registrados aún. Haz clic en "Registrar Prestamista" arriba.</div>`;
         return;
       }
 
       cachedPrestamistas.forEach(({ id, data }) => {
-        const inicial = data.nombre ? data.nombre.charAt(0).toUpperCase() : 'P';
-        
         const card = document.createElement('div');
         card.className = 'prestamista-row-card';
         card.setAttribute('data-id', id);
-        card.setAttribute('data-vence', data.venceEn || '');
 
         card.innerHTML = `
           <div class="prestamista-info">
-            <div class="user-avatar-box">${inicial}</div>
+            <div class="user-avatar-3d">
+              <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
             <div class="prestamista-texts">
               <div class="p-nombre">${data.nombre}</div>
-              <div class="p-user">Usuario: <strong>${data.usuario}</strong> &bull; Clave: <code>${data.clave}</code></div>
-              <div class="timer-display" id="timer-${id}">Calculando tiempo...</div>
+              <div class="p-details">
+                <span>DNI: <strong>${data.dni || 'N/A'}</strong></span>
+                <span>Edad: <strong>${data.edad || 'N/A'}</strong></span>
+                <span>WApp: <strong>${data.whatsapp || 'N/A'}</strong></span>
+                <span>User: <strong>${data.usuario}</strong></span>
+                <span>Clave: <code>${data.clave}</code></span>
+              </div>
+              <div class="timer-display" id="timer-${id}">Calculando...</div>
             </div>
           </div>
           <div class="actions-right">
-            <button class="btn-icon-renew" data-id="${id}" title="Renovar suscripción">
-              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.65-5.65"/>
-              </svg>
+            <button class="btn-icon-3d btn-money" data-id="${id}" title="Registrar Pago ($) y Renovar">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
             </button>
-            <button class="btn-delete-compact" data-id="${id}">Eliminar</button>
+            <button class="btn-icon-3d btn-edit" data-id="${id}" title="Editar Prestamista">
+              <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            </button>
+            <button class="btn-icon-3d btn-delete" data-id="${id}" title="Eliminar Prestamista">
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
           </div>
         `;
 
-        // Abrir modal de renovación al hacer clic en el icono
-        card.querySelector('.btn-icon-renew').addEventListener('click', () => {
-          renewPrestamistaId.value = id;
-          document.getElementById('renewCantidad').value = 30;
-          document.getElementById('renewUnidad').value = 'dias';
-          renewModalOverlay.classList.add('active');
+        // Abrir Modal Pago ($)
+        card.querySelector('.btn-money').addEventListener('click', () => {
+          moneyPrestamistaId.value = id;
+          document.getElementById('montoPago').value = '';
+          document.getElementById('extCantidad').value = 30;
+          document.getElementById('extUnidad').value = 'dias';
+          moneyModalOverlay.classList.add('active');
         });
 
-        // Evento Eliminar
-        card.querySelector('.btn-delete-compact').addEventListener('click', async () => {
-          if (confirm(`¿Estás seguro de eliminar al prestamista "${data.nombre}"?`)) {
+        // Abrir Modal Editar
+        card.querySelector('.btn-edit').addEventListener('click', () => {
+          editPrestamistaId.value = id;
+          document.getElementById('editNombre').value = data.nombre || '';
+          document.getElementById('editDni').value = data.dni || '';
+          document.getElementById('editWhatsapp').value = data.whatsapp || '';
+          document.getElementById('editEdad').value = data.edad || '';
+          document.getElementById('editUsuario').value = data.usuario || '';
+          document.getElementById('editClave').value = data.clave || '';
+          editModalOverlay.classList.add('active');
+        });
+
+        // Eliminar
+        card.querySelector('.btn-delete').addEventListener('click', async () => {
+          if (confirm(`¿Estás seguro de eliminar a "${data.nombre}"?`)) {
             try {
               await deleteDoc(doc(db, "carpetacout", "configuracion_general", "usuariosprestamistas", id));
             } catch (err) {
-              console.error("Error al eliminar:", err);
-              alert("No se pudo eliminar: " + err.message);
+              alert("Error al eliminar: " + err.message);
             }
           }
         });
 
         prestamistasGrid.appendChild(card);
       });
-
       actualizarTimers();
     }
 
-    // Función de actualización de contadores segundo a segundo
+    // Temporizador segundo a segundo
     function actualizarTimers() {
       const ahora = new Date();
       cachedPrestamistas.forEach(({ id, data }) => {
@@ -754,10 +859,9 @@
       });
     }
 
-    // Ejecutar el contador segundo a segundo de forma fluida
     setInterval(actualizarTimers, 1000);
 
-    // Sincronización en Tiempo Real con Firebase y Caché Local Instantánea
+    // Sincronización Firebase en Tiempo Real
     onSnapshot(prestamistasRef, (snapshot) => {
       cachedPrestamistas = [];
       snapshot.forEach((docSnap) => {
@@ -766,7 +870,7 @@
       localStorage.setItem('cout_cached_prestamistas', JSON.stringify(cachedPrestamistas));
       renderPrestamistas();
     }, (error) => {
-      console.error("Error en tiempo real con prestamistas:", error);
+      console.error("Error sincronización:", error);
     });
   </script>
 </body>
