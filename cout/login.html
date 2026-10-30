@@ -42,9 +42,10 @@
       justify-content: center;
       padding: 16px;
       color: var(--text-primary);
+      position: relative;
+      overflow: hidden;
     }
 
-    /* Animaciones profesionales */
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
@@ -115,7 +116,6 @@
       font-weight: 500;
     }
 
-    /* Formulario */
     .login-form {
       width: 100%;
       display: flex;
@@ -206,12 +206,90 @@
       display: none;
     }
 
-    /* --- VENTANA EMERGENTE (MODAL) PROFESIONAL --- */
+    /* --- PANTALLA DE CARGA / ESCANEO DE DATOS (3 SEGUNDOS) --- */
+    .loader-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(9, 10, 15, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 3000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .loader-overlay.is-active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .scanner-box {
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scanner-box svg {
+      width: 32px;
+      height: 32px;
+      stroke: var(--accent-primary);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    @keyframes scanLine {
+      0% { top: 0%; opacity: 0.8; }
+      50% { top: 90%; opacity: 1; }
+      100% { top: 0%; opacity: 0.8; }
+    }
+
+    .scanner-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: #60a5fa;
+      box-shadow: 0 0 10px #60a5fa;
+      animation: scanLine 1.5s ease-in-out infinite;
+    }
+
+    .loader-texts {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .loader-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
+    }
+
+    .loader-subtitle {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* --- VENTANA EMERGENTE (MODAL) PROFESIONAL DE ALTA GAMA --- */
     .modal-backdrop {
       position: fixed;
       inset: 0;
       background: rgba(5, 7, 11, 0.85);
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
       z-index: 2000;
       display: flex;
       align-items: center;
@@ -219,7 +297,7 @@
       padding: 16px;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .modal-backdrop.is-open {
@@ -229,66 +307,76 @@
 
     .modal-window {
       background: var(--bg-surface);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      border-radius: 16px;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: 20px;
       width: 100%;
-      max-width: 400px;
-      padding: 28px 24px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-      transform: scale(0.95) translateY(10px);
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 420px;
+      padding: 32px 28px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85);
+      transform: scale(0.92) translateY(15px);
+      transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
 
     .modal-backdrop.is-open .modal-window {
       transform: scale(1) translateY(0);
     }
 
+    .modal-window::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 4px;
+      background: linear-gradient(90deg, #ef4444, #f97316);
+    }
+
     .modal-icon-alert {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.3);
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 16px auto;
+      margin: 0 auto 20px auto;
     }
 
     .modal-icon-alert svg {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       stroke: var(--status-error);
       fill: none;
       stroke-width: 2;
     }
 
     .modal-window h3 {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
     }
 
     .modal-window p {
       font-size: 13px;
       color: var(--text-secondary);
-      line-height: 1.5;
-      margin-bottom: 24px;
+      line-height: 1.6;
+      margin-bottom: 28px;
     }
 
     .modal-actions {
       display: flex;
-      gap: 10px;
+      gap: 12px;
     }
 
     .btn-modal-pay {
       flex: 1;
-      height: 42px;
+      height: 44px;
       background: linear-gradient(135deg, #059669 0%, #047857 100%);
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       color: white;
       font-weight: 600;
       font-size: 13px;
@@ -298,13 +386,14 @@
       gap: 8px;
       cursor: pointer;
       text-decoration: none;
-      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
-      transition: opacity 0.2s, transform 0.15s;
+      box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35);
+      transition: all 0.2s ease;
     }
 
     .btn-modal-pay:hover {
       opacity: 0.95;
       transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(5, 150, 105, 0.5);
     }
 
     .btn-modal-pay svg {
@@ -316,16 +405,16 @@
     }
 
     .btn-modal-close {
-      height: 42px;
-      padding: 0 16px;
+      height: 44px;
+      padding: 0 18px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-subtle);
-      border-radius: 10px;
+      border-radius: 12px;
       color: var(--text-secondary);
       font-weight: 600;
       font-size: 13px;
       cursor: pointer;
-      transition: background 0.2s, color 0.2s;
+      transition: all 0.2s ease;
     }
 
     .btn-modal-close:hover {
@@ -342,6 +431,18 @@
   </style>
 </head>
 <body>
+
+  <!-- Pantalla de Carga / Análisis de Datos (3 Segundos) -->
+  <div class="loader-overlay" id="loaderOverlay">
+    <div class="scanner-box">
+      <div class="scanner-line"></div>
+      <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+    </div>
+    <div class="loader-texts">
+      <div class="loader-title" id="loaderTitle">Analizando credenciales...</div>
+      <div class="loader-subtitle" id="loaderSubtitle">Sincronizando con servidor seguro</div>
+    </div>
+  </div>
 
   <!-- Contenedor Principal del Login -->
   <div class="login-container">
@@ -385,7 +486,7 @@
     </div>
   </div>
 
-  <!-- Ventana Emergente (Modal) de Cuenta Inactiva / Suscripción Vencida -->
+  <!-- Ventana Emergente (Modal) Profesional de Cuenta Inactiva -->
   <div class="modal-backdrop" id="expiredModalBackdrop">
     <div class="modal-window">
       <div class="modal-icon-alert">
@@ -395,7 +496,7 @@
       <p>Su cuenta se encuentra inactiva o con la suscripción vencida. Contacte al administrador o realice su abono para continuar.</p>
       <div class="modal-actions">
         <button type="button" class="btn-modal-close" id="closeModalBtn">Cerrar</button>
-        <a href="pagosonline.html" class="btn-modal-pay">
+        <a href="#" class="btn-modal-pay" id="btnGoPay">
           <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
           Pagar
         </a>
@@ -413,11 +514,30 @@
     const errorBanner = document.getElementById('errorBanner');
     const btnSubmit = document.getElementById('btnSubmit');
 
+    const loaderOverlay = document.getElementById('loaderOverlay');
+    const loaderTitle = document.getElementById('loaderTitle');
+    const loaderSubtitle = document.getElementById('loaderSubtitle');
+
     const expiredModalBackdrop = document.getElementById('expiredModalBackdrop');
     const closeModalBtn = document.getElementById('closeModalBtn');
+    const btnGoPay = document.getElementById('btnGoPay');
 
     closeModalBtn.addEventListener('click', () => {
       expiredModalBackdrop.classList.remove('is-open');
+    });
+
+    // Animación de carga de 3 segundos al hacer clic en Pagar
+    btnGoPay.addEventListener('click', (e) => {
+      e.preventDefault();
+      expiredModalBackdrop.classList.remove('is-open');
+      
+      loaderTitle.textContent = "Preparando pasarela de pagos...";
+      loaderSubtitle.textContent = "Conectando con entorno seguro";
+      loaderOverlay.classList.add('is-active');
+
+      setTimeout(() => {
+        window.location.href = 'pagosonline.html';
+      }, 3000);
     });
 
     function mostrarError(mensaje) {
@@ -437,7 +557,10 @@
         return;
       }
 
-      btnSubmit.textContent = "Verificando...";
+      // Activar pantalla de carga por 3 segundos con animación de análisis
+      loaderTitle.textContent = "Analizando credenciales...";
+      loaderSubtitle.textContent = "Escaneando base de datos de prestamistas";
+      loaderOverlay.classList.add('is-active');
       btnSubmit.disabled = true;
 
       try {
@@ -453,37 +576,40 @@
           }
         });
 
-        if (!prestamistaValido) {
-          mostrarError("Usuario o contraseña incorrectos.");
-          btnSubmit.textContent = "Iniciar Sesión";
+        // Simular el cumplimiento total de los 3 segundos exactos de animación profesional
+        setTimeout(() => {
+          loaderOverlay.classList.remove('is-active');
           btnSubmit.disabled = false;
-          return;
-        }
 
-        // Validar si la cuenta está vencida
-        const ahora = new Date();
-        const venceEn = prestamistaValido.venceEn ? new Date(prestamistaValido.venceEn) : null;
+          if (!prestamistaValido) {
+            mostrarError("Usuario o contraseña incorrectos.");
+            return;
+          }
 
-        if (!venceEn || venceEn <= ahora) {
-          // Mostrar ventana emergente profesional de suscripción vencida
-          expiredModalBackdrop.classList.add('is-open');
-          btnSubmit.textContent = "Iniciar Sesión";
-          btnSubmit.disabled = false;
-          return;
-        }
+          // Validar si la cuenta está vencida
+          const ahora = new Date();
+          const venceEn = prestamistaValido.venceEn ? new Date(prestamistaValido.venceEn) : null;
 
-        // Guardar sesión y redirigir al panel de prestamistas
-        sessionStorage.setItem('cout_prestamista_auth', 'true');
-        sessionStorage.setItem('cout_prestamista_id', prestamistaValido.id);
-        sessionStorage.setItem('cout_prestamista_nombre', prestamistaValido.nombre || 'Prestamista');
+          if (!venceEn || venceEn <= ahora) {
+            expiredModalBackdrop.classList.add('is-open');
+            return;
+          }
 
-        window.location.replace('panelprestamistas.html');
+          // Guardar sesión y redirigir
+          sessionStorage.setItem('cout_prestamista_auth', 'true');
+          sessionStorage.setItem('cout_prestamista_id', prestamistaValido.id);
+          sessionStorage.setItem('cout_prestamista_nombre', prestamistaValido.nombre || 'Prestamista');
+
+          window.location.replace('panelprestamistas.html');
+        }, 3000);
 
       } catch (err) {
-        console.error("Error al validar credenciales:", err);
-        mostrarError("Error de conexión con el servidor. Intente nuevamente.");
-        btnSubmit.textContent = "Iniciar Sesión";
-        btnSubmit.disabled = false;
+        setTimeout(() => {
+          loaderOverlay.classList.remove('is-active');
+          btnSubmit.disabled = false;
+          console.error("Error al validar credenciales:", err);
+          mostrarError("Error de conexión con el servidor. Intente nuevamente.");
+        }, 1500);
       }
     });
   </script>
