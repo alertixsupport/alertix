@@ -44,28 +44,15 @@
       color: var(--text-primary);
     }
 
-    /* Animación de entrada profesional */
+    /* Animaciones profesionales */
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(12px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Animación elegante del Fueguito */
     @keyframes flameFlicker {
-      0%, 100% {
-        transform: scale(1) rotate(0deg);
-        filter: drop-shadow(0 0 4px rgba(249, 115, 22, 0.4));
-      }
-      50% {
-        transform: scale(1.06) rotate(-2deg);
-        filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.7));
-      }
+      0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 4px rgba(249, 115, 22, 0.4)); }
+      50% { transform: scale(1.06) rotate(-2deg); filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.7)); }
     }
 
     .login-container {
@@ -205,10 +192,6 @@
       transform: translateY(-1px);
     }
 
-    .btn-submit:active {
-      transform: translateY(0);
-    }
-
     .error-banner {
       width: 100%;
       background: rgba(239, 68, 68, 0.1);
@@ -223,6 +206,133 @@
       display: none;
     }
 
+    /* --- VENTANA EMERGENTE (MODAL) PROFESIONAL --- */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 7, 11, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-backdrop.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-window {
+      background: var(--bg-surface);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 400px;
+      padding: 28px 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+      transform: scale(0.95) translateY(10px);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      text-align: center;
+    }
+
+    .modal-backdrop.is-open .modal-window {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-icon-alert {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px auto;
+    }
+
+    .modal-icon-alert svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--status-error);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .modal-window h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .modal-window p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-modal-pay {
+      flex: 1;
+      height: 42px;
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .btn-modal-pay:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    .btn-modal-pay svg {
+      width: 16px;
+      height: 16px;
+      stroke: #ffffff;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .btn-modal-close {
+      height: 42px;
+      padding: 0 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-modal-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+    }
+
     .login-footer {
       margin-top: 24px;
       text-align: center;
@@ -233,9 +343,9 @@
 </head>
 <body>
 
+  <!-- Contenedor Principal del Login -->
   <div class="login-container">
     <div class="brand-header">
-      <!-- El fueguito corporativo estilizado -->
       <div class="brand-logo-icon" title="Cout.app">
         <svg viewBox="0 0 24 24">
           <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.542 2-6 .5 2 2 3.5 3.5 5.5A5.5 5.5 0 0 1 17 15a5 5 0 0 1-10 0c0-.3.033-.6.097-.892A5.474 5.474 0 0 0 8.5 14.5z"/>
@@ -275,6 +385,24 @@
     </div>
   </div>
 
+  <!-- Ventana Emergente (Modal) de Cuenta Inactiva / Suscripción Vencida -->
+  <div class="modal-backdrop" id="expiredModalBackdrop">
+    <div class="modal-window">
+      <div class="modal-icon-alert">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      </div>
+      <h3>Suscripción Vencida</h3>
+      <p>Su cuenta se encuentra inactiva o con la suscripción vencida. Contacte al administrador o realice su abono para continuar.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-close" id="closeModalBtn">Cerrar</button>
+        <a href="pagosonline.html" class="btn-modal-pay">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          Pagar
+        </a>
+      </div>
+    </div>
+  </div>
+
   <script type="module">
     import { db } from '../app.js';
     import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -284,6 +412,13 @@
     const claveInput = document.getElementById('clave');
     const errorBanner = document.getElementById('errorBanner');
     const btnSubmit = document.getElementById('btnSubmit');
+
+    const expiredModalBackdrop = document.getElementById('expiredModalBackdrop');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    closeModalBtn.addEventListener('click', () => {
+      expiredModalBackdrop.classList.remove('is-open');
+    });
 
     function mostrarError(mensaje) {
       errorBanner.textContent = mensaje;
@@ -330,13 +465,14 @@
         const venceEn = prestamistaValido.venceEn ? new Date(prestamistaValido.venceEn) : null;
 
         if (!venceEn || venceEn <= ahora) {
-          mostrarError("Su cuenta se encuentra inactiva o con la suscripción vencida. Contacte al administrador.");
+          // Mostrar ventana emergente profesional de suscripción vencida
+          expiredModalBackdrop.classList.add('is-open');
           btnSubmit.textContent = "Iniciar Sesión";
           btnSubmit.disabled = false;
           return;
         }
 
-        // Guardar sesión y redirigir al panel correspondiente
+        // Guardar sesión y redirigir al panel de prestamistas
         sessionStorage.setItem('cout_prestamista_auth', 'true');
         sessionStorage.setItem('cout_prestamista_id', prestamistaValido.id);
         sessionStorage.setItem('cout_prestamista_nombre', prestamistaValido.nombre || 'Prestamista');
