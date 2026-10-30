@@ -553,7 +553,7 @@
 <body>
 
   <!-- Modal Bloqueo: Cuenta Inactiva o Vencida -->
-  <div class="modal-backdrop" id="blockedModalBackdrop" style="pointer-events: auto; opacity: 1; display: none;">
+  <div class="modal-backdrop" id="blockedModalBackdrop">
     <div class="modal-window blocked-modal">
       <div class="modal-icon-alert">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
@@ -778,11 +778,11 @@
         headerTimerTxt.textContent = "Suscripción Vencida";
         modalCounterTxt.textContent = "Vencido";
         openTimerModalBtn.classList.add('suspended');
-        blockedModalBackdrop.style.display = 'flex';
+        blockedModalBackdrop.classList.add('is-open');
       } else {
-        // CUANDO ESTÁ ACTIVO: Oculta el bloqueo y permite navegar con normalidad
+        // CUANDO ESTÁ ACTIVO: Oculta el modal de bloqueo y permite navegar normalmente
         openTimerModalBtn.classList.remove('suspended');
-        blockedModalBackdrop.style.display = 'none';
+        blockedModalBackdrop.classList.remove('is-open');
 
         const totSeg = Math.floor(diffMs / 1000);
         const d = Math.floor(totSeg / (3600 * 24));
