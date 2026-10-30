@@ -3,11 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <!-- Evita que el navegador guarde en caché esta página -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-
   <title>COUT.APP | Panel de Prestamistas</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -697,20 +692,18 @@
   </div>
 
   <script type="module">
-    // --- PROTECCIÓN ESTRICTA DE RUTA PRIVADA CON EXPIRACIÓN (2 HORAS) ---
+    // --- VALIDACIÓN DE SESIÓN (LOGIN OBLIGATORIO) ---
     const auth = localStorage.getItem('cout_prestamista_auth');
-    const loginTime = localStorage.getItem('cout_login_time');
-    const EXPIRATION_TIME = 2 * 60 * 60 * 1000;
+    const prestamistaId = localStorage.getItem('cout_prestamista_id');
 
-    if (auth !== 'true' || !loginTime || (Date.now() - parseInt(loginTime) > EXPIRATION_TIME)) {
+    if (auth !== 'true' || !prestamistaId) {
       localStorage.clear();
       window.location.replace('login.html');
     }
 
     import { db } from '../app.js';
-    import { collection, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const prestamistaId = localStorage.getItem('cout_prestamista_id');
     const userNameSpan = document.getElementById('userNameSpan');
     const modalUserName = document.getElementById('modalUserName');
     const headerTimerTxt = document.getElementById('headerTimerTxt');
@@ -751,25 +744,23 @@
     }
 
     // Escuchar datos del prestamista en tiempo real desde Firestore
-    if (prestamistaId) {
-      const pRef = doc(db, "carpetacout", "configuracion_general", "usuariosprestamistas", prestamistaId);
-      onSnapshot(pRef, (snap) => {
-        if (snap.exists()) {
-          prestamistaData = snap.data();
-          const nombreCompleto = prestamistaData.nombre || 'Prestamista';
-          userNameSpan.textContent = nombreCompleto;
-          modalUserName.textContent = nombreCompleto;
+    const pRef = doc(db, "carpetacout", "configuracion_general", "usuariosprestamistas", prestamistaId);
+    onSnapshot(pRef, (snap) => {
+      if (snap.exists()) {
+        prestamistaData = snap.data();
+        const nombreCompleto = prestamistaData.nombre || 'Prestamista';
+        userNameSpan.textContent = nombreCompleto;
+        modalUserName.textContent = nombreCompleto;
 
-          if (prestamistaData.venceEn) {
-            modalVenceFecha.textContent = formatearFechaEscrita(prestamistaData.venceEn);
-          }
-          actualizarContador();
-        } else {
-          localStorage.clear();
-          window.location.replace('login.html');
+        if (prestamistaData.venceEn) {
+          modalVenceFecha.textContent = formatearFechaEscrita(prestamistaData.venceEn);
         }
-      });
-    }
+        actualizarContador();
+      } else {
+        localStorage.clear();
+        window.location.replace('login.html');
+      }
+    });
 
     function actualizarContador() {
       if (!prestamistaData || !prestamistaData.venceEn) return;
@@ -779,13 +770,13 @@
       const diffMs = fVence - ahora;
 
       if (diffMs <= 0) {
-        // CUANDO ESTÁ VENCIDO: Muestra el modal bloqueante de renovación
+        // VENCIDO: Muestra modal bloqueante de renovación
         headerTimerTxt.textContent = "Suscripción Vencida";
         modalCounterTxt.textContent = "Vencido";
         openTimerModalBtn.classList.add('suspended');
         blockedModalBackdrop.classList.add('is-open');
       } else {
-        // CUANDO ESTÁ ACTIVO: Oculta el modal de bloqueo y permite navegar normalmente
+        // ACTIVO: Permite navegar con total normalidad
         openTimerModalBtn.classList.remove('suspended');
         blockedModalBackdrop.classList.remove('is-open');
 
@@ -832,7 +823,7 @@
         block.className = 'menu-category-block';
 
         const title = document.createElement('div');
-        title.className, title.className = 'category-title';
+        title.className = 'category-title';
         title.textContent = categoria;
         block.appendChild(title);
 
