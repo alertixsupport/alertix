@@ -456,6 +456,7 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
       transform: scale(0.95);
       transition: transform 0.25s ease;
+      position: relative;
     }
 
     .modal-backdrop.is-open .modal-window {
@@ -542,7 +543,6 @@
         </button>
       </div>
       <div class="sidebar-content" id="sidebarContent">
-        <!-- Generado dinámicamente desde Firebase (menuprestamistas) -->
         <div style="text-align: center; color: var(--text-tertiary); padding: 20px; font-size: 12px;">
           Cargando menú...
         </div>
@@ -626,7 +626,7 @@
 
   <!-- Modal Estado de Suscripción -->
   <div class="modal-backdrop" id="timerModalBackdrop">
-    <div class="modal-window" style="position: relative;">
+    <div class="modal-window">
       <button class="btn-modal-close-simple" id="closeTimerModalBtn">
         <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
@@ -635,7 +635,7 @@
 
       <div class="subscription-details-card">
         <div class="sub-detail-row">
-          <label>Titular:</label>
+          <label>Hola:</label>
           <span id="modalUserName">Cargando...</span>
         </div>
         <div class="sub-detail-row">
@@ -656,9 +656,9 @@
   </div>
 
   <script type="module">
-    // --- PROTECCIÓN DE RUTA PRIVADA ---
+    // --- PROTECCIÓN ESTRICTA DE RUTA PRIVADA ---
     if (sessionStorage.getItem('cout_prestamista_auth') !== 'true') {
-      window.location.replace('/cout/login.html');
+      window.location.replace('login.html');
     }
 
     import { db } from '../app.js';
@@ -683,21 +683,18 @@
 
     let prestamistaData = null;
 
-    // Abrir/Cerrar Sidebar
     openSidebarBtn.addEventListener('click', () => sidebarOverlay.classList.add('is-open'));
     closeSidebarBtn.addEventListener('click', () => sidebarOverlay.classList.remove('is-open'));
     sidebarOverlay.addEventListener('click', (e) => {
       if (e.target === sidebarOverlay) sidebarOverlay.classList.remove('is-open');
     });
 
-    // Abrir/Cerrar Modal Timer
     openTimerModalBtn.addEventListener('click', () => timerModalBackdrop.classList.add('is-open'));
     closeTimerModalBtn.addEventListener('click', () => timerModalBackdrop.classList.remove('is-open'));
 
-    // Cerrar Sesión
     logoutBtn.addEventListener('click', () => {
       sessionStorage.clear();
-      window.location.replace('/cout/login.html');
+      window.location.replace('login.html');
     });
 
     function formatearFechaEscrita(isoString) {
@@ -706,22 +703,23 @@
       return f.toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' });
     }
 
-    // Escuchar datos del prestamista en tiempo real
+    // Escuchar datos del prestamista en tiempo real desde Firestore
     if (prestamistaId) {
       const pRef = doc(db, "carpetacout", "configuracion_general", "usuariosprestamistas", prestamistaId);
       onSnapshot(pRef, (snap) => {
         if (snap.exists()) {
           prestamistaData = snap.data();
-          const nombre = prestamistaData.nombre || 'Prestamista';
-          userNameSpan.textContent = nombre;
-          modalUserName.textContent = nombre;
+          // Lee el nombre y apellido del usuario de la base de datos
+          const nombreCompleto = prestamistaData.nombre || 'Prestamista';
+          userNameSpan.textContent = nombreCompleto;
+          modalUserName.textContent = nombreCompleto;
 
           if (prestamistaData.venceEn) {
             modalVenceFecha.textContent = formatearFechaEscrita(prestamistaData.venceEn);
           }
           actualizarContador();
         } else {
-          window.location.replace('/cout/login.html');
+          window.location.replace('login.html');
         }
       });
     }
@@ -765,7 +763,6 @@
         return;
       }
 
-      // Agrupar items por categoría
       const categoriasMap = {};
 
       snapshot.forEach((docSnap) => {
@@ -778,7 +775,6 @@
         categoriasMap[cat].push(item);
       });
 
-      // Renderizar por categorías
       Object.keys(categoriasMap).forEach((categoria) => {
         const block = document.createElement('div');
         block.className = 'menu-category-block';
