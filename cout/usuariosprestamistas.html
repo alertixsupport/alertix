@@ -16,7 +16,7 @@
       --text-muted: #94a3b8;
       --danger-color: #ef4444;
       --success-color: #10b981;
-      --warning-color: #f59e0b;
+      --renew-color: #3b82f6;
     }
 
     * {
@@ -210,7 +210,7 @@
 
     .form-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr 120px auto;
+      grid-template-columns: 1fr 1fr 1fr 130px auto;
       gap: 15px;
       align-items: flex-end;
     }
@@ -240,7 +240,7 @@
       font-weight: 600;
     }
 
-    input {
+    input, select {
       padding: 12px 14px;
       background: rgba(0,0,0,0.5);
       border: 1px solid var(--border-glass);
@@ -251,7 +251,7 @@
       transition: border-color 0.3s;
     }
 
-    input:focus {
+    input:focus, select:focus {
       border-color: var(--accent-fire);
     }
 
@@ -345,26 +345,16 @@
       color: var(--text-muted);
     }
 
-    .status-badge {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 700;
+    .timer-display {
+      font-size: 12px;
+      font-weight: 600;
       margin-top: 4px;
+      font-family: monospace;
+      letter-spacing: 0.5px;
     }
 
-    .status-badge.active {
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-
-    .status-badge.suspended {
-      background: rgba(239, 68, 68, 0.15);
-      color: #fca5a5;
-      border: 1px solid rgba(239, 68, 68, 0.3);
-    }
+    .timer-display.active { color: #34d399; }
+    .timer-display.suspended { color: #fca5a5; }
 
     .actions-right {
       display: flex;
@@ -372,27 +362,36 @@
       gap: 10px;
     }
 
-    .btn-renew {
-      padding: 7px 12px;
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      border-radius: 8px;
-      color: #34d399;
-      font-weight: 700;
-      font-size: 11px;
-      text-transform: uppercase;
+    .btn-icon-renew {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
       transition: all 0.3s;
+      color: #93c5fd;
     }
 
-    .btn-renew:hover {
-      background: var(--success-color);
+    .btn-icon-renew:hover {
+      background: var(--renew-color);
       color: white;
-      box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+      transform: scale(1.05);
+    }
+
+    .btn-icon-renew svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
     }
 
     .btn-delete-compact {
-      padding: 7px 12px;
+      padding: 8px 12px;
       background: rgba(239, 68, 68, 0.15);
       border: 1px solid rgba(239, 68, 68, 0.4);
       border-radius: 8px;
@@ -408,6 +407,60 @@
       background: var(--danger-color);
       color: white;
       box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+    }
+
+    /* Estilos del Modal Emergente de Renovación */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(3, 1, 18, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      padding: 30px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+    }
+
+    .modal-card h3 {
+      font-size: 16px;
+      margin-bottom: 20px;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-cancel {
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border-glass);
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -433,9 +486,9 @@
       </div>
     </header>
 
-    <!-- Tarjeta de Creación de Prestamista con Días -->
+    <!-- Tarjeta de Creación de Prestamista -->
     <div class="create-card">
-      <h2>👤 Registrar Nuevo Prestamista &bull; Suscripción</h2>
+      <h2>👤 Registrar Nuevo Prestamista &bull; Habilitación</h2>
       <form id="createPrestamistaForm">
         <div class="form-grid">
           <div class="form-group">
@@ -451,19 +504,51 @@
             <input type="password" id="clave" required placeholder="••••••••">
           </div>
           <div class="form-group">
-            <label for="dias">Días de Abono</label>
-            <input type="number" id="dias" value="30" min="1" required placeholder="30">
+            <label for="tiempoCantidad">Cantidad</label>
+            <input type="number" id="tiempoCantidad" value="30" min="1" required>
           </div>
-          <button type="submit" class="btn-primary">Registrar</button>
+          <div class="form-group">
+            <label for="tiempoUnidad">Unidad</label>
+            <select id="tiempoUnidad">
+              <option value="dias" selected>Días</option>
+              <option value="horas">Horas</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary" style="grid-column: span 5;">Registrar Cuenta</button>
         </div>
       </form>
     </div>
 
-    <h2 class="section-title">Prestamistas Registrados (Control en Tiempo Real)</h2>
+    <h2 class="section-title">Prestamistas Registrados (Control en Tiempo Real con Segundos)</h2>
 
     <!-- Lista en tiempo real de Prestamistas -->
     <div class="cards-list" id="prestamistasGrid">
       <!-- Carga instantánea desde caché local -->
+    </div>
+  </div>
+
+  <!-- Modal Emergente de Renovación -->
+  <div class="modal-overlay" id="renewModalOverlay">
+    <div class="modal-card">
+      <h3>🔄 Extender Suscripción</h3>
+      <form id="renewForm">
+        <input type="hidden" id="renewPrestamistaId">
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label for="renewCantidad">¿A cuánto extendés el usuario?</label>
+          <input type="number" id="renewCantidad" value="30" min="1" required>
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label for="renewUnidad">Unidad de Tiempo</label>
+          <select id="renewUnidad">
+            <option value="dias" selected>Días</option>
+            <option value="horas">Horas</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" id="closeRenewModal">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar Extensión</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -478,6 +563,10 @@
 
     const createPrestamistaForm = document.getElementById('createPrestamistaForm');
     const prestamistasGrid = document.getElementById('prestamistasGrid');
+    const renewModalOverlay = document.getElementById('renewModalOverlay');
+    const closeRenewModal = document.getElementById('closeRenewModal');
+    const renewForm = document.getElementById('renewForm');
+    const renewPrestamistaId = document.getElementById('renewPrestamistaId');
 
     const prestamistasRef = collection(db, "carpetacout", "configuracion_general", "usuariosprestamistas");
     let cachedPrestamistas = [];
@@ -493,18 +582,22 @@
       }
     }
 
-    // Registrar nuevo prestamista con fecha de expiración calculada
+    // Registrar nuevo prestamista
     createPrestamistaForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const nombre = document.getElementById('nombre').value.trim();
       const usuario = document.getElementById('usuario').value.trim();
       const clave = document.getElementById('clave').value.trim();
-      const dias = parseInt(document.getElementById('dias').value) || 30;
+      const cantidad = parseInt(document.getElementById('tiempoCantidad').value) || 30;
+      const unidad = document.getElementById('tiempoUnidad').value;
 
-      // Calcular fecha de vencimiento sumando los días a la fecha actual
       const fechaVencimiento = new Date();
-      fechaVencimiento.setDate(fechaVencimiento.getDate() + dias);
+      if (unidad === 'horas') {
+        fechaVencimiento.setHours(fechaVencimiento.getHours() + cantidad);
+      } else {
+        fechaVencimiento.setDate(fechaVencimiento.getDate() + cantidad);
+      }
 
       try {
         await addDoc(prestamistasRef, {
@@ -516,14 +609,51 @@
         });
 
         createPrestamistaForm.reset();
-        document.getElementById('dias').value = 30;
+        document.getElementById('tiempoCantidad').value = 30;
       } catch (error) {
         console.error("Error al registrar prestamista:", error);
         alert("Error al guardar en Firebase: " + error.message);
       }
     });
 
-    // Renderizar la lista con control automático de vencimiento
+    // Cerrar modal de renovación
+    closeRenewModal.addEventListener('click', () => {
+      renewModalOverlay.classList.remove('active');
+    });
+
+    // Guardar extensión desde el modal
+    renewForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = renewPrestamistaId.value;
+      const cantidad = parseInt(document.getElementById('renewCantidad').value) || 30;
+      const unidad = document.getElementById('renewUnidad').value;
+
+      const prestamistaObj = cachedPrestamistas.find(p => p.id === id);
+      if (!prestamistaObj) return;
+
+      const ahora = new Date();
+      let baseFecha = (prestamistaObj.data.venceEn && new Date(prestamistaObj.data.venceEn) > ahora) 
+        ? new Date(prestamistaObj.data.venceEn) 
+        : ahora;
+
+      if (unidad === 'horas') {
+        baseFecha.setHours(baseFecha.getHours() + cantidad);
+      } else {
+        baseFecha.setDate(baseFecha.getDate() + cantidad);
+      }
+
+      try {
+        await updateDoc(doc(db, "carpetacout", "configuracion_general", "usuariosprestamistas", id), {
+          venceEn: baseFecha.toISOString()
+        });
+        renewModalOverlay.classList.remove('active');
+      } catch (err) {
+        console.error("Error al extender:", err);
+        alert("No se pudo extender: " + err.message);
+      }
+    });
+
+    // Renderizar la lista con temporizador segundo a segundo
     function renderPrestamistas() {
       prestamistasGrid.innerHTML = '';
 
@@ -535,29 +665,13 @@
         return;
       }
 
-      const ahora = new Date();
-
       cachedPrestamistas.forEach(({ id, data }) => {
         const inicial = data.nombre ? data.nombre.charAt(0).toUpperCase() : 'P';
         
-        // Calcular días restantes
-        let diasRestantes = 0;
-        let estaSuspendido = false;
-
-        if (data.venceEn) {
-          const fechaVence = new Date(data.venceEn);
-          const diferenciaMs = fechaVence - ahora;
-          diasRestantes = Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
-          if (diasRestantes <= 0) {
-            estaSuspendido = true;
-            diasRestantes = 0;
-          }
-        } else {
-          estaSuspendido = true;
-        }
-
         const card = document.createElement('div');
-        card.className = `prestamista-row-card ${estaSuspendido ? 'suspended' : ''}`;
+        card.className = 'prestamista-row-card';
+        card.setAttribute('data-id', id);
+        card.setAttribute('data-vence', data.venceEn || '');
 
         card.innerHTML = `
           <div class="prestamista-info">
@@ -565,38 +679,28 @@
             <div class="prestamista-texts">
               <div class="p-nombre">${data.nombre}</div>
               <div class="p-user">Usuario: <strong>${data.usuario}</strong> &bull; Clave: <code>${data.clave}</code></div>
-              <div>
-                ${estaSuspendido 
-                  ? `<span class="status-badge suspended">🔴 Suspendido (Vencido)</span>`
-                  : `<span class="status-badge active">🟢 Activo: ${diasRestantes} días restantes</span>`
-                }
-              </div>
+              <div class="timer-display" id="timer-${id}">Calculando tiempo...</div>
             </div>
           </div>
           <div class="actions-right">
-            <button class="btn-renew" data-id="${id}" title="Extender 30 días">Renovar 30d</button>
+            <button class="btn-icon-renew" data-id="${id}" title="Renovar suscripción">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.65-5.65"/>
+              </svg>
+            </button>
             <button class="btn-delete-compact" data-id="${id}">Eliminar</button>
           </div>
         `;
 
-        // Evento Renovar / Extender Suscripción (+30 días)
-        card.querySelector('.btn-renew').addEventListener('click', async () => {
-          const nuevaFecha = new Date();
-          // Si aún no vencía, sumar desde la fecha de vencimiento actual; si ya venció, sumar desde hoy
-          const baseFecha = (data.venceEn && new Date(data.venceEn) > ahora) ? new Date(data.venceEn) : ahora;
-          baseFecha.setDate(baseFecha.getDate() + 30);
-
-          try {
-            await updateDoc(doc(db, "carpetacout", "configuracion_general", "usuariosprestamistas", id), {
-              venceEn: baseFecha.toISOString()
-            });
-          } catch (err) {
-            console.error("Error al renovar:", err);
-            alert("No se pudo renovar: " + err.message);
-          }
+        // Abrir modal de renovación al hacer clic en el icono
+        card.querySelector('.btn-icon-renew').addEventListener('click', () => {
+          renewPrestamistaId.value = id;
+          document.getElementById('renewCantidad').value = 30;
+          document.getElementById('renewUnidad').value = 'dias';
+          renewModalOverlay.classList.add('active');
         });
 
-        // Evento Eliminar Prestamista
+        // Evento Eliminar
         card.querySelector('.btn-delete-compact').addEventListener('click', async () => {
           if (confirm(`¿Estás seguro de eliminar al prestamista "${data.nombre}"?`)) {
             try {
@@ -610,7 +714,48 @@
 
         prestamistasGrid.appendChild(card);
       });
+
+      actualizarTimers();
     }
+
+    // Función de actualización de contadores segundo a segundo
+    function actualizarTimers() {
+      const ahora = new Date();
+      cachedPrestamistas.forEach(({ id, data }) => {
+        const timerEl = document.getElementById(`timer-${id}`);
+        const cardEl = document.querySelector(`.prestamista-row-card[data-id="${id}"]`);
+        if (!timerEl || !cardEl) return;
+
+        if (!data.venceEn) {
+          timerEl.textContent = "🔴 Sin fecha de vencimiento";
+          timerEl.className = "timer-display suspended";
+          cardEl.classList.add('suspended');
+          return;
+        }
+
+        const fechaVence = new Date(data.venceEn);
+        const diferenciaMs = fechaVence - ahora;
+
+        if (diferenciaMs <= 0) {
+          timerEl.textContent = "🔴 Suspendido por falta de abono (Vencido)";
+          timerEl.className = "timer-display suspended";
+          cardEl.classList.add('suspended');
+        } else {
+          cardEl.classList.remove('suspended');
+          const totalSegundos = Math.floor(diferenciaMs / 1000);
+          const dias = Math.floor(totalSegundos / (3600 * 24));
+          const horas = Math.floor((totalSegundos % (3600 * 24)) / 3600);
+          const minutos = Math.floor((totalSegundos % 3600) / 60);
+          const segundos = totalSegundos % 60;
+
+          timerEl.textContent = `🟢 Activo: ${dias}d ${horas}h ${minutos}m ${segundos}s restantes`;
+          timerEl.className = "timer-display active";
+        }
+      });
+    }
+
+    // Ejecutar el contador segundo a segundo de forma fluida
+    setInterval(actualizarTimers, 1000);
 
     // Sincronización en Tiempo Real con Firebase y Caché Local Instantánea
     onSnapshot(prestamistasRef, (snapshot) => {
