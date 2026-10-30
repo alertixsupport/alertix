@@ -64,7 +64,6 @@
       box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
     }
 
-    /* Botón Menú Hamburguesa Estilo 3D */
     .btn-hamburger {
       width: 42px;
       height: 42px;
@@ -84,11 +83,6 @@
       transform: translateY(-1px);
     }
 
-    .btn-hamburger:active {
-      transform: translateY(1px);
-      box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.4);
-    }
-
     .btn-hamburger svg {
       width: 22px;
       height: 22px;
@@ -98,7 +92,6 @@
       stroke-linecap: round;
     }
 
-    /* Brand Centrado */
     .brand-section {
       display: flex;
       align-items: center;
@@ -116,7 +109,6 @@
       color: var(--accent-flame);
     }
 
-    /* Badge Contador en Tiempo Real (Header) */
     .header-timer-badge {
       display: flex;
       align-items: center;
@@ -328,7 +320,7 @@
       stroke-width: 2;
     }
 
-    /* --- CARD DE BIENVENIDA & INSTRUCCIONES --- */
+    /* --- CARD DE BIENVENIDA --- */
     .dashboard-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
@@ -425,12 +417,12 @@
       gap: 8px;
     }
 
-    /* --- MODAL SUSCRIPCIÓN / EXTENSIÓN --- */
+    /* --- MODALES --- */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(5, 7, 11, 0.85);
-      backdrop-filter: blur(8px);
+      background: rgba(5, 7, 11, 0.88);
+      backdrop-filter: blur(10px);
       z-index: 3000;
       display: flex;
       align-items: center;
@@ -463,6 +455,32 @@
       transform: scale(1);
     }
 
+    /* Modal de Suscripción Vencida (Bloqueo Estricto) */
+    .modal-window.blocked-modal {
+      border: 1px solid rgba(220, 38, 38, 0.4);
+      text-align: center;
+    }
+
+    .modal-icon-alert {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(220, 38, 38, 0.1);
+      border: 1px solid rgba(220, 38, 38, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px auto;
+    }
+
+    .modal-icon-alert svg {
+      width: 26px;
+      height: 26px;
+      stroke: var(--status-suspended);
+      fill: none;
+      stroke-width: 2;
+    }
+
     .subscription-details-card {
       background: var(--bg-base);
       border: 1px solid var(--border-subtle);
@@ -472,6 +490,7 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      text-align: left;
     }
 
     .sub-detail-row {
@@ -532,6 +551,23 @@
   </style>
 </head>
 <body>
+
+  <!-- Modal Bloqueo: Cuenta Inactiva o Vencida -->
+  <div class="modal-backdrop" id="blockedModalBackdrop" style="pointer-events: auto; opacity: 1; display: none;">
+    <div class="modal-window blocked-modal">
+      <div class="modal-icon-alert">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      </div>
+      <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 8px;">Acceso Restringido</h3>
+      <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 24px;">
+        No podés navegar en panelprestamistas.html. Renová tu suscripción de cout.app.
+      </p>
+      <a href="pagosonline.html" class="btn-abonar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        Pagar
+      </a>
+    </div>
+  </div>
 
   <!-- Overlay Menú Hamburguesa -->
   <div class="sidebar-overlay" id="sidebarOverlay">
@@ -656,15 +692,20 @@
   </div>
 
   <script type="module">
-    // --- PROTECCIÓN ESTRICTA DE RUTA PRIVADA ---
-    if (sessionStorage.getItem('cout_prestamista_auth') !== 'true') {
+    // --- PROTECCIÓN ESTRICTA DE RUTA PRIVADA CON EXPIRACIÓN (2 HORAS) ---
+    const auth = localStorage.getItem('cout_prestamista_auth');
+    const loginTime = localStorage.getItem('cout_login_time');
+    const EXPIRATION_TIME = 2 * 60 * 60 * 1000;
+
+    if (auth !== 'true' || !loginTime || (Date.now() - parseInt(loginTime) > EXPIRATION_TIME)) {
+      localStorage.clear();
       window.location.replace('login.html');
     }
 
     import { db } from '../app.js';
     import { collection, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const prestamistaId = sessionStorage.getItem('cout_prestamista_id');
+    const prestamistaId = localStorage.getItem('cout_prestamista_id');
     const userNameSpan = document.getElementById('userNameSpan');
     const modalUserName = document.getElementById('modalUserName');
     const headerTimerTxt = document.getElementById('headerTimerTxt');
@@ -680,6 +721,7 @@
 
     const timerModalBackdrop = document.getElementById('timerModalBackdrop');
     const closeTimerModalBtn = document.getElementById('closeTimerModalBtn');
+    const blockedModalBackdrop = document.getElementById('blockedModalBackdrop');
 
     let prestamistaData = null;
 
@@ -693,7 +735,7 @@
     closeTimerModalBtn.addEventListener('click', () => timerModalBackdrop.classList.remove('is-open'));
 
     logoutBtn.addEventListener('click', () => {
-      sessionStorage.clear();
+      localStorage.clear();
       window.location.replace('login.html');
     });
 
@@ -709,7 +751,6 @@
       onSnapshot(pRef, (snap) => {
         if (snap.exists()) {
           prestamistaData = snap.data();
-          // Lee el nombre y apellido del usuario de la base de datos
           const nombreCompleto = prestamistaData.nombre || 'Prestamista';
           userNameSpan.textContent = nombreCompleto;
           modalUserName.textContent = nombreCompleto;
@@ -719,6 +760,7 @@
           }
           actualizarContador();
         } else {
+          localStorage.clear();
           window.location.replace('login.html');
         }
       });
@@ -735,8 +777,12 @@
         headerTimerTxt.textContent = "Suscripción Vencida";
         modalCounterTxt.textContent = "Vencido";
         openTimerModalBtn.classList.add('suspended');
+        // Bloquear navegación y mostrar modal estricto de renovación
+        blockedModalBackdrop.style.display = 'flex';
       } else {
         openTimerModalBtn.classList.remove('suspended');
+        blockedModalBackdrop.style.display = 'none';
+
         const totSeg = Math.floor(diffMs / 1000);
         const d = Math.floor(totSeg / (3600 * 24));
         const h = Math.floor((totSeg % (3600 * 24)) / 3600);
