@@ -19,6 +19,7 @@
       --renew-color: #3b82f6;
       --money-color: #10b981;
       --edit-color: #8b5cf6;
+      --contract-color: #0ea5e9;
     }
 
     * {
@@ -86,10 +87,11 @@
       gap: 10px;
     }
 
-    .fire-icon {
-      font-size: 28px;
+    .fire-icon-svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--accent-fire);
       animation: flameAnim 1.8s ease-in-out infinite alternate;
-      display: inline-block;
       filter: drop-shadow(0 0 10px rgba(255, 85, 0, 0.8));
     }
 
@@ -130,14 +132,8 @@
       left: -140%;
       width: 80%;
       height: 140%;
-      background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.25) 50%,
-        rgba(255, 255, 255, 0) 100%
-      );
-      transform: skewX(-25deg) translate3d(0, 0, 0);
-      will-change: left, opacity;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0) 100%);
+      transform: skewX(-25deg);
       animation: epicFadeShine 4.5s cubic-bezier(0.25, 1, 0.5, 1) infinite;
     }
 
@@ -189,14 +185,9 @@
       height: 20px;
       stroke: #ffffff;
       fill: none;
-      transition: stroke 0.3s;
+      stroke-width: 2;
     }
 
-    .menu-btn:hover svg, .btn-action-header:hover svg {
-      stroke: var(--accent-fire);
-    }
-
-    /* Separador Ejecutivo */
     .executive-separator {
       width: 100%;
       height: 1px;
@@ -235,7 +226,6 @@
       gap: 16px;
     }
 
-    /* Avatar 3D Profesional para el usuario */
     .user-avatar-3d {
       width: 48px;
       height: 48px;
@@ -253,7 +243,6 @@
       width: 24px;
       height: 24px;
       fill: #818cf8;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
     }
 
     .prestamista-texts .p-nombre {
@@ -311,7 +300,7 @@
       fill: none;
     }
 
-    /* Botón Pago / Dinero ($) */
+    /* Botón Pagos / Dinero ($) */
     .btn-money {
       background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.4) 100%);
       border-color: rgba(16, 185, 129, 0.4);
@@ -325,6 +314,21 @@
       transform: translateY(-2px);
     }
     .btn-money:hover svg { stroke: white; }
+
+    /* Botón Contrato / Historial */
+    .btn-contract {
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(2, 132, 199, 0.4) 100%);
+      border-color: rgba(14, 165, 233, 0.4);
+      color: #38bdf8;
+    }
+    .btn-contract svg { stroke: #38bdf8; }
+    .btn-contract:hover {
+      background: var(--contract-color);
+      color: white;
+      box-shadow: 0 0 15px rgba(14, 165, 233, 0.6);
+      transform: translateY(-2px);
+    }
+    .btn-contract:hover svg { stroke: white; }
 
     /* Botón Editar */
     .btn-edit {
@@ -382,6 +386,8 @@
       width: 100%;
       max-width: 480px;
       box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+      max-height: 85vh;
+      overflow-y: auto;
     }
 
     .modal-card h3 {
@@ -407,8 +413,26 @@
       font-weight: 600;
     }
 
-    input, select {
-      padding: 12px 14px;
+    /* Campos con Iconos 3D Profesionales Internos */
+    .input-icon-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon-box svg {
+      position: absolute;
+      left: 14px;
+      width: 18px;
+      height: 18px;
+      stroke: var(--text-muted);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .input-icon-box input, .input-icon-box select {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
       background: rgba(0,0,0,0.5);
       border: 1px solid var(--border-glass);
       border-radius: 10px;
@@ -418,7 +442,7 @@
       transition: border-color 0.3s;
     }
 
-    input:focus, select:focus {
+    .input-icon-box input:focus, .input-icon-box select:focus {
       border-color: var(--accent-fire);
     }
 
@@ -459,6 +483,37 @@
       font-size: 12px;
       font-weight: 600;
     }
+
+    /* Lista de pagos dentro del modal contrato */
+    .pagos-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 250px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    .pago-item {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-glass);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .pago-item .monto {
+      font-weight: 700;
+      color: #34d399;
+    }
+
+    .pago-item .fecha-hora {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
@@ -467,7 +522,8 @@
     <!-- Navbar Ejecutivo Pro -->
     <header>
       <div class="brand">
-        <span class="fire-icon">🔥</span>
+        <!-- Ícono 3D de Fuego -->
+        <svg class="fire-icon-svg" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.229 1.15-3.05z"/></svg>
       </div>
 
       <div class="logo-container-center">
@@ -493,46 +549,70 @@
     </div>
   </div>
 
-  <!-- Modal para Registrar Prestamista -->
+  <!-- Modal para Registrar Prestamista con Iconos 3D en Casillas -->
   <div class="modal-overlay" id="registerModalOverlay">
     <div class="modal-card">
-      <h3>👤 Registrar Nuevo Prestamista</h3>
+      <h3>Registrar Nuevo Prestamista</h3>
       <form id="createPrestamistaForm">
         <div class="form-group">
           <label for="nombre">Nombre Completo</label>
-          <input type="text" id="nombre" required placeholder="Ej: Carlos Pérez">
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <input type="text" id="nombre" required placeholder="Ej: Carlos Pérez">
+          </div>
         </div>
         <div class="form-group">
           <label for="dni">DNI</label>
-          <input type="text" id="dni" required placeholder="Ej: 35123456">
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+            <input type="text" id="dni" required placeholder="Ej: 35123456">
+          </div>
         </div>
         <div class="form-group">
           <label for="whatsapp">WhatsApp</label>
-          <input type="text" id="whatsapp" required placeholder="Ej: +5491123456789">
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <input type="text" id="whatsapp" required placeholder="Ej: +5491123456789">
+          </div>
         </div>
         <div class="form-group">
           <label for="edad">Edad</label>
-          <input type="number" id="edad" min="18" max="100" required placeholder="Ej: 35">
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <input type="number" id="edad" min="18" max="100" required placeholder="Ej: 35">
+          </div>
         </div>
         <div class="form-group">
           <label for="usuario">Usuario de Acceso</label>
-          <input type="text" id="usuario" required placeholder="Ej: cperez">
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+            <input type="text" id="usuario" required placeholder="Ej: cperez">
+          </div>
         </div>
         <div class="form-group">
           <label for="clave">Contraseña</label>
-          <input type="password" id="clave" required placeholder="••••••••">
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <input type="password" id="clave" required placeholder="••••••••">
+          </div>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div class="form-group">
             <label for="tiempoCantidad">Abono Inicial</label>
-            <input type="number" id="tiempoCantidad" value="30" min="1" required>
+            <div class="input-icon-box">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <input type="number" id="tiempoCantidad" value="30" min="1" required>
+            </div>
           </div>
           <div class="form-group">
             <label for="tiempoUnidad">Unidad</label>
-            <select id="tiempoUnidad">
-              <option value="dias" selected>Días</option>
-              <option value="horas">Horas</option>
-            </select>
+            <div class="input-icon-box">
+              <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              <select id="tiempoUnidad">
+                <option value="dias" selected>Días</option>
+                <option value="horas">Horas</option>
+              </select>
+            </div>
           </div>
         </div>
         <div class="modal-actions">
@@ -546,23 +626,32 @@
   <!-- Modal para Registrar Pago y Extensión ($) -->
   <div class="modal-overlay" id="moneyModalOverlay">
     <div class="modal-card">
-      <h3>💰 Registrar Pago y Renovación</h3>
+      <h3>Registrar Pago y Renovación</h3>
       <form id="moneyForm">
         <input type="hidden" id="moneyPrestamistaId">
         <div class="form-group">
           <label for="montoPago">Monto Abonado en Pesos ($)</label>
-          <input type="number" id="montoPago" step="0.01" min="0" required placeholder="Ej: 15000">
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            <input type="number" id="montoPago" step="0.01" min="0" required placeholder="Ej: 15000">
+          </div>
         </div>
         <div class="form-group">
           <label for="extCantidad">Extensión de Tiempo</label>
-          <input type="number" id="extCantidad" value="30" min="1" required>
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <input type="number" id="extCantidad" value="30" min="1" required>
+          </div>
         </div>
         <div class="form-group">
           <label for="extUnidad">Unidad de Tiempo</label>
-          <select id="extUnidad">
-            <option value="dias" selected>Días</option>
-            <option value="horas">Horas</option>
-          </select>
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <select id="extUnidad">
+              <option value="dias" selected>Días</option>
+              <option value="horas">Horas</option>
+            </select>
+          </div>
         </div>
         <div class="modal-actions">
           <button type="button" class="btn-cancel" id="closeMoneyModal">Cancelar</button>
@@ -572,35 +661,66 @@
     </div>
   </div>
 
+  <!-- Modal Historial de Pagos ("Papel Contrato") -->
+  <div class="modal-overlay" id="contractModalOverlay">
+    <div class="modal-card">
+      <h3>Historial de Pagos Registrados</h3>
+      <div class="pagos-list" id="pagosListContainer">
+        <!-- Se cargan dinámicamente -->
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" id="closeContractModal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal para Editar Prestamista -->
   <div class="modal-overlay" id="editModalOverlay">
     <div class="modal-card">
-      <h3>✏️ Editar Datos del Prestamista</h3>
+      <h3>Editar Datos del Prestamista</h3>
       <form id="editForm">
         <input type="hidden" id="editPrestamistaId">
         <div class="form-group">
           <label for="editNombre">Nombre Completo</label>
-          <input type="text" id="editNombre" required>
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <input type="text" id="editNombre" required>
+          </div>
         </div>
         <div class="form-group">
           <label for="editDni">DNI</label>
-          <input type="text" id="editDni" required>
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+            <input type="text" id="editDni" required>
+          </div>
         </div>
         <div class="form-group">
           <label for="editWhatsapp">WhatsApp</label>
-          <input type="text" id="editWhatsapp" required>
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <input type="text" id="editWhatsapp" required>
+          </div>
         </div>
         <div class="form-group">
           <label for="editEdad">Edad</label>
-          <input type="number" id="editEdad" required>
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <input type="number" id="editEdad" required>
+          </div>
         </div>
         <div class="form-group">
           <label for="editUsuario">Usuario</label>
-          <input type="text" id="editUsuario" required>
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+            <input type="text" id="editUsuario" required>
+          </div>
         </div>
         <div class="form-group">
           <label for="editClave">Contraseña</label>
-          <input type="text" id="editClave" required>
+          <div class="input-icon-box">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <input type="text" id="editClave" required>
+          </div>
         </div>
         <div class="modal-actions">
           <button type="button" class="btn-cancel" id="closeEditModal">Cancelar</button>
@@ -616,7 +736,7 @@
     }
 
     import { db } from '../app.js';
-    import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const openRegisterModal = document.getElementById('openRegisterModal');
     const registerModalOverlay = document.getElementById('registerModalOverlay');
@@ -627,6 +747,10 @@
     const closeMoneyModal = document.getElementById('closeMoneyModal');
     const moneyForm = document.getElementById('moneyForm');
     const moneyPrestamistaId = document.getElementById('moneyPrestamistaId');
+
+    const contractModalOverlay = document.getElementById('contractModalOverlay');
+    const closeContractModal = document.getElementById('closeContractModal');
+    const pagosListContainer = document.getElementById('pagosListContainer');
 
     const editModalOverlay = document.getElementById('editModalOverlay');
     const closeEditModal = document.getElementById('closeEditModal');
@@ -653,7 +777,19 @@
     openRegisterModal.addEventListener('click', () => registerModalOverlay.classList.add('active'));
     closeRegisterModal.addEventListener('click', () => registerModalOverlay.classList.remove('active'));
     closeMoneyModal.addEventListener('click', () => moneyModalOverlay.classList.remove('active'));
+    closeContractModal.addEventListener('click', () => contractModalOverlay.classList.remove('active'));
     closeEditModal.addEventListener('click', () => editModalOverlay.classList.remove('active'));
+
+    // Formateador de fecha legible (Ej: "15 de noviembre" y hora)
+    function formatearFechaLegible(isoString) {
+      if (!isoString) return "Fecha no disponible";
+      const fecha = new Date(isoString);
+      const opcionesFecha = { day: 'numeric', month: 'long', year: 'numeric' };
+      const opcionesHora = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+      const fechaTexto = fecha.toLocaleDateString('es-ES', opcionesFecha);
+      const horaTexto = fecha.toLocaleTimeString('es-ES', opcionesHora);
+      return `${fechaTexto} a las ${horaTexto}`;
+    }
 
     // Registrar Prestamista
     createPrestamistaForm.addEventListener('submit', async (e) => {
@@ -704,7 +840,6 @@
       else baseFecha.setDate(baseFecha.getDate() + cantidad);
 
       try {
-        // Guardar el pago en la subcolección de pagos del prestamista
         const pagosRef = collection(db, "carpetacout", "configuracion_general", "usuariosprestamistas", id, "pagos");
         await addDoc(pagosRef, {
           monto: monto,
@@ -712,7 +847,6 @@
           extensionOtorgada: `${cantidad} ${unidad}`
         });
 
-        // Actualizar la fecha de vencimiento principal
         await updateDoc(doc(db, "carpetacout", "configuracion_general", "usuariosprestamistas", id), {
           venceEn: baseFecha.toISOString()
         });
@@ -774,12 +908,19 @@
             </div>
           </div>
           <div class="actions-right">
+            <!-- Botón Pago ($) -->
             <button class="btn-icon-3d btn-money" data-id="${id}" title="Registrar Pago ($) y Renovar">
               <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
             </button>
+            <!-- Botón Historial Contrato -->
+            <button class="btn-icon-3d btn-contract" data-id="${id}" title="Ver Historial de Pagos (Contrato)">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </button>
+            <!-- Botón Editar -->
             <button class="btn-icon-3d btn-edit" data-id="${id}" title="Editar Prestamista">
               <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
             </button>
+            <!-- Botón Eliminar -->
             <button class="btn-icon-3d btn-delete" data-id="${id}" title="Eliminar Prestamista">
               <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
             </button>
@@ -793,6 +934,41 @@
           document.getElementById('extCantidad').value = 30;
           document.getElementById('extUnidad').value = 'dias';
           moneyModalOverlay.classList.add('active');
+        });
+
+        // Abrir Historial de Pagos ("Papel Contrato")
+        card.querySelector('.btn-contract').addEventListener('click', async () => {
+          pagosListContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">Cargando pagos...</div>';
+          contractModalOverlay.classList.add('active');
+
+          try {
+            const pagosRef = collection(db, "carpetacout", "configuracion_general", "usuariosprestamistas", id, "pagos");
+            const querySnapshot = await getDocs(pagosRef);
+            
+            pagosListContainer.innerHTML = '';
+            if (querySnapshot.empty) {
+              pagosListContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">No hay pagos registrados para este prestamista.</div>';
+              return;
+            }
+
+            querySnapshot.forEach((docPago) => {
+              const pData = docPago.data();
+              const fechaLegible = formatearFechaLegible(pData.fechaPago);
+              
+              const itemDiv = document.createElement('div');
+              itemDiv.className = 'pago-item';
+              itemDiv.innerHTML = `
+                <div>
+                  <div class="monto">$ ${Number(pData.monto).toLocaleString('es-ES', {minimumFractionDigits: 2})}</div>
+                  <div style="font-size: 11px; color: #94a3b8;">Extensión: ${pData.extensionOtorgada}</div>
+                </div>
+                <div class="fecha-hora">${fechaLegible}</div>
+              `;
+              pagosListContainer.appendChild(itemDiv);
+            });
+          } catch (err) {
+            pagosListContainer.innerHTML = '<div style="text-align: center; color: var(--danger-color); padding: 20px;">Error al cargar el historial de pagos.</div>';
+          }
         });
 
         // Abrir Modal Editar
@@ -832,7 +1008,7 @@
         if (!timerEl || !cardEl) return;
 
         if (!data.venceEn) {
-          timerEl.textContent = "🔴 Sin fecha de vencimiento";
+          timerEl.textContent = "Sin fecha de vencimiento";
           timerEl.className = "timer-display suspended";
           cardEl.classList.add('suspended');
           return;
@@ -842,7 +1018,7 @@
         const diferenciaMs = fechaVence - ahora;
 
         if (diferenciaMs <= 0) {
-          timerEl.textContent = "🔴 Suspendido por falta de abono (Vencido)";
+          timerEl.textContent = "Suspendido por falta de abono (Vencido)";
           timerEl.className = "timer-display suspended";
           cardEl.classList.add('suspended');
         } else {
@@ -853,7 +1029,7 @@
           const minutos = Math.floor((totalSegundos % 3600) / 60);
           const segundos = totalSegundos % 60;
 
-          timerEl.textContent = `🟢 Activo: ${dias}d ${horas}h ${minutos}m ${segundos}s restantes`;
+          timerEl.textContent = `Activo: ${dias}d ${horas}h ${minutos}m ${segundos}s restantes`;
           timerEl.className = "timer-display active";
         }
       });
