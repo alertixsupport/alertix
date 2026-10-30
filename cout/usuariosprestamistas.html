@@ -307,7 +307,7 @@
       color: var(--text-primary);
     }
 
-    /* Estructura formal de datos (Vista Previa Limpia) */
+    /* Estructura formal de datos */
     .user-details-table {
       display: flex;
       flex-wrap: wrap;
@@ -342,6 +342,33 @@
       border-radius: 4px;
       color: #e2e8f0;
       font-size: 11px;
+    }
+
+    /* Triangulito Rojo Parpadeante para datos faltantes */
+    @keyframes blinkWarning {
+      0% { opacity: 0.3; transform: scale(0.95); }
+      50% { opacity: 1; transform: scale(1.1); }
+      100% { opacity: 0.3; transform: scale(0.95); }
+    }
+
+    .missing-data-warning {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      animation: blinkWarning 1.6s ease-in-out infinite;
+      vertical-align: middle;
+      cursor: help;
+      margin-left: 2px;
+    }
+
+    .missing-data-warning svg {
+      width: 13px;
+      height: 13px;
+      fill: #ef4444;
+      stroke: #fca5a5;
+      stroke-width: 1;
     }
 
     .timer-badge {
@@ -983,6 +1010,16 @@
       return `${f.toLocaleDateString('es-AR', { day: '2-digit', month: 'short' })} &bull; ${f.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}`;
     }
 
+    // Helper inteligente: si el dato no existe o está vacío, genera el triángulo rojo parpadeante
+    function renderCampo(valor, etiquetaFaltante) {
+      if (!valor || String(valor).trim() === '') {
+        return `<span class="missing-data-warning" title="Dato faltante: ${etiquetaFaltante}">
+                  <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </span>`;
+      }
+      return `<strong>${valor}</strong>`;
+    }
+
     async function cargarHistorialPagos(prestamistaId) {
       pagosListContainer.innerHTML = '<div style="text-align: center; color: var(--text-tertiary); padding: 16px;">Cargando registros...</div>';
       contractModalOverlay.classList.add('is-open');
@@ -1165,23 +1202,23 @@
           <div class="card-user-meta">
             <div class="avatar-initial-box">${initial}</div>
             <div class="user-info">
-              <div class="user-name">${data.nombre}</div>
+              <div class="user-name">${data.nombre || 'Sin Nombre'}</div>
               <div class="user-details-table">
                 <div class="detail-item">
                   <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="17" y2="8"></line></svg>
-                  <span>DNI:</span> <strong>${data.dni || 'N/D'}</strong>
+                  <span>DNI:</span> ${renderCampo(data.dni, 'DNI faltante')}
                 </div>
                 <div class="detail-item">
                   <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                  <span>WA:</span> <strong>${data.whatsapp || 'N/D'}</strong>
+                  <span>WA:</span> ${renderCampo(data.whatsapp, 'WhatsApp faltante')}
                 </div>
                 <div class="detail-item">
                   <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                  <span>User:</span> <code>${data.usuario}</code>
+                  <span>User:</span> <code>${data.usuario || ''}</code> ${!data.usuario ? renderCampo('', 'Usuario faltante') : ''}
                 </div>
                 <div class="detail-item">
                   <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                  <span>Clave:</span> <code>${data.clave}</code>
+                  <span>Clave:</span> <code>${data.clave || ''}</code> ${!data.clave ? renderCampo('', 'Contraseña faltante') : ''}
                 </div>
               </div>
               <div class="timer-badge ${isSusp ? 'suspended' : 'active'}" id="timer-${id}">
@@ -1237,7 +1274,7 @@
         });
 
         card.querySelector('.btn-remove-usr').addEventListener('click', async () => {
-          if (confirm(`¿Eliminar la cuenta del prestamista "${data.nombre}"?`)) {
+          if (confirm(`¿Eliminar la cuenta del prestamista "${data.nombre || 'Sin Nombre'}"?`)) {
             await deleteDoc(doc(db, "carpetacout", "configuracion_general", "usuariosprestamistas", id));
           }
         });
@@ -1270,7 +1307,7 @@
 
         if (diffMs <= 0) {
           timeTxt.textContent = "Suscripción Vencida";
-          badgeEl.className = "timer-badge suspended";
+          badgeEl.className, badgeEl.className = "timer-badge suspended";
           cardEl.classList.add('is-suspended');
         } else {
           cardEl.classList.remove('is-suspended');
