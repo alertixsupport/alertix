@@ -221,11 +221,98 @@
       stroke-width: 2;
     }
 
+    /* Barra Superior de Control (Buscador y Contador) */
+    .controls-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    @media (min-width: 650px) {
+      .controls-bar {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      max-width: 450px;
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      stroke: var(--text-muted);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
+      background: var(--bg-card);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      color: white;
+      font-size: 13px;
+      outline: none;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      transition: border-color 0.3s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent-fire);
+    }
+
+    .counter-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-card);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      padding: 10px 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      align-self: flex-start;
+    }
+
+    @media (min-width: 650px) {
+      .counter-badge {
+        align-self: auto;
+      }
+    }
+
+    .counter-badge svg {
+      width: 20px;
+      height: 20px;
+      stroke: #818cf8;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .counter-badge strong {
+      color: var(--text-main);
+      font-size: 15px;
+    }
+
     .executive-separator {
       width: 100%;
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-      margin: 20px 0;
+      margin: 15px 0 20px 0;
     }
 
     /* Tarjetas de Prestamistas Adaptadas a Celular */
@@ -320,7 +407,6 @@
     .timer-display.active { color: #34d399; }
     .timer-display.suspended { color: #fca5a5; }
 
-    /* Acciones en la tarjeta */
     .actions-right {
       display: flex;
       align-items: center;
@@ -404,7 +490,7 @@
     .btn-delete:hover { background: var(--danger-color); color: white; transform: translateY(-2px); }
     .btn-delete:hover svg { stroke: white; }
 
-    /* --- ANIMACIONES PROFESIONALES PARA MODALES --- */
+    /* Modales Profesionales con Animación */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -618,6 +704,18 @@
         </a>
       </div>
     </header>
+
+    <!-- Barra de Control: Buscador y Contador Profesional -->
+    <div class="controls-bar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="searchInput" placeholder="Buscar por nombre, DNI, WhatsApp, usuario...">
+      </div>
+      <div class="counter-badge" id="counterBadge">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span>Total Prestamistas: <strong id="totalCountNumber">0</strong></span>
+      </div>
+    </div>
 
     <div class="executive-separator"></div>
 
@@ -887,6 +985,8 @@
     const editPrestamistaId = document.getElementById('editPrestamistaId');
 
     const prestamistasGrid = document.getElementById('prestamistasGrid');
+    const searchInput = document.getElementById('searchInput');
+    const totalCountNumber = document.getElementById('totalCountNumber');
 
     const prestamistasRef = collection(db, "carpetacout", "configuracion_general", "usuariosprestamistas");
     let cachedPrestamistas = [];
@@ -915,6 +1015,11 @@
       } else {
         quitarCamposGroup.style.display = 'none';
       }
+    });
+
+    // Evento del Buscador en tiempo real
+    searchInput.addEventListener('input', () => {
+      renderPrestamistas();
     });
 
     function formatearFechaLegible(isoString) {
@@ -1101,12 +1206,28 @@
 
     function renderPrestamistas() {
       prestamistasGrid.innerHTML = '';
-      if (cachedPrestamistas.length === 0) {
-        prestamistasGrid.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px; font-size: 13px;">No hay prestamistas registrados aún. Haz clic en "Registrar Prestamista" arriba.</div>`;
+      
+      // Actualizar contador total
+      totalCountNumber.textContent = cachedPrestamistas.length;
+
+      const filtro = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+      const prestamistasFiltrados = cachedPrestamistas.filter(({ data }) => {
+        if (!filtro) return true;
+        const nombre = (data.nombre || '').toLowerCase();
+        const dni = (data.dni || '').toLowerCase();
+        const whatsapp = (data.whatsapp || '').toLowerCase();
+        const usuario = (data.usuario || '').toLowerCase();
+        const edad = (data.edad || '').toLowerCase();
+        return nombre.includes(filtro) || dni.includes(filtro) || whatsapp.includes(filtro) || usuario.includes(filtro) || edad.includes(filtro);
+      });
+
+      if (prestamistasFiltrados.length === 0) {
+        prestamistasGrid.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px; font-size: 13px;">No se encontraron prestamistas con esos criterios de búsqueda.</div>`;
         return;
       }
 
-      cachedPrestamistas.forEach(({ id, data }) => {
+      prestamistasFiltrados.forEach(({ id, data }) => {
         const card = document.createElement('div');
         card.className = 'prestamista-row-card';
         card.setAttribute('data-id', id);
