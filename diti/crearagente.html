@@ -441,7 +441,7 @@
             box-shadow: 0 6px 15px rgba(255,77,77,0.2), inset 0 1px 0 rgba(255,77,77,0.2);
         }
 
-        /* MODALES CON ANIMACIONES PROFESIONALES DE ENTRADA Y SALIDA */
+        /* MODALES */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -668,6 +668,20 @@
                     <input type="tel" id="whatsapp" class="form-input" required placeholder="Ej. +549..." autocomplete="off">
                 </div>
 
+                <!-- Selección de Vínculo / Origen del Agente -->
+                <div class="form-group">
+                    <label class="form-label">Origen / Patrocinio del Agente</label>
+                    <select id="origenAgente" class="form-select" required onchange="togglePatrocinadorInput()">
+                        <option value="Oficial Directo" selected>Oficial Directo (Traído por mí a DITI)</option>
+                        <option value="Afiliado por otro agente">Afiliado por otro agente de mi red</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="grupo-patrocinador" style="display: none;">
+                    <label class="form-label">Nombre del Agente Patrocinador</label>
+                    <input type="text" id="patrocinador" class="form-input" placeholder="Ej. Juan Pérez (Agente ID)">
+                </div>
+
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Usuario de Acceso</label>
@@ -687,11 +701,11 @@
         </div>
     </div>
 
-    <!-- Modal de Detalles -->
+    <!-- Modal de Detalles (Incluye Usuario y Contraseña) -->
     <div class="modal-overlay" id="detail-modal">
         <div class="modal-container">
             <div class="card-header-title">
-                <span>Detalles del Agente</span>
+                <span>Detalles y Credenciales del Agente</span>
                 <button class="btn-action" onclick="cerrarModal('detail-modal')">✕</button>
             </div>
             <div id="modal-detail-content" style="display: flex; flex-direction: column; gap: 4px;"></div>
@@ -739,7 +753,7 @@
         </div>
     </div>
 
-    <!-- Script de Gestión -->
+    <!-- Script de Gestión Completa -->
     <script type="module">
         import { db } from "../app.js";
         import { collection, addDoc, serverTimestamp, query, where, getDocs, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -767,6 +781,19 @@
 
         window.abrirModalRegistro = () => document.getElementById("register-modal").classList.add("active");
         window.cerrarModal = (modalId) => document.getElementById(modalId).classList.remove("active");
+
+        window.togglePatrocinadorInput = () => {
+            const origen = document.getElementById("origenAgente").value;
+            const grupoPatrocinador = document.getElementById("grupo-patrocinador");
+            if (origen === "Afiliado por otro agente") {
+                grupoPatrocinador.style.display = "flex";
+                document.getElementById("patrocinador").required = true;
+            } else {
+                grupoPatrocinador.style.display = "none";
+                document.getElementById("patrocinador").required = false;
+                document.getElementById("patrocinador").value = "";
+            }
+        };
 
         window.actualizarProvincias = () => {
             const paisSelect = document.getElementById("pais").value;
@@ -810,11 +837,13 @@
             const pais = document.getElementById("pais").value.trim();
             const provincia = document.getElementById("provincia").value.trim();
             const whatsapp = document.getElementById("whatsapp").value.trim();
+            const origenAgente = document.getElementById("origenAgente").value;
+            const patrocinador = document.getElementById("patrocinador").value.trim();
             const usuario = document.getElementById("usuario").value.trim().toLowerCase();
             const password = document.getElementById("password").value.trim();
 
             if (!nombre || !pais || !provincia || !whatsapp || !usuario || !password) {
-                alert("Por favor completa todos los campos.");
+                alert("Por favor completa todos los campos obligatorios.");
                 return;
             }
 
@@ -829,6 +858,8 @@
 
                 await addDoc(collection(db, "diti_usuarioagentes"), {
                     nombre, pais, provincia, whatsapp, usuario, password,
+                    origenAgente,
+                    patrocinador: origenAgente === "Afiliado por otro agente" ? patrocinador : "Directo del Admin",
                     estado: "activo",
                     creadoPor: adminSesion.usuario,
                     creadoEn: serverTimestamp()
@@ -837,6 +868,7 @@
                 alert("¡Agente registrado con éxito!");
                 agentForm.reset();
                 document.getElementById("provincia").innerHTML = '<option value="" disabled selected>Seleccione Provincia</option>';
+                document.getElementById("grupo-patrocinador").style.display = "none";
                 cerrarModal("register-modal");
             } catch (err) {
                 alert("Hubo un error al registrar el agente.");
@@ -875,7 +907,8 @@
                 ag.usuario.toLowerCase().includes(filtro) ||
                 ag.pais.toLowerCase().includes(filtro) ||
                 ag.provincia.toLowerCase().includes(filtro) ||
-                ag.whatsapp.toLowerCase().includes(filtro)
+                ag.whatsapp.toLowerCase().includes(filtro) ||
+                (ag.patrocinador && ag.patrocinador.toLowerCase().includes(filtro))
             );
             renderizarAgentes(filtrados);
         };
@@ -894,6 +927,7 @@
                 const antiguedad = calcularAntigüedad(ag.creadoEn);
                 const fechaFormateada = ag.creadoEn ? ag.creadoEn.toDate().toLocaleDateString() : "Recién";
                 const iniciales = ag.nombre ? ag.nombre.substring(0, 2).toUpperCase() : "AG";
+                const origenBadge = ag.origenAgente === "Afiliado por otro agente" ? `Afiliado: ${ag.patrocinador}` : `Oficial Directo`;
 
                 agentsListContainer.innerHTML += `
                     <div class="agent-card-item ${isSuspended ? 'suspended' : ''}">
@@ -921,13 +955,17 @@
                             </div>
                         </div>
 
+                        <div style="font-size: 0.73rem; color: var(--accent-green); font-family: monospace; background: rgba(0,230,118,0.05); padding: 4px 8px; border-radius: 4px; border: 1px dashed rgba(0,230,118,0.2);">
+                            🤝 <strong>Origen:</strong> ${origenBadge}
+                        </div>
+
                         <div class="agent-footer-info">
                             <span>Alta: ${fechaFormateada}</span>
                             <span style="color: var(--accent-green);">${antiguedad}</span>
                         </div>
 
                         <div class="agent-actions-bar">
-                            <button class="btn-action" onclick="verDetalles('${id}')" title="Ver Detalles">
+                            <button class="btn-action" onclick="verDetalles('${id}')" title="Ver Credenciales y Detalles">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                             </button>
                             <button class="btn-action" onclick="abrirEditar('${id}')" title="Editar">
@@ -951,7 +989,9 @@
             const fechaFormateada = ag.creadoEn ? ag.creadoEn.toDate().toLocaleString() : "N/D";
             document.getElementById("modal-detail-content").innerHTML = `
                 <div class="modal-detail-row"><span class="modal-detail-label">Nombre Completo</span><span class="modal-detail-val">${ag.nombre}</span></div>
-                <div class="modal-detail-row"><span class="modal-detail-label">Usuario</span><span class="modal-detail-val">@${ag.usuario}</span></div>
+                <div class="modal-detail-row" style="background: rgba(0,230,118,0.06); padding: 4px 6px; border-radius: 4px;"><span class="modal-detail-label" style="color: var(--accent-green);">Usuario de Acceso</span><span class="modal-detail-val" style="font-weight: 700; color: var(--accent-green);">@${ag.usuario}</span></div>
+                <div class="modal-detail-row" style="background: rgba(0,230,118,0.06); padding: 4px 6px; border-radius: 4px;"><span class="modal-detail-label" style="color: var(--accent-green);">Contraseña</span><span class="modal-detail-val" style="font-family: monospace; color: #fff;">${ag.password}</span></div>
+                <div class="modal-detail-row"><span class="modal-detail-label">Origen / Patrocinio</span><span class="modal-detail-val">${ag.origenAgente} (${ag.patrocinador})</span></div>
                 <div class="modal-detail-row"><span class="modal-detail-label">Ubicación</span><span class="modal-detail-val">${ag.provincia}, ${ag.pais}</span></div>
                 <div class="modal-detail-row"><span class="modal-detail-label">WhatsApp</span><span class="modal-detail-val">${ag.whatsapp}</span></div>
                 <div class="modal-detail-row"><span class="modal-detail-label">Estado</span><span class="modal-detail-val">${ag.estado || "activo"}</span></div>
