@@ -265,19 +265,27 @@
         </div>
     </div>
 
-    <!-- Script de Sincronización en Tiempo Real Absoluto con menuagente.html y Firebase -->
+    <!-- Script de Validación de Sesión y Lectura en Tiempo Real Absoluto -->
     <script type="module">
         import { db } from "../app.js";
         import { collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // Validar sesión activa del agente
+        // Validar y leer sesión activa del agente logueado
         const sesionRaw = sessionStorage.getItem("diti_agente_sesion");
         if (!sesionRaw) {
             window.location.replace("loginagente.html");
         }
 
-        const agenteSesion = JSON.parse(sesionRaw);
-        document.getElementById("agent-user-display").innerText = `@${agenteSesion.usuario} (${agenteSesion.nombre})`;
+        try {
+            const agenteSesion = JSON.parse(sesionRaw);
+            const displayUser = agenteSesion.usuario ? `@${agenteSesion.usuario}` : "Agente";
+            const displayName = agenteSesion.nombre ? `(${agenteSesion.nombre})` : "";
+            document.getElementById("agent-user-display").innerText = `${displayUser} ${displayName}`;
+        } catch (e) {
+            console.error("Error al leer sesión:", e);
+            sessionStorage.removeItem("diti_agente_sesion");
+            window.location.replace("loginagente.html");
+        }
 
         window.cerrarSesionAgente = () => {
             if (confirm("¿Estás seguro de cerrar sesión?")) {
@@ -288,21 +296,96 @@
 
         const cardsContainer = document.getElementById("cards-container");
 
-        // Lectura en tiempo real absoluto desde Firebase Firestore de la colección que alimenta menuagente.html
-        // (Asumiendo la colección 'diti_menuagentes' o sincronizada con menuagente.html)
+        // Lectura en tiempo real absoluto desde Firebase Firestore de la colección de menú
         const qMenu = query(collection(db, "diti_menuagentes"), orderBy("orden", "asc"));
 
         onSnapshot(qMenu, (snapshot) => {
             cardsContainer.innerHTML = "";
 
             if (snapshot.empty) {
-                // Fallback por defecto si aún no hay elementos configurados en la colección de menú
                 renderizarCardsDefault();
                 return;
             }
 
             snapshot.forEach((docSnap) => {
                 const item = docSnap.data();
-                if (item.activo === false) return; // Omitir inactivos si aplica
+                if (item.activo === false) return;
 
-                const svgIcono = item.svgIcono || `<svg width="22" height="22" viewBox="0
+                const svgIcono = item.svgIcono || `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+                const titulo = item.titulo || "Sección Operativa";
+                const descripcion = item.descripcion || "Accede a las herramientas y gestión detallada.";
+                const redireccion = item.redireccion || "#";
+
+                cardsContainer.innerHTML += `
+                    <a href="${redireccion}" class="agent-nav-card">
+                        <div class="card-left-content">
+                            <div class="card-icon-box">
+                                ${svgIcono}
+                            </div>
+                            <div class="card-text-group">
+                                <div class="card-title">${titulo}</div>
+                                <div class="card-description">${descripcion}</div>
+                            </div>
+                        </div>
+                        <div class="card-arrow-box">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </div>
+                    </a>
+                `;
+            });
+        }, (error) => {
+            console.error("Error sincronizando menú:", error);
+            renderizarCardsDefault();
+        });
+
+        function renderizarCardsDefault() {
+            const defaultItems = [
+                {
+                    titulo: "Mi Red de Afiliados",
+                    descripcion: "Consulta la lista de agentes patrocinados y el rendimiento de tu red.",
+                    redireccion: "redagentes.html",
+                    svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`
+                },
+                {
+                    titulo: "Registro de Nuevos Ingresos",
+                    descripcion: "Da de alta nuevos agentes operativos y vincula sus montos de cobro.",
+                    redireccion: "crearagente.html",
+                    svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>`
+                },
+                {
+                    titulo: "Reporte de Cobros y Comisiones",
+                    descripcion: "Monitorea los montos cobrados en pesos y dólares en tiempo real.",
+                    redireccion: "cobrosagente.html",
+                    svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>`
+                },
+                {
+                    titulo: "Soporte y Herramientas",
+                    descripcion: "Accede a recursos, manuales operativos y asistencia gerencial directa.",
+                    redireccion: "soporteagente.html",
+                    svg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`
+                }
+            ];
+
+            cardsContainer.innerHTML = "";
+            defaultItems.forEach(item => {
+                cardsContainer.innerHTML += `
+                    <a href="${item.redireccion}" class="agent-nav-card">
+                        <div class="card-left-content">
+                            <div class="card-icon-box">
+                                ${item.svg}
+                            </div>
+                            <div class="card-text-group">
+                                <div class="card-title">${item.titulo}</div>
+                                <div class="card-description">${item.descripcion}</div>
+                            </div>
+                        </div>
+                        <div class="card-arrow-box">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </div>
+                    </a>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
