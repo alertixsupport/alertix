@@ -668,7 +668,7 @@
                     <input type="tel" id="whatsapp" class="form-input" required placeholder="Ej. +549..." autocomplete="off">
                 </div>
 
-                <!-- Selección de Vínculo / Origen del Agente -->
+                <!-- Selección de Vínculo / Patrocinador -->
                 <div class="form-group">
                     <label class="form-label">Origen / Patrocinio del Agente</label>
                     <select id="origenAgente" class="form-select" required onchange="togglePatrocinadorInput()">
@@ -677,9 +677,13 @@
                     </select>
                 </div>
 
+                <!-- Selector con Buscador para elegir de tu propia lista de agentes -->
                 <div class="form-group" id="grupo-patrocinador" style="display: none;">
-                    <label class="form-label">Nombre del Agente Patrocinador</label>
-                    <input type="text" id="patrocinador" class="form-input" placeholder="Ej. Juan Pérez (Agente ID)">
+                    <label class="form-label">Seleccionar Agente Patrocinador</label>
+                    <input type="text" id="buscador-patrocinador" class="form-input" placeholder="Buscar agente por nombre..." oninput="filtrarListaPatrocinadores()" style="margin-bottom: 6px;" autocomplete="off">
+                    <select id="patrocinador" class="form-select">
+                        <option value="" disabled selected>Seleccione un agente de su red</option>
+                    </select>
                 </div>
 
                 <div class="form-row">
@@ -701,7 +705,7 @@
         </div>
     </div>
 
-    <!-- Modal de Detalles (Incluye Usuario y Contraseña) -->
+    <!-- Modal de Detalles -->
     <div class="modal-overlay" id="detail-modal">
         <div class="modal-container">
             <div class="card-header-title">
@@ -768,6 +772,8 @@
         const agentsListContainer = document.getElementById("agents-list-container");
         const counterNum = document.getElementById("counter-num");
         const searchInput = document.getElementById("search-agent-input");
+        const selectPatrocinador = document.getElementById("patrocinador");
+        const buscadorPatrocinador = document.getElementById("buscador-patrocinador");
 
         const provinciasPorPais = {
             "Argentina": ["Buenos Aires", "Capital Federal", "Córdoba", "Santa Fe", "Mendoza", "Tucumán", "Entre Ríos", "Salta", "Misiones", "Corrientes", "Chaco", "Santiago del Estero", "San Juan", "Jujuy", "Río Negro", "Neuquén", "Formosa", "Chubut", "San Luis", "Catamarca", "La Rioja", "La Pampa", "Santa Cruz", "Tierra del Fuego"],
@@ -787,11 +793,13 @@
             const grupoPatrocinador = document.getElementById("grupo-patrocinador");
             if (origen === "Afiliado por otro agente") {
                 grupoPatrocinador.style.display = "flex";
-                document.getElementById("patrocinador").required = true;
+                selectPatrocinador.required = true;
             } else {
                 grupoPatrocinador.style.display = "none";
-                document.getElementById("patrocinador").required = false;
-                document.getElementById("patrocinador").value = "";
+                selectPatrocinador.required = false;
+                selectPatrocinador.value = "";
+                buscadorPatrocinador.value = "";
+                poblarSelectPatrocinadores(listaAgentesSnapshot);
             }
         };
 
@@ -818,6 +826,22 @@
             }
         };
 
+        function poblarSelectPatrocinadores(agentes) {
+            selectPatrocinador.innerHTML = '<option value="" disabled selected>Seleccione un agente de su red</option>';
+            agentes.forEach(ag => {
+                selectPatrocinador.innerHTML += `<option value="${ag.nombre} (@${ag.usuario})">${ag.nombre} (@${ag.usuario})</option>`;
+            });
+        }
+
+        window.filtrarListaPatrocinadores = () => {
+            const filtro = buscadorPatrocinador.value.toLowerCase().trim();
+            const filtrados = listaAgentesSnapshot.filter(ag => 
+                ag.nombre.toLowerCase().includes(filtro) ||
+                ag.usuario.toLowerCase().includes(filtro)
+            );
+            poblarSelectPatrocinadores(filtrados);
+        };
+
         function calcularAntigüedad(fechaCreacion) {
             if (!fechaCreacion) return "Recién ingresado";
             const diffTime = Math.abs(new Date() - fechaCreacion.toDate());
@@ -838,12 +862,17 @@
             const provincia = document.getElementById("provincia").value.trim();
             const whatsapp = document.getElementById("whatsapp").value.trim();
             const origenAgente = document.getElementById("origenAgente").value;
-            const patrocinador = document.getElementById("patrocinador").value.trim();
+            const patrocinador = selectPatrocinador.value;
             const usuario = document.getElementById("usuario").value.trim().toLowerCase();
             const password = document.getElementById("password").value.trim();
 
             if (!nombre || !pais || !provincia || !whatsapp || !usuario || !password) {
                 alert("Por favor completa todos los campos obligatorios.");
+                return;
+            }
+
+            if (origenAgente === "Afiliado por otro agente" && !patrocinador) {
+                alert("Por favor seleccione el agente patrocinador de su red.");
                 return;
             }
 
@@ -859,7 +888,7 @@
                 await addDoc(collection(db, "diti_usuarioagentes"), {
                     nombre, pais, provincia, whatsapp, usuario, password,
                     origenAgente,
-                    patrocinador: origenAgente === "Afiliado por otro agente" ? patrocinador : "Directo del Admin",
+                    patrocinador: origenAgente === "Afiliado por otro agente" ? patrocinador : "Oficial Directo",
                     estado: "activo",
                     creadoPor: adminSesion.usuario,
                     creadoEn: serverTimestamp()
@@ -897,6 +926,7 @@
                 return timeB - timeA;
             });
 
+            poblarSelectPatrocinadores(listaAgentesSnapshot);
             renderizarAgentes(listaAgentesSnapshot);
         });
 
@@ -927,7 +957,7 @@
                 const antiguedad = calcularAntigüedad(ag.creadoEn);
                 const fechaFormateada = ag.creadoEn ? ag.creadoEn.toDate().toLocaleDateString() : "Recién";
                 const iniciales = ag.nombre ? ag.nombre.substring(0, 2).toUpperCase() : "AG";
-                const origenBadge = ag.origenAgente === "Afiliado por otro agente" ? `Afiliado: ${ag.patrocinador}` : `Oficial Directo`;
+                const origenBadge = ag.origenAgente === "Afiliado por otro agente" ? `Patrocinado por: ${ag.patrocinador}` : `Oficial Directo`;
 
                 agentsListContainer.innerHTML += `
                     <div class="agent-card-item ${isSuspended ? 'suspended' : ''}">
